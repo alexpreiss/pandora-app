@@ -1,0 +1,21 @@
+.controlIcons:hover {
+  color: #6499ef;
+  cursor: pointer;
+}
+.controlIcons {
+  color: white;
+}
+.view p {
+  font-family: 'Lato', sans-serif;
+}
+.topIcons:hover {
+  color: #6499ef;
+  cursor: pointer;
+}
+
+.is-upgraded.mdl-js-slider.mdl-slider {
+  margin-left: 0px !important;
+}
+.mdl-slider__background-flex {
+  margin-left: 0px !important;
+}

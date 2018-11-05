@@ -1,0 +1,170 @@
+= Indentation
+
+* http://github.com/samueldana/indentation
+
+== DESCRIPTION:
+
+A small library of extensions to Ruby's Array and String classes that allow indentation manipulation of Strings and Arrays of Strings. Has the capability of working with multi-line strings. If you frequently use String arrays to manipulate text, see synopsis (In README.rdoc) for examples of how indentation can make your life easier.
+
+== EXAMPLES:
+  
+=== Indent
+
+  # Default indentation is 2 spaces
+    "test".indent # => "  test"
+
+  # Amount of indentation can be changed
+    "test".indent(3) # => "   test"
+
+  # Indentation character (or string) is set as the second parameter of indent.
+    "test".indent(2, "\t") # => "\t\ttest"
+  
+  # Operates on multi-line strings
+    "this\nis\na\ntest".indent # => "  this\n  is\n  a\n  test"
+
+  # Indent method accepts negative values (Removes tabs, spaces, and supplied indentation string)
+    "  test".indent(-1) # => " test"
+    "\t test".indent(-5) # => "test"
+    "\t--     Test".indent(-10) # => "--     Test"
+    "\t--     Test".indent(-10, '-') # => "Test"
+    "--- Test".indent(-2, '--') # => "- Test"
+
+  # Operates on arrays
+    ["one", "two"].indent # => ["  one", "  two"]
+    [["one", "  two"], ["uno", "\t\tdos"]].indent # => [["  one", "    two"], ["  uno", "  \t\tdos"]]
+
+
+=== Reset Indentation
+
+  # 'resets' the indentation of a string by finding the least amount of indentation in the String/Array, and
+  # removing that amount from every line.
+    "  def method_name\n    # Do stuff\n  end".reset_indentation # => "def method_name\n  # Do stuff\nend"
+  
+  # Operates on arrays
+    ["  def method_name", "    # Do stuff", "  end"].reset_indentation # => ["def method_name", "  # Do stuff", "end"]
+  
+  # Useful for heredocs - must chomp to remove trailing newline
+    my_string = <<-EOS.chomp.reset_indentation
+      def method_name
+        # Do stuff
+      end
+      EOS
+    my_string # => "def method_name\n  # Do stuff\nend"
+
+  # Accepts an indentation modifier
+    " one\n  two".reset_indentation(1) # => " one\n  two"
+    "   one\n  two".reset_indentation(0) # => " one\ntwo" # Default behavior
+    " one\n  two".reset_indentation(-1) # => "one\ntwo"
+  
+  
+=== Append Separator
+
+  # Given an Array of Arrays or an Array of Strings, appends a separator object to all but the last element in the Array.
+  # NOTE: For an Array of Strings the separator object must be a String, since it is appended to other Strings
+    ["arg1", "arg2", "arg3"].append_separator("!") # => ["arg1!", "arg2!", "arg3"]
+    [["line1"], ["line2"], ["line3"]].append_separator("") # => [["line1", ""], ["line2", ""], ["line3"]]
+    [["line1", "line2"], ["line3", "line4"]].append_separator("") # => [["line1", "line2", ""], ["line3", "line4"]]
+  
+  # Useful combined with indent and join
+    vars = ["var1", "var2", "var3", "var4"]
+    method_def = ["def add_up(#{vars.join(', ')})"]
+    method_body = vars.append_separator(" + ")
+    method_def += method_body.indent
+    method_def << "end"
+    method_def.join("\n") # =>
+      # def add_up(var1, var2, var3, var4)
+      #   var1 + 
+      #   var2 + 
+      #   var3 + 
+      #   var4
+      # end
+  
+  # Handy for separating arrays of string arrays
+    test_array = [["this", "is", "a", "test"], ["quick", "brown", "fox"], ["lazy", "typist"]]
+    test_array.append_separator("").join("\n") # =>
+      # this
+      # is
+      # a
+      # test
+      # 
+      # quick
+      # brown
+      # fox
+      # 
+      # lazy
+      # typist
+
+
+=== Find Least Indentation
+
+  # Given a String or Array of Strings, finds the least indentation on any line. Splits on newlines found within strings
+  # to find the least indentation within a multi-line String
+  "  test".find_least_indentation # => 2
+  "   three\n  two \n one".find_least_indentation # => 1
+  ["  two", "   three", "    four"].find_least_indentation # => 2
+  ["  two", "   three", ["    four", "     five\n one"]].find_least_indentation # => 1
+  
+  # Option to ignore blank (no characters whatsoever) lines. 
+  # Note, disabling this option will automatically disable :ignore_empty_lines
+  # Default => true
+    "   three\n".find_least_indentation # => 3
+    "   three\n".find_least_indentation(:ignore_blank_lines => false) # => 0
+  
+  # Option to ignore both blank lines (no characters whatsoever) and empty lines (whitespace-only)
+  # Implies :ignore_blank_lines => true when enabled
+  # Default => true
+    "   three\n ".find_least_indentation # => 3
+    "   three\n ".find_least_indentation(:ignore_empty_lines => false) # => 1
+    "   three\n".find_least_indentation # => 3
+    "   three\n".find_least_indentation(:ignore_empty_lines => false) # => 0
+  
+  # To ignore blank, but not empty, lines:
+    "   three\n ".find_least_indentation(:ignore_blank_lines => true, :ignore_empty_lines => false) # => 1
+    "   three\n".find_least_indentation(:ignore_blank_lines => true, :ignore_empty_lines => false) # => 3
+    
+=== English Array Join
+
+  # Given an Array of Strings and an optional conjunction, joins them using English list punctuation
+  # to find the least indentation within a multi-line String
+  ['one', 'two'].english_join # => "one and two"
+  ['one', 'two', 'three'].english_join # => "one, two, and three"
+  
+  # Different conjunction
+  ['one', 'two', 'three'].english_join('or') # => "one, two, or three"
+  
+  # Different separator
+  ['one', 'two', 'three'].english_join('or', ' ') # => "one two or three"
+  
+== REQUIREMENTS:
+
+* none
+
+== INSTALL:
+
+* [sudo] gem install indentation
+  * (Use sudo unless using rvm)
+
+== LICENSE:
+
+(The MIT License)
+
+Copyright (c) 2010 Prometheus Computing
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+'Software'), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

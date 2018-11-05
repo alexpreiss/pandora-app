@@ -1,0 +1,33 @@
+var _user$project$AboutMe$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Nav$topNav,
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$AboutMe$subscriptions = function (_p0) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$AboutMe$update = F2(
+	function (msg, model) {
+		var _p1 = msg;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			model,
+			{ctor: '[]'});
+	});
+var _user$project$AboutMe$init = A2(
+	_elm_lang$core$Platform_Cmd_ops['!'],
+	{
+		messages: {ctor: '[]'}
+	},
+	{ctor: '[]'});
+var _user$project$AboutMe$main = _elm_lang$html$Html$program(
+	{init: _user$project$AboutMe$init, view: _user$project$AboutMe$view, update: _user$project$AboutMe$update, subscriptions: _user$project$AboutMe$subscriptions})();
+var _user$project$AboutMe$Model = function (a) {
+	return {messages: a};
+};
+var _user$project$AboutMe$AddMessage = {ctor: 'AddMessage'};
