@@ -4,6 +4,7 @@ import Elm from './Main.elm'
 
   const app = Elm.Main.embed(
     document.querySelector('div'),
+    localStorage.authToken 
   )
 
 
@@ -30,6 +31,10 @@ function setAudio(level) {
   song.volume = level
 }
 
+function rememberMe(token) {
+   localStorage.setItem('authToken', token)}
+
 app.ports.togglePause.subscribe( togglePause )
 app.ports.replaySong.subscribe( replaySong )
 app.ports.audioLevel.subscribe( setAudio )
+app.ports.rememberMe.subscribe( rememberMe )

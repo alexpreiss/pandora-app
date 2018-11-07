@@ -1,0 +1,80 @@
+var _user$project$Types_Feedback$send = F3(
+	function (authToken, songId, isPositive) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/addFeedback',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'isPositive',
+								_1: _elm_lang$core$Json_Encode$bool(isPositive)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'trackToken',
+									_1: _elm_lang$core$Json_Encode$string(songId)
+								},
+								_1: {ctor: '[]'}
+							}
+						})),
+				expect: _elm_lang$http$Http$expectJson(
+					_elm_lang$core$Json_Decode$succeed('')),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _user$project$Types_Feedback$remove = F2(
+	function (authToken, songId) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/deleteFeedback',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'isPositive',
+								_1: _elm_lang$core$Json_Encode$bool(false)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'trackToken',
+									_1: _elm_lang$core$Json_Encode$string(songId)
+								},
+								_1: {ctor: '[]'}
+							}
+						})),
+				expect: _elm_lang$http$Http$expectJson(
+					_elm_lang$core$Json_Decode$succeed('')),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});

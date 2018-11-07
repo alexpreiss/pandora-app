@@ -1,0 +1,124 @@
+var _user$project$Types_Fragment$Song = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {songTitle: a, trackLength: b, rating: c, audioURL: d, artistName: e, albumTitle: f, albumArt: g, trackToken: h};
+	});
+var _user$project$Types_Fragment$fragmentDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'trackToken',
+	_elm_lang$core$Json_Decode$string,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$requiredAt,
+		{
+			ctor: '::',
+			_0: 'albumArt',
+			_1: {
+				ctor: '::',
+				_0: '4',
+				_1: {
+					ctor: '::',
+					_0: 'url',
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'albumTitle',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'artistName',
+				_elm_lang$core$Json_Decode$string,
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'audioURL',
+					_elm_lang$core$Json_Decode$string,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'rating',
+						_elm_lang$core$Json_Decode$int,
+						A3(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+							'trackLength',
+							_elm_lang$core$Json_Decode$int,
+							A3(
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+								'songTitle',
+								_elm_lang$core$Json_Decode$string,
+								_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types_Fragment$Song)))))))));
+var _user$project$Types_Fragment$fragmentListDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'tracks',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$list(_user$project$Types_Fragment$fragmentDecoder));
+var _user$project$Types_Fragment$getNext = F3(
+	function (stationId, authToken, isStationStart) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/playlist/getFragment',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'stationId',
+								_1: _elm_lang$core$Json_Encode$string(stationId)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'isStationStart',
+									_1: _elm_lang$core$Json_Encode$bool(isStationStart)
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'fragmentRequestReason',
+										_1: _elm_lang$core$Json_Encode$string('Normal')
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'audioFormat',
+											_1: _elm_lang$core$Json_Encode$string('mp3-hifi')
+										},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'startingAtTrackId', _1: _elm_lang$core$Json_Encode$null},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'onDemandArtistMessageArtistUidHex', _1: _elm_lang$core$Json_Encode$null},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'onDemandArtistMessageIdHex', _1: _elm_lang$core$Json_Encode$null},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}
+							}
+						})),
+				expect: _elm_lang$http$Http$expectJson(_user$project$Types_Fragment$fragmentListDecoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});

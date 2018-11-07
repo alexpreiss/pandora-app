@@ -1,116 +1,80 @@
-var _user$project$Main$viewSong = function (song) {
-	return A2(
-		_elm_lang$html$Html$span,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(song.artistName),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(' '),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(song.songTitle),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
 var _user$project$Main$viewSongInfo = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {
+	var _p0 = model.state;
+	if (_p0.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p5 = _p0._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '2.75%'},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '2.75%'},
+									_1: {ctor: '[]'}
+								}
 							}
 						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$img,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$height(335),
-					_1: {
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$img,
+					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$width(335),
+						_0: _elm_lang$html$Html_Attributes$height(335),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$src(
-								function () {
-									var _p0 = _elm_lang$core$List$head(model.songQueue);
-									if (_p0.ctor === 'Just') {
-										return _p0._0.albumArt;
-									} else {
-										return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAOVBMVEX07/PJycnz8PHj4uLt6u318PPy8PHU1NTHycjc3dzQz9Dz7vLc2tvGxsbLy8vz8fTp5ebm5ubi4+L4IaaGAAACgElEQVR4nO3b226jMBRAUS7xCQm2If3/jx2bpsNVARVGcDx7PfSlUGXrGAiIZhkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+SuR3JnJ2zwFRVfpSqumJhcVhfTCzOzllwaGF+3cJqt4sX+vt+/tKFz8LsJPK8euHeP3P5wr0fjcIT/S007eO3WqOisCndLy+CrmxUFJodhTpm+P8VOpdv/E6us9B5W7al9ckWOitNljWNPDYsXZWFrTGhsM7MlqNTYaF79F/ixK4mKiz0cYn+/L5ePRb1FVa2GWxgbHqF7jXaYvVIVF/YJl9Yrl34FRba4f1wisdhOJf2n1RkfC71djZShYVucDKV8QjDl50UZpjn5XuKIl+T80w7/wqgsjC38elbZmY5vpBbEjOMx1v5CvcW03lZmZ96lBZ2N4gzrg2DnQ5RbeGSKt5vTJduUoW222UyxJQKXdvtMzkSUyr00u1jZLRpSoX2p/CZaGE8k3ZMmWihr+v3XqNlmk7h4J7DDJdpKoWuuvcvk4wfPSZQ6Jy3r2Zw1zg6myZQ6G1bFDJ8PFUMz6a6C7vp1c18vzKNQhenZxY/9i2JwnCvvzC9b+aeQKGzHz7w8KGH1sJw+as/7NcvU62FYYl+KjT9RV9p4ecJRv3zVZWFIXDtNSm5O8WFYYmuTDBe9d+JGgs3TDB6JyosDJeJenWEWXxe3CWqKWyf7zdFnzbb+qqidNsreeurECl+bJpg1O0Tfqgo3PlnKDzPd6Hsd+1CX+537TfZw43ubvm1C49C4RmKAxZo74qFcsBJpidn5yzY+88yE2fnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS9weVjTfmgUbdUgAAAABJRU5ErkJggg==';
-									}
-								}()),
+							_0: _elm_lang$html$Html_Attributes$width(335),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
+										_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
 										_1: {ctor: '[]'}
 									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$p,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'font-size', _1: '16px'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '15px'},
+									_0: _elm_lang$html$Html_Attributes$src(
+										function () {
+											var _p1 = _elm_lang$core$List$head(_p5.songQueue);
+											if (_p1.ctor === 'Just') {
+												return _p1._0.albumArt;
+											} else {
+												return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAOVBMVEX07/PJycnz8PHj4uLt6u318PPy8PHU1NTHycjc3dzQz9Dz7vLc2tvGxsbLy8vz8fTp5ebm5ubi4+L4IaaGAAACgElEQVR4nO3b226jMBRAUS7xCQm2If3/jx2bpsNVARVGcDx7PfSlUGXrGAiIZhkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+SuR3JnJ2zwFRVfpSqumJhcVhfTCzOzllwaGF+3cJqt4sX+vt+/tKFz8LsJPK8euHeP3P5wr0fjcIT/S007eO3WqOisCndLy+CrmxUFJodhTpm+P8VOpdv/E6us9B5W7al9ckWOitNljWNPDYsXZWFrTGhsM7MlqNTYaF79F/ixK4mKiz0cYn+/L5ePRb1FVa2GWxgbHqF7jXaYvVIVF/YJl9Yrl34FRba4f1wisdhOJf2n1RkfC71djZShYVucDKV8QjDl50UZpjn5XuKIl+T80w7/wqgsjC38elbZmY5vpBbEjOMx1v5CvcW03lZmZ96lBZ2N4gzrg2DnQ5RbeGSKt5vTJduUoW222UyxJQKXdvtMzkSUyr00u1jZLRpSoX2p/CZaGE8k3ZMmWihr+v3XqNlmk7h4J7DDJdpKoWuuvcvk4wfPSZQ6Jy3r2Zw1zg6myZQ6G1bFDJ8PFUMz6a6C7vp1c18vzKNQhenZxY/9i2JwnCvvzC9b+aeQKGzHz7w8KGH1sJw+as/7NcvU62FYYl+KjT9RV9p4ecJRv3zVZWFIXDtNSm5O8WFYYmuTDBe9d+JGgs3TDB6JyosDJeJenWEWXxe3CWqKWyf7zdFnzbb+qqidNsreeurECl+bJpg1O0Tfqgo3PlnKDzPd6Hsd+1CX+537TfZw43ubvm1C49C4RmKAxZo74qFcsBJpidn5yzY+88yE2fnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS9weVjTfmgUbdUgAAAABJRU5ErkJggg==';
+											}
+										}()),
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '0px'},
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
+												_1: {ctor: '[]'}
+											}),
 										_1: {ctor: '[]'}
 									}
 								}
-							}),
-						_1: {ctor: '[]'}
+							}
+						}
 					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							function () {
-								var _p1 = _elm_lang$core$List$head(model.songQueue);
-								if (_p1.ctor === 'Just') {
-									return _p1._0.songTitle;
-								} else {
-									return 'Loading...';
-								}
-							}()),
-						_1: {ctor: '[]'}
-					}),
+					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -120,11 +84,15 @@ var _user$project$Main$viewSongInfo = function (model) {
 							_0: _elm_lang$html$Html_Attributes$style(
 								{
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'font-size', _1: '14px'},
+									_0: {ctor: '_Tuple2', _0: 'font-size', _1: '16px'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
-										_1: {ctor: '[]'}
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '15px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '0px'},
+											_1: {ctor: '[]'}
+										}
 									}
 								}),
 							_1: {ctor: '[]'}
@@ -133,141 +101,139 @@ var _user$project$Main$viewSongInfo = function (model) {
 							ctor: '::',
 							_0: _elm_lang$html$Html$text(
 								function () {
-									var _p2 = _elm_lang$core$List$head(model.songQueue);
+									var _p2 = _elm_lang$core$List$head(_p5.songQueue);
 									if (_p2.ctor === 'Just') {
-										var _p3 = _p2._0;
-										return A2(
-											_elm_lang$core$Basics_ops['++'],
-											_p3.artistName,
-											A2(_elm_lang$core$Basics_ops['++'], ' - ', _p3.albumTitle));
+										return _p2._0.songTitle;
 									} else {
-										return '';
+										return _elm_lang$core$Native_Utils.eq(_p5.currentStation, _elm_lang$core$Maybe$Nothing) ? 'Select a station to listen' : 'Loading...';
 									}
 								}()),
 							_1: {ctor: '[]'}
 						}),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
-var _user$project$Main$timePercentage = function (model) {
-	return 100 * (model.currentTime / function () {
-		var _p4 = _elm_lang$core$List$head(model.songQueue);
-		if (_p4.ctor === 'Just') {
-			return _elm_lang$core$Basics$toFloat(_p4._0.trackLength);
-		} else {
-			return 1.0;
-		}
-	}());
-};
-var _user$project$Main$viewProgressBar = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
-							_1: {
+						_0: A2(
+							_elm_lang$html$Html$p,
+							{
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin-top', _1: 'auto'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border-top', _1: 'black solid 1px'},
-									_1: {ctor: '[]'}
-								}
-							}
-						}
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'font-size', _1: '14px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									function () {
+										var _p3 = _elm_lang$core$List$head(_p5.songQueue);
+										if (_p3.ctor === 'Just') {
+											var _p4 = _p3._0;
+											return A2(
+												_elm_lang$core$Basics_ops['++'],
+												_p4.artistName,
+												A2(_elm_lang$core$Basics_ops['++'], ' - ', _p4.albumTitle));
+										} else {
+											return '';
+										}
+									}()),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
 					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
+				}
+			});
+	}
+};
+var _user$project$Main$timePercentage = F2(
+	function (currentTime, songQueue) {
+		return 100 * (currentTime / function () {
+			var _p6 = _elm_lang$core$List$head(songQueue);
+			if (_p6.ctor === 'Just') {
+				return _elm_lang$core$Basics$toFloat(_p6._0.trackLength);
+			} else {
+				return 1.0;
+			}
+		}());
+	});
+var _user$project$Main$viewProgressBar = function (model) {
+	var _p7 = model.state;
+	if (_p7.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p8 = _p7._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+						_1: {
 							ctor: '::',
 							_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
 							_1: {
 								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'width',
-									_1: A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(
-											_user$project$Main$timePercentage(model)),
-										'%')
-								},
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+									_0: {ctor: '_Tuple2', _0: 'border-top', _1: '1px black solid'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border-right', _1: 'black solid 1px'},
+										_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
 										_1: {ctor: '[]'}
 									}
 								}
 							}
-						}),
-					_1: {ctor: '[]'}
-				},
-				{ctor: '[]'}),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$sendFeedback = F3(
-	function (authToken, songId, isPositive) {
-		return _elm_lang$http$Http$request(
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
 			{
-				method: 'POST',
-				headers: {
-					ctor: '::',
-					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
-					_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
 						ctor: '::',
-						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
-						_1: {ctor: '[]'}
-					}
-				},
-				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/addFeedback',
-				body: _elm_lang$http$Http$jsonBody(
-					_elm_lang$core$Json_Encode$object(
-						{
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'isPositive',
-								_1: _elm_lang$core$Json_Encode$bool(isPositive)
-							},
-							_1: {
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
 								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'trackToken',
-									_1: _elm_lang$core$Json_Encode$string(songId)
-								},
-								_1: {ctor: '[]'}
-							}
-						})),
-				expect: _elm_lang$http$Http$expectJson(
-					_elm_lang$core$Json_Decode$succeed('')),
-				timeout: _elm_lang$core$Maybe$Nothing,
-				withCredentials: false
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'width',
+										_1: A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												A2(_user$project$Main$timePercentage, _p8.currentTime, _p8.songQueue)),
+											'%')
+									},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
 			});
-	});
+	}
+};
 var _user$project$Main$authDecode = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
@@ -276,7 +242,7 @@ var _user$project$Main$authDecode = A2(
 		_1: {ctor: '[]'}
 	},
 	_elm_lang$core$Json_Decode$string);
-var _user$project$Main$login = function (model) {
+var _user$project$Main$login = function (info) {
 	return _elm_lang$http$Http$request(
 		{
 			method: 'POST',
@@ -293,14 +259,14 @@ var _user$project$Main$login = function (model) {
 						_0: {
 							ctor: '_Tuple2',
 							_0: 'username',
-							_1: _elm_lang$core$Json_Encode$string(model.email)
+							_1: _elm_lang$core$Json_Encode$string(info.email)
 						},
 						_1: {
 							ctor: '::',
 							_0: {
 								ctor: '_Tuple2',
 								_0: 'password',
-								_1: _elm_lang$core$Json_Encode$string(model.password)
+								_1: _elm_lang$core$Json_Encode$string(info.password)
 							},
 							_1: {
 								ctor: '::',
@@ -322,12 +288,39 @@ var _user$project$Main$login = function (model) {
 			withCredentials: false
 		});
 };
-var _user$project$Main$currentSong = function (model) {
-	var _p5 = _elm_lang$core$List$head(model.songQueue);
-	if (_p5.ctor === 'Just') {
-		return _p5._0;
+var _user$project$Main$getCurrentStation = function (model) {
+	var _p9 = model.state;
+	if (_p9.ctor === 'LoggingIn') {
+		return {id: '', name: 'Select a station', art: ''};
 	} else {
+		var _p10 = _p9._0.currentStation;
+		if (_p10.ctor === 'Just') {
+			return _p10._0;
+		} else {
+			return {id: '', name: 'Select a station', art: ''};
+		}
+	}
+};
+var _user$project$Main$stateCase = F3(
+	function (model, playing, loggingIn) {
+		var _p11 = model.state;
+		if (_p11.ctor === 'Playing') {
+			return playing;
+		} else {
+			return loggingIn;
+		}
+	});
+var _user$project$Main$currentSong = function (model) {
+	var _p12 = model.state;
+	if (_p12.ctor === 'LoggingIn') {
 		return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: ''};
+	} else {
+		var _p13 = _elm_lang$core$List$head(_p12._0.songQueue);
+		if (_p13.ctor === 'Just') {
+			return _p13._0;
+		} else {
+			return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: ''};
+		}
 	}
 };
 var _user$project$Main$togglePause = _elm_lang$core$Native_Platform.outgoingPort(
@@ -345,220 +338,181 @@ var _user$project$Main$audioLevel = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return v;
 	});
-var _user$project$Main$Song = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {songTitle: a, trackLength: b, rating: c, audioURL: d, artistName: e, albumTitle: f, albumArt: g, trackToken: h};
+var _user$project$Main$rememberMe = _elm_lang$core$Native_Platform.outgoingPort(
+	'rememberMe',
+	function (v) {
+		return v;
 	});
-var _user$project$Main$fragmentDecoder = A9(
-	_elm_lang$core$Json_Decode$map8,
-	_user$project$Main$Song,
-	A2(_elm_lang$core$Json_Decode$field, 'songTitle', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'trackLength', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'rating', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'audioURL', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'artistName', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'albumTitle', _elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'albumArt',
-			_1: {
-				ctor: '::',
-				_0: '4',
-				_1: {
-					ctor: '::',
-					_0: 'url',
-					_1: {ctor: '[]'}
-				}
-			}
-		},
-		_elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'trackToken', _elm_lang$core$Json_Decode$string));
-var _user$project$Main$fragmentListDecoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'tracks',
-		_1: {ctor: '[]'}
-	},
-	_elm_lang$core$Json_Decode$list(_user$project$Main$fragmentDecoder));
-var _user$project$Main$getNextSongs = F3(
-	function (stationId, authToken, isStationStart) {
-		return _elm_lang$http$Http$request(
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {state: a, mdl: b};
+	});
+var _user$project$Main$UserInfo = F2(
+	function (a, b) {
+		return {authToken: a, email: b};
+	});
+var _user$project$Main$User = F4(
+	function (a, b, c, d) {
+		return {email: a, authToken: b, audioLevel: c, lastStation: d};
+	});
+var _user$project$Main$SelectingStation = {ctor: 'SelectingStation'};
+var _user$project$Main$Normal = {ctor: 'Normal'};
+var _user$project$Main$Playing = function (a) {
+	return {ctor: 'Playing', _0: a};
+};
+var _user$project$Main$LoggingIn = function (a) {
+	return {ctor: 'LoggingIn', _0: a};
+};
+var _user$project$Main$LoggedInRemember = function (a) {
+	return {ctor: 'LoggedInRemember', _0: a};
+};
+var _user$project$Main$RememberMe = function (a) {
+	return {ctor: 'RememberMe', _0: a};
+};
+var _user$project$Main$UnMute = {ctor: 'UnMute'};
+var _user$project$Main$Mute = {ctor: 'Mute'};
+var _user$project$Main$BackToPlaying = {ctor: 'BackToPlaying'};
+var _user$project$Main$NoOp = {ctor: 'NoOp'};
+var _user$project$Main$Logout = {ctor: 'Logout'};
+var _user$project$Main$Mdl = function (a) {
+	return {ctor: 'Mdl', _0: a};
+};
+var _user$project$Main$BackToStations = {ctor: 'BackToStations'};
+var _user$project$Main$viewTopMenu = F2(
+	function (modelMdl, playingState) {
+		return A2(
+			_elm_lang$html$Html$div,
 			{
-				method: 'POST',
-				headers: {
-					ctor: '::',
-					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
-					_1: {
-						ctor: '::',
-						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
-						_1: {ctor: '[]'}
-					}
-				},
-				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/playlist/getFragment',
-				body: _elm_lang$http$Http$jsonBody(
-					_elm_lang$core$Json_Encode$object(
-						{
-							ctor: '::',
-							_0: {
-								ctor: '_Tuple2',
-								_0: 'stationId',
-								_1: _elm_lang$core$Json_Encode$string(stationId)
-							},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'isStationStart',
-									_1: _elm_lang$core$Json_Encode$bool(isStationStart)
-								},
-								_1: {
-									ctor: '::',
-									_0: {
-										ctor: '_Tuple2',
-										_0: 'fragmentRequestReason',
-										_1: _elm_lang$core$Json_Encode$string('Normal')
-									},
-									_1: {
-										ctor: '::',
-										_0: {
-											ctor: '_Tuple2',
-											_0: 'audioFormat',
-											_1: _elm_lang$core$Json_Encode$string('mp3-hifi')
-										},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'startingAtTrackId', _1: _elm_lang$core$Json_Encode$null},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'onDemandArtistMessageArtistUidHex', _1: _elm_lang$core$Json_Encode$null},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'onDemandArtistMessageIdHex', _1: _elm_lang$core$Json_Encode$null},
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								}
-							}
-						})),
-				expect: _elm_lang$http$Http$expectJson(_user$project$Main$fragmentListDecoder),
-				timeout: _elm_lang$core$Maybe$Nothing,
-				withCredentials: false
-			});
-	});
-var _user$project$Main$Station = F3(
-	function (a, b, c) {
-		return {id: a, name: b, art: c};
-	});
-var _user$project$Main$stationDecoder = A4(
-	_elm_lang$core$Json_Decode$map3,
-	_user$project$Main$Station,
-	A2(_elm_lang$core$Json_Decode$field, 'stationId', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
-	A2(
-		_elm_lang$core$Json_Decode$at,
-		{
-			ctor: '::',
-			_0: 'art',
-			_1: {
 				ctor: '::',
-				_0: '4',
-				_1: {
-					ctor: '::',
-					_0: 'url',
-					_1: {ctor: '[]'}
-				}
-			}
-		},
-		_elm_lang$core$Json_Decode$string));
-var _user$project$Main$stationListDecoder = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'stations',
-		_1: {ctor: '[]'}
-	},
-	_elm_lang$core$Json_Decode$list(_user$project$Main$stationDecoder));
-var _user$project$Main$getStations = function (authToken) {
-	return _elm_lang$http$Http$request(
-		{
-			method: 'POST',
-			headers: {
-				ctor: '::',
-				_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
-				_1: {
-					ctor: '::',
-					_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
-					_1: {ctor: '[]'}
-				}
-			},
-			url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/getStations',
-			body: _elm_lang$http$Http$jsonBody(
-				_elm_lang$core$Json_Encode$object(
+				_0: _elm_lang$html$Html_Attributes$style(
 					{
 						ctor: '::',
-						_0: {
-							ctor: '_Tuple2',
-							_0: 'pageSize',
-							_1: _elm_lang$core$Json_Encode$int(250)
-						},
-						_1: {ctor: '[]'}
-					})),
-			expect: _elm_lang$http$Http$expectJson(_user$project$Main$stationListDecoder),
-			timeout: _elm_lang$core$Maybe$Nothing,
-			withCredentials: false
-		});
-};
-var _user$project$Main$Model = function (a) {
-	return function (b) {
-		return function (c) {
-			return function (d) {
-				return function (e) {
-					return function (f) {
-						return function (g) {
-							return function (h) {
-								return function (i) {
-									return function (j) {
-										return function (k) {
-											return function (l) {
-												return {email: a, password: b, authToken: c, stations: d, currentStation: e, songQueue: f, currentTime: g, isPlaying: h, previousSongs: i, audioLevel: j, audioHover: k, state: l};
-											};
-										};
-									};
-								};
-							};
-						};
+						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: 'auto'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: function () {
+					var padding = A2(_debois$elm_mdl$Material_Options$css, 'padding-right', '20px');
+					var i = function (name) {
+						return A2(
+							_debois$elm_mdl$Material_Icon$view,
+							name,
+							{
+								ctor: '::',
+								_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '30px'),
+								_1: {ctor: '[]'}
+							});
 					};
-				};
-			};
-		};
-	};
+					return A5(
+						_debois$elm_mdl$Material_Menu$render,
+						_user$project$Main$Mdl,
+						{
+							ctor: '::',
+							_0: 2,
+							_1: {ctor: '[]'}
+						},
+						modelMdl,
+						{
+							ctor: '::',
+							_0: _debois$elm_mdl$Material_Menu$bottomRight,
+							_1: {
+								ctor: '::',
+								_0: _debois$elm_mdl$Material_Menu$icon('keyboard_arrow_down'),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Native_Utils.eq(playingState, _user$project$Main$SelectingStation) ? A2(
+								_debois$elm_mdl$Material_Menu$item,
+								{
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToPlaying),
+									_1: {
+										ctor: '::',
+										_0: padding,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Menu$divider,
+											_1: {ctor: '[]'}
+										}
+									}
+								},
+								{
+									ctor: '::',
+									_0: i('arrow_back'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Back'),
+										_1: {ctor: '[]'}
+									}
+								}) : A2(
+								_debois$elm_mdl$Material_Menu$item,
+								{
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToStations),
+									_1: {
+										ctor: '::',
+										_0: padding,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Menu$divider,
+											_1: {ctor: '[]'}
+										}
+									}
+								},
+								{
+									ctor: '::',
+									_0: i('apps'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Stations'),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_debois$elm_mdl$Material_Menu$item,
+									{
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+										_1: {
+											ctor: '::',
+											_0: padding,
+											_1: {ctor: '[]'}
+										}
+									},
+									{
+										ctor: '::',
+										_0: i('clear'),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Log out'),
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						});
+				}(),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Main$TogglePause = {ctor: 'TogglePause'};
+var _user$project$Main$RemovedFeedBack = function (a) {
+	return {ctor: 'RemovedFeedBack', _0: a};
 };
-var _user$project$Main$Playing = {ctor: 'Playing'};
-var _user$project$Main$Paused = {ctor: 'Paused'};
-var _user$project$Main$SelectingStation = {ctor: 'SelectingStation'};
-var _user$project$Main$LoggingIn = {ctor: 'LoggingIn'};
-var _user$project$Main$init = A2(
-	_elm_lang$core$Platform_Cmd_ops['!'],
-	{
-		email: '',
-		password: '',
-		authToken: '',
-		stations: {ctor: '[]'},
-		currentStation: {id: '', name: '', art: ''},
-		songQueue: {ctor: '[]'},
-		currentTime: 0,
-		isPlaying: true,
-		previousSongs: {ctor: '[]'},
-		audioLevel: 1,
-		audioHover: false,
-		state: _user$project$Main$LoggingIn
-	},
-	{ctor: '[]'});
+var _user$project$Main$RemoveThumbsUp = function (a) {
+	return {ctor: 'RemoveThumbsUp', _0: a};
+};
 var _user$project$Main$UnHoveringAudio = {ctor: 'UnHoveringAudio'};
 var _user$project$Main$onUnHover = A2(
 	_elm_lang$html$Html_Events$on,
@@ -573,7 +527,7 @@ var _user$project$Main$SetAudio = function (a) {
 	return {ctor: 'SetAudio', _0: a};
 };
 var _user$project$Main$audioSlider = F2(
-	function (model, visibleVal) {
+	function (modelAudioLevel, visibleVal) {
 		return _debois$elm_mdl$Material_Slider$view(
 			{
 				ctor: '::',
@@ -589,7 +543,7 @@ var _user$project$Main$audioSlider = F2(
 							_0: _debois$elm_mdl$Material_Slider$step(0.1),
 							_1: {
 								ctor: '::',
-								_0: _debois$elm_mdl$Material_Slider$value(model.audioLevel),
+								_0: _debois$elm_mdl$Material_Slider$value(modelAudioLevel),
 								_1: {
 									ctor: '::',
 									_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100px'),
@@ -617,96 +571,98 @@ var _user$project$Main$audioSlider = F2(
 				}
 			});
 	});
-var _user$project$Main$viewTopBar = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
+var _user$project$Main$audioSelector = F2(
+	function (modelAudioLevel, modelAudioHover) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _user$project$Main$onHover,
+				_1: {
 					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+					_0: _user$project$Main$onUnHover,
 					_1: {
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '35px'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(242, 242, 242, 0)'},
-							_1: {
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
 								ctor: '::',
 								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _user$project$Main$onHover,
-					_1: {
-						ctor: '::',
-						_0: _user$project$Main$onUnHover,
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$i,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
+								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'margin-right', _1: 'auto'},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$i,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-right', _1: 'auto'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
+											_0: {ctor: '_Tuple2', _0: 'z-index', _1: '3'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'z-index', _1: '3'},
+												_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
 												_1: {ctor: '[]'}
 											}
 										}
 									}
-								}),
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('material-icons topIcons'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('material-icons topIcons'),
+								_0: _elm_lang$core$Native_Utils.eq(modelAudioLevel, 0) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$UnMute) : _elm_lang$html$Html_Events$onClick(_user$project$Main$Mute),
 								_1: {ctor: '[]'}
 							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								(_elm_lang$core$Native_Utils.cmp(model.audioLevel, 0.5) > 0) ? 'volume_up' : 'volume_down'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
+						}
+					},
+					{
 						ctor: '::',
-						_0: model.audioHover ? A2(_user$project$Main$audioSlider, model, 'visible') : A2(_user$project$Main$audioSlider, model, 'hidden'),
+						_0: _elm_lang$html$Html$text(
+							_elm_lang$core$Native_Utils.eq(modelAudioLevel, 0) ? 'volume_off' : ((_elm_lang$core$Native_Utils.cmp(modelAudioLevel, 0.5) > 0) ? 'volume_up' : 'volume_down')),
 						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
+					}),
+				_1: {
+					ctor: '::',
+					_0: modelAudioHover ? A2(_user$project$Main$audioSlider, modelAudioLevel, 'visible') : A2(_user$project$Main$audioSlider, modelAudioLevel, 'hidden'),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Main$viewTopBar = F5(
+	function (modelAudioLevel, modelCurrentStationName, modelAudioHover, modelMdl, playingState) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
 				ctor: '::',
 				_0: A2(
 					_elm_lang$html$Html$p,
@@ -715,52 +671,59 @@ var _user$project$Main$viewTopBar = function (model) {
 						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'left', _1: '0'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'right', _1: '0'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '6px'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
 							}),
 						_1: {ctor: '[]'}
 					},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(model.currentStation.name),
+						_0: _elm_lang$html$Html$text(modelCurrentStationName),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$i,
+						_elm_lang$html$Html$div,
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Attributes$style(
 								{
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin-left', _1: 'auto'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '10px'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
-											_1: {ctor: '[]'}
-										}
-									}
+									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+									_1: {ctor: '[]'}
 								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('material-icons topIcons'),
-								_1: {ctor: '[]'}
-							}
+							_1: {ctor: '[]'}
 						},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text('keyboard_arrow_down'),
-							_1: {ctor: '[]'}
+							_0: A2(_user$project$Main$audioSelector, modelAudioLevel, modelAudioHover),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Main$viewTopMenu, modelMdl, playingState),
+								_1: {ctor: '[]'}
+							}
 						}),
 					_1: {ctor: '[]'}
 				}
-			}
-		});
-};
+			});
+	});
 var _user$project$Main$SentFeedBack = function (a) {
 	return {ctor: 'SentFeedBack', _0: a};
 };
@@ -771,183 +734,106 @@ var _user$project$Main$SendThumbsDown = function (a) {
 	return {ctor: 'SendThumbsDown', _0: a};
 };
 var _user$project$Main$ReplaySong = {ctor: 'ReplaySong'};
-var _user$project$Main$TogglePause = {ctor: 'TogglePause'};
 var _user$project$Main$SetCurrentTime = function (a) {
 	return {ctor: 'SetCurrentTime', _0: a};
 };
 var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		{
-			ctor: '::',
-			_0: model.isPlaying ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$SetCurrentTime) : _elm_lang$core$Platform_Sub$none,
-			_1: {ctor: '[]'}
-		});
+	var _p14 = model.state;
+	if (_p14.ctor === 'LoggingIn') {
+		return _elm_lang$core$Platform_Sub$batch(
+			{
+				ctor: '::',
+				_0: _elm_lang$core$Platform_Sub$none,
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return _elm_lang$core$Platform_Sub$batch(
+			{
+				ctor: '::',
+				_0: _p14._0.isPlaying ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$SetCurrentTime) : _elm_lang$core$Platform_Sub$none,
+				_1: {
+					ctor: '::',
+					_0: A2(_debois$elm_mdl$Material$subscriptions, _user$project$Main$Mdl, model),
+					_1: {ctor: '[]'}
+				}
+			});
+	}
 };
 var _user$project$Main$SkipSong = function (a) {
 	return {ctor: 'SkipSong', _0: a};
 };
 var _user$project$Main$viewControls = F2(
 	function (model, stationId) {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-						_1: {
+		var _p15 = model.state;
+		if (_p15.ctor === 'LoggingIn') {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		} else {
+			var _p16 = _p15._0;
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'height', _1: '60px'},
+							_0: {ctor: '_Tuple2', _0: 'margin-top', _1: 'auto'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'center'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
-											_1: {ctor: '[]'}
-										}
-									}
-								}
+								_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+								_1: {ctor: '[]'}
 							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$i,
-					{
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _user$project$Main$viewProgressBar(model),
+					_1: {
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(
-								_user$project$Main$SendThumbsDown(stationId)),
-							_1: {
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'font-size', _1: '20px'},
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('thumb_down_alt'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$i,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$ReplaySong),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'font-size', _1: '26px'},
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '60px'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '20px'},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('replay'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$i,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$TogglePause),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'font-size', _1: '40px'},
+												_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
+													_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 													_1: {
 														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '10px'},
-														_1: {ctor: '[]'}
+														_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'center'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation) ? {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'} : {ctor: '_Tuple2', _0: '', _1: ''},
+																_1: {ctor: '[]'}
+															}
+														}
 													}
 												}
-											}),
-										_1: {ctor: '[]'}
-									}
+											}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: ((!_p16.isPlaying) && _elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation)) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : (_elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$BackToPlaying) : _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp)),
+									_1: {ctor: '[]'}
 								}
 							},
 							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									model.isPlaying ? 'pause' : 'play_arrow'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$i,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'font-size', _1: '26px'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '20px'},
-													_1: {ctor: '[]'}
-												}
-											}),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onClick(
-												_user$project$Main$SkipSong(stationId)),
-											_1: {ctor: '[]'}
-										}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('skip_next'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
 								ctor: '::',
 								_0: A2(
 									_elm_lang$html$Html$i,
@@ -956,8 +842,10 @@ var _user$project$Main$viewControls = F2(
 										_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Events$onClick(
-												_user$project$Main$SendThumbsUp(stationId)),
+											_0: _elm_lang$core$Native_Utils.eq(
+												_p16.songQueue,
+												{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(
+												_user$project$Main$SendThumbsDown(stationId)),
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$html$Html_Attributes$style(
@@ -972,16 +860,234 @@ var _user$project$Main$viewControls = F2(
 									},
 									{
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('thumb_up_alt'),
+										_0: _elm_lang$html$Html$text('thumb_down_alt'),
 										_1: {ctor: '[]'}
 									}),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$i,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$core$Native_Utils.eq(
+													_p16.songQueue,
+													{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(_user$project$Main$ReplaySong),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$style(
+														{
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'font-size', _1: '26px'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '20px'},
+																_1: {ctor: '[]'}
+															}
+														}),
+													_1: {ctor: '[]'}
+												}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('replay'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$i,
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$core$Native_Utils.eq(
+														_p16.songQueue,
+														{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(_user$project$Main$TogglePause),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '40px'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
+																	_1: {
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '10px'},
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}),
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text(
+													_p16.isPlaying ? 'pause' : 'play_arrow'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$i,
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$style(
+															{
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'font-size', _1: '26px'},
+																_1: {
+																	ctor: '::',
+																	_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '20px'},
+																	_1: {ctor: '[]'}
+																}
+															}),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$core$Native_Utils.eq(
+																_p16.songQueue,
+																{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(
+																_user$project$Main$SkipSong(stationId)),
+															_1: {ctor: '[]'}
+														}
+													}
+												},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('skip_next'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$i,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$class('material-icons controlIcons'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$core$Native_Utils.eq(
+																_user$project$Main$currentSong(model).rating,
+																1) ? _elm_lang$html$Html_Events$onClick(
+																_user$project$Main$RemoveThumbsUp(stationId)) : _elm_lang$html$Html_Events$onClick(
+																_user$project$Main$SendThumbsUp(stationId)),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$style(
+																	{
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'font-size', _1: '20px'},
+																		_1: {
+																			ctor: '::',
+																			_0: _elm_lang$core$Native_Utils.eq(
+																				_user$project$Main$currentSong(model).rating,
+																				1) ? {ctor: '_Tuple2', _0: 'color', _1: '#6499ef'} : {ctor: '_Tuple2', _0: 'opacity', _1: '1'},
+																			_1: {ctor: '[]'}
+																		}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}
+													},
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('thumb_up_alt'),
+														_1: {ctor: '[]'}
+													}),
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				});
+		}
+	});
+var _user$project$Main$viewPlayer = function (model) {
+	var _p17 = model.state;
+	if (_p17.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p19 = _p17._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '550px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
 							}
 						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A5(
+					_user$project$Main$viewTopBar,
+					_p19.audioLevel,
+					function () {
+						var _p18 = _p19.currentStation;
+						if (_p18.ctor === 'Just') {
+							return _p18._0.name;
+						} else {
+							return '';
+						}
+					}(),
+					_p19.audioHover,
+					model.mdl,
+					_p19.playingState),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Main$viewSongInfo(model),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_user$project$Main$viewControls,
+							model,
+							_user$project$Main$getCurrentStation(model).id),
+						_1: {ctor: '[]'}
 					}
 				}
 			});
-	});
+	}
+};
 var _user$project$Main$SongEnded = function (a) {
 	return {ctor: 'SongEnded', _0: a};
 };
@@ -1005,8 +1111,107 @@ var _user$project$Main$StartStation = F3(
 	function (a, b, c) {
 		return {ctor: 'StartStation', _0: a, _1: b, _2: c};
 	});
-var _user$project$Main$viewStation = F4(
-	function (model, id, name, url) {
+var _user$project$Main$viewStation = F3(
+	function (id, name, url) {
+		return A2(
+			_debois$elm_mdl$Material_Grid$cell,
+			{
+				ctor: '::',
+				_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$Desktop, 4),
+				_1: {
+					ctor: '::',
+					_0: A2(_debois$elm_mdl$Material_Options$css, 'margin-bottom', '25px '),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '175px'},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(
+								A3(_user$project$Main$StartStation, id, name, url)),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'height', _1: '150px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$src(url),
+									_1: {ctor: '[]'}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(name),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Main$viewStationSelector = function (model) {
+	var _p20 = model.state;
+	if (_p20.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p21 = _p20._0;
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -1014,402 +1219,960 @@ var _user$project$Main$viewStation = F4(
 				_0: _elm_lang$html$Html_Attributes$style(
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+						_0: {ctor: '_Tuple2', _0: 'min-height', _1: '550px'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'height', _1: '175px'},
-							_1: {ctor: '[]'}
+							_0: {ctor: '_Tuple2', _0: 'max-height', _1: '550px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
 						}
 					}),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(
-						A3(_user$project$Main$StartStation, id, name, url)),
-					_1: {ctor: '[]'}
-				}
+				_1: {ctor: '[]'}
 			},
 			{
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$img,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: '150px'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
-										_1: {ctor: '[]'}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$src(url),
-							_1: {ctor: '[]'}
-						}
-					},
-					{ctor: '[]'}),
+				_0: A5(
+					_user$project$Main$viewTopBar,
+					_p21.audioLevel,
+					_user$project$Main$getCurrentStation(model).name,
+					_p21.audioHover,
+					model.mdl,
+					_p21.playingState),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$p,
+						_debois$elm_mdl$Material_Grid$grid,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
+							_0: _debois$elm_mdl$Material_Grid$maxWidth('650px'),
+							_1: {
+								ctor: '::',
+								_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '0px'),
+								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+									_0: A2(_debois$elm_mdl$Material_Options$css, 'overflow-y', 'auto'),
 									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
+								}
+							}
 						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(name),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
+						A2(
+							_elm_lang$core$List$map,
+							function (station) {
+								return A3(_user$project$Main$viewStation, station.id, station.name, station.art);
+							},
+							_p21.stations)),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_user$project$Main$viewControls,
+							model,
+							_user$project$Main$getCurrentStation(model).id),
+						_1: {ctor: '[]'}
+					}
 				}
 			});
-	});
-var _user$project$Main$viewStations = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		},
-		A2(
-			_elm_lang$core$List$map,
-			function (station) {
-				return A4(_user$project$Main$viewStation, model, station.id, station.name, station.art);
-			},
-			model.stations));
+	}
 };
 var _user$project$Main$GotStations = function (a) {
 	return {ctor: 'GotStations', _0: a};
+};
+var _user$project$Main$init = function (userToken) {
+	return _elm_lang$core$Native_Utils.eq(userToken, '') ? A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			state: _user$project$Main$LoggingIn(
+				{email: '', password: '', remember: false}),
+			mdl: _debois$elm_mdl$Material$model
+		},
+		{ctor: '[]'}) : A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			state: _user$project$Main$Playing(
+				{
+					authToken: userToken,
+					stations: {ctor: '[]'},
+					currentStation: _elm_lang$core$Maybe$Nothing,
+					songQueue: {ctor: '[]'},
+					currentTime: 0.0,
+					previousSongs: {ctor: '[]'},
+					audioLevel: 1,
+					audioHover: false,
+					isPlaying: false,
+					playingState: _user$project$Main$SelectingStation
+				}),
+			mdl: _debois$elm_mdl$Material$model
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$http$Http$send,
+				_user$project$Main$GotStations,
+				_user$project$Types_Station$get(userToken)),
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$LoggedIn = function (a) {
 	return {ctor: 'LoggedIn', _0: a};
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p6 = msg;
-		switch (_p6.ctor) {
+		var _p22 = msg;
+		switch (_p22.ctor) {
 			case 'InputEmail':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{email: _p6._0}),
-					{ctor: '[]'});
-			case 'InputPassword':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{password: _p6._0}),
-					{ctor: '[]'});
-			case 'Login':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					model,
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$LoggedIn,
-							_user$project$Main$login(model)),
-						_1: {ctor: '[]'}
-					});
-			case 'LoggedIn':
-				var _p7 = _p6._0;
-				if (_p7.ctor === 'Ok') {
-					var _p8 = _p7._0;
+				var _p23 = model.state;
+				if (_p23.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{authToken: _p8, state: _user$project$Main$SelectingStation}),
+							{
+								state: _user$project$Main$LoggingIn(
+									_elm_lang$core$Native_Utils.update(
+										_p23._0,
+										{email: _p22._0}))
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'InputPassword':
+				var _p24 = model.state;
+				if (_p24.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$LoggingIn(
+									_elm_lang$core$Native_Utils.update(
+										_p24._0,
+										{password: _p22._0}))
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'Login':
+				var _p25 = model.state;
+				if (_p25.ctor === 'LoggingIn') {
+					var _p26 = _p25._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
 						{
 							ctor: '::',
 							_0: A2(
 								_elm_lang$http$Http$send,
-								_user$project$Main$GotStations,
-								_user$project$Main$getStations(_p8)),
+								_user$project$Main$LoggedIn,
+								_user$project$Main$login(
+									{email: _p26.email, password: _p26.password})),
 							_1: {ctor: '[]'}
 						});
 				} else {
-					var log = A2(_elm_lang$core$Debug$log, 'Error logging in', 'This broke');
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'LoginRemember':
+				var _p27 = model.state;
+				if (_p27.ctor === 'LoggingIn') {
+					var _p28 = _p27._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$http$Http$send,
+								_user$project$Main$LoggedInRemember,
+								_user$project$Main$login(
+									{email: _p28.email, password: _p28.password})),
+							_1: {ctor: '[]'}
+						});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'LoggedInRemember':
+				var _p29 = model.state;
+				if (_p29.ctor === 'LoggingIn') {
+					var _p30 = _p22._0;
+					if (_p30.ctor === 'Ok') {
+						var _p31 = _p30._0;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										{
+											authToken: _p31,
+											stations: {ctor: '[]'},
+											currentStation: _elm_lang$core$Maybe$Nothing,
+											songQueue: {ctor: '[]'},
+											currentTime: 0.0,
+											previousSongs: {ctor: '[]'},
+											audioLevel: 1.0,
+											audioHover: false,
+											isPlaying: false,
+											playingState: _user$project$Main$SelectingStation
+										})
+								}),
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$http$Http$send,
+									_user$project$Main$GotStations,
+									_user$project$Types_Station$get(_p31)),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$rememberMe(_p31),
+									_1: {ctor: '[]'}
+								}
+							});
+					} else {
+						var log = A2(_elm_lang$core$Debug$log, 'Error logging in', 'This broke');
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'LoggedIn':
+				var _p32 = model.state;
+				if (_p32.ctor === 'LoggingIn') {
+					var _p33 = _p22._0;
+					if (_p33.ctor === 'Ok') {
+						var _p34 = _p33._0;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										{
+											authToken: _p34,
+											stations: {ctor: '[]'},
+											currentStation: _elm_lang$core$Maybe$Nothing,
+											songQueue: {ctor: '[]'},
+											currentTime: 0.0,
+											previousSongs: {ctor: '[]'},
+											audioLevel: 1.0,
+											audioHover: false,
+											isPlaying: false,
+											playingState: _user$project$Main$SelectingStation
+										})
+								}),
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$http$Http$send,
+									_user$project$Main$GotStations,
+									_user$project$Types_Station$get(_p34)),
+								_1: {ctor: '[]'}
+							});
+					} else {
+						var log = A2(_elm_lang$core$Debug$log, 'Error logging in', 'This broke');
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
+				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				}
 			case 'GotStations':
-				var _p9 = _p6._0;
-				if (_p9.ctor === 'Ok') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{stations: _p9._0}),
-						{ctor: '[]'});
-				} else {
-					var log = A2(_elm_lang$core$Debug$log, 'Error fetching stations', 'This broke');
+				var _p35 = model.state;
+				if (_p35.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
+				} else {
+					var _p36 = _p22._0;
+					if (_p36.ctor === 'Ok') {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										_elm_lang$core$Native_Utils.update(
+											_p35._0,
+											{stations: _p36._0}))
+								}),
+							{ctor: '[]'});
+					} else {
+						var log = A2(_elm_lang$core$Debug$log, 'Error fetching stations', _p36._0);
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
 				}
 			case 'StartStation':
-				var _p10 = _p6._0;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
+				var _p39 = _p22._0;
+				var _p37 = model.state;
+				if (_p37.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
-						{
-							currentStation: {id: _p10, name: _p6._1, art: _p6._2},
-							songQueue: {ctor: '[]'}
-						}),
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$StartedStation,
-							A3(_user$project$Main$getNextSongs, _p10, model.authToken, true)),
-						_1: {ctor: '[]'}
-					});
-			case 'LoadNextSongs':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					model,
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$LoadedNextSongs,
-							A3(_user$project$Main$getNextSongs, _p6._0, model.authToken, false)),
-						_1: {ctor: '[]'}
-					});
-			case 'StartedStation':
-				var _p11 = _p6._0;
-				if (_p11.ctor === 'Ok') {
+						{ctor: '[]'});
+				} else {
+					var _p38 = _p37._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								songQueue: A2(_elm_lang$core$List$append, model.songQueue, _p11._0),
-								currentTime: 0,
-								state: _user$project$Main$Playing
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p38,
+										{
+											currentStation: _elm_lang$core$Maybe$Just(
+												{id: _p39, name: _p22._1, art: _p22._2}),
+											songQueue: {ctor: '[]'},
+											playingState: _user$project$Main$Normal
+										}))
 							}),
-						{ctor: '[]'});
-				} else {
-					var error = A2(_elm_lang$core$Debug$log, 'Error starting station', 'whoop');
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$http$Http$send,
+								_user$project$Main$StartedStation,
+								A3(_user$project$Types_Fragment$getNext, _p39, _p38.authToken, true)),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'LoadNextSongs':
+				var _p40 = model.state;
+				if (_p40.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$http$Http$send,
+								_user$project$Main$LoadedNextSongs,
+								A3(_user$project$Types_Fragment$getNext, _p22._0, _p40._0.authToken, false)),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'StartedStation':
+				var _p41 = model.state;
+				if (_p41.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p43 = _p41._0;
+					var _p42 = _p22._0;
+					if (_p42.ctor === 'Ok') {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										_elm_lang$core$Native_Utils.update(
+											_p43,
+											{
+												songQueue: A2(_elm_lang$core$List$append, _p43.songQueue, _p42._0),
+												currentTime: 0,
+												isPlaying: true
+											}))
+								}),
+							{ctor: '[]'});
+					} else {
+						var error = A2(_elm_lang$core$Debug$log, 'Error starting station', 'whoop');
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
 				}
 			case 'LoadedNextSongs':
-				var _p12 = _p6._0;
-				if (_p12.ctor === 'Ok') {
+				var _p44 = model.state;
+				if (_p44.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p46 = _p44._0;
+					var _p45 = _p22._0;
+					if (_p45.ctor === 'Ok') {
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										_elm_lang$core$Native_Utils.update(
+											_p46,
+											{
+												songQueue: A2(_elm_lang$core$List$append, _p46.songQueue, _p45._0)
+											}))
+								}),
+							{ctor: '[]'});
+					} else {
+						var error = A2(_elm_lang$core$Debug$log, 'Error starting station', 'whoop');
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
+				}
+			case 'SongEnded':
+				var _p47 = model.state;
+				if (_p47.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p48 = _p47._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								songQueue: A2(_elm_lang$core$List$append, model.songQueue, _p12._0)
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p48,
+										{
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p48.songQueue),
+											previousSongs: {
+												ctor: '::',
+												_0: _user$project$Main$currentSong(model),
+												_1: _p48.previousSongs
+											},
+											currentTime: 0,
+											isPlaying: true
+										}))
 							}),
-						{ctor: '[]'});
-				} else {
-					var error = A2(_elm_lang$core$Debug$log, 'Error starting station', 'whoop');
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Native_Utils.eq(
+								_elm_lang$core$List$length(_p48.songQueue),
+								1) ? A2(
+								_elm_lang$http$Http$send,
+								_user$project$Main$LoadedNextSongs,
+								A3(_user$project$Types_Fragment$getNext, _p22._0, _p48.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'SkipSong':
+				var _p49 = model.state;
+				if (_p49.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
-				}
-			case 'SongEnded':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
+				} else {
+					var _p50 = _p49._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p50,
+										{
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p50.songQueue),
+											currentTime: 0,
+											isPlaying: true
+										}))
+							}),
 						{
-							songQueue: A2(_elm_lang$core$List$drop, 1, model.songQueue),
-							previousSongs: {
-								ctor: '::',
-								_0: _user$project$Main$currentSong(model),
-								_1: model.previousSongs
-							},
-							currentTime: 0,
-							isPlaying: true
-						}),
-					{
-						ctor: '::',
-						_0: _elm_lang$core$Native_Utils.eq(
-							_elm_lang$core$List$length(model.songQueue),
-							1) ? A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$LoadedNextSongs,
-							A3(_user$project$Main$getNextSongs, _p6._0, model.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
-						_1: {ctor: '[]'}
-					});
-			case 'SkipSong':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							songQueue: A2(_elm_lang$core$List$drop, 1, model.songQueue),
-							currentTime: 0,
-							isPlaying: true
-						}),
-					{
-						ctor: '::',
-						_0: _elm_lang$core$Native_Utils.eq(
-							_elm_lang$core$List$length(model.songQueue),
-							1) ? A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$LoadedNextSongs,
-							A3(_user$project$Main$getNextSongs, _p6._0, model.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
-						_1: {ctor: '[]'}
-					});
-			case 'SetCurrentTime':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{currentTime: model.currentTime + 1}),
-					{ctor: '[]'});
-			case 'TogglePause':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{isPlaying: !model.isPlaying}),
-					{
-						ctor: '::',
-						_0: _user$project$Main$togglePause(
-							{ctor: '_Tuple0'}),
-						_1: {ctor: '[]'}
-					});
-			case 'ReplaySong':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{currentTime: 0}),
-					{
-						ctor: '::',
-						_0: _user$project$Main$replaySong(
-							{ctor: '_Tuple0'}),
-						_1: {ctor: '[]'}
-					});
-			case 'SendThumbsDown':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							songQueue: A2(_elm_lang$core$List$drop, 1, model.songQueue),
-							currentTime: 0,
-							isPlaying: true
-						}),
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$http$Http$send,
-							_user$project$Main$SentFeedBack,
-							A3(
-								_user$project$Main$sendFeedback,
-								model.authToken,
-								_user$project$Main$currentSong(model).trackToken,
-								false)),
-						_1: {
 							ctor: '::',
 							_0: _elm_lang$core$Native_Utils.eq(
-								_elm_lang$core$List$length(model.songQueue),
+								_elm_lang$core$List$length(_p50.songQueue),
 								1) ? A2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Main$getNextSongs, _p6._0, model.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+								A3(_user$project$Types_Fragment$getNext, _p22._0, _p50.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
 							_1: {ctor: '[]'}
+						});
+				}
+			case 'SetCurrentTime':
+				var _p51 = model.state;
+				if (_p51.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p52 = _p51._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p52,
+										{currentTime: _p52.currentTime + 1}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'TogglePause':
+				var _p53 = model.state;
+				if (_p53.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p54 = _p53._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p54,
+										{isPlaying: !_p54.isPlaying}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$togglePause(
+								{ctor: '_Tuple0'}),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'ReplaySong':
+				var _p55 = model.state;
+				if (_p55.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p55._0,
+										{currentTime: 0, isPlaying: true}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$replaySong(
+								{ctor: '_Tuple0'}),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'SendThumbsDown':
+				var _p56 = model.state;
+				if (_p56.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p57 = _p56._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p57,
+										{
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p57.songQueue),
+											currentTime: 0,
+											isPlaying: true
+										}))
+							}),
+						{
+							ctor: '::',
+							_0: A2(
+								_elm_lang$http$Http$send,
+								_user$project$Main$SentFeedBack,
+								A3(
+									_user$project$Types_Feedback$send,
+									_p57.authToken,
+									_user$project$Main$currentSong(model).trackToken,
+									false)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Native_Utils.eq(
+									_elm_lang$core$List$length(_p57.songQueue),
+									1) ? A2(
+									_elm_lang$http$Http$send,
+									_user$project$Main$LoadedNextSongs,
+									A3(_user$project$Types_Fragment$getNext, _p22._0, _p57.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+								_1: {ctor: '[]'}
+							}
+						});
+				}
+			case 'RemoveThumbsUp':
+				var _p58 = model.state;
+				if (_p58.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p62 = _p58._0;
+					var song = _elm_lang$core$List$head(_p62.songQueue);
+					var updatedSong = function () {
+						var _p59 = song;
+						if (_p59.ctor === 'Just') {
+							return _elm_lang$core$Maybe$Just(
+								_elm_lang$core$Native_Utils.update(
+									_p59._0,
+									{rating: 0}));
+						} else {
+							return _elm_lang$core$Maybe$Nothing;
 						}
-					});
+					}();
+					var updatedModel = _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							state: _user$project$Main$Playing(
+								_elm_lang$core$Native_Utils.update(
+									_p62,
+									{
+										songQueue: function () {
+											var _p60 = updatedSong;
+											if (_p60.ctor === 'Just') {
+												return {
+													ctor: '::',
+													_0: _p60._0,
+													_1: A2(_elm_lang$core$List$drop, 1, _p62.songQueue)
+												};
+											} else {
+												return _p62.songQueue;
+											}
+										}()
+									}))
+						});
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						updatedModel,
+						{
+							ctor: '::',
+							_0: function () {
+								var _p61 = _elm_lang$core$List$head(_p62.songQueue);
+								if (_p61.ctor === 'Just') {
+									return A2(
+										_elm_lang$http$Http$send,
+										_user$project$Main$RemovedFeedBack,
+										A2(_user$project$Types_Feedback$remove, _p62.authToken, _p61._0.trackToken));
+								} else {
+									return _elm_lang$core$Platform_Cmd$none;
+								}
+							}(),
+							_1: {ctor: '[]'}
+						});
+				}
 			case 'SendThumbsUp':
+				var _p63 = model.state;
+				if (_p63.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p67 = _p63._0;
+					var song = _elm_lang$core$List$head(_p67.songQueue);
+					var updatedSong = function () {
+						var _p64 = song;
+						if (_p64.ctor === 'Just') {
+							return _elm_lang$core$Maybe$Just(
+								_elm_lang$core$Native_Utils.update(
+									_p64._0,
+									{rating: 1}));
+						} else {
+							return _elm_lang$core$Maybe$Nothing;
+						}
+					}();
+					var updatedModel = _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							state: _user$project$Main$Playing(
+								_elm_lang$core$Native_Utils.update(
+									_p67,
+									{
+										songQueue: function () {
+											var _p65 = updatedSong;
+											if (_p65.ctor === 'Just') {
+												return {
+													ctor: '::',
+													_0: _p65._0,
+													_1: A2(_elm_lang$core$List$drop, 1, _p67.songQueue)
+												};
+											} else {
+												return _p67.songQueue;
+											}
+										}()
+									}))
+						});
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						updatedModel,
+						{
+							ctor: '::',
+							_0: function () {
+								var _p66 = _elm_lang$core$List$head(_p67.songQueue);
+								if (_p66.ctor === 'Just') {
+									return A2(
+										_elm_lang$http$Http$send,
+										_user$project$Main$SentFeedBack,
+										A3(_user$project$Types_Feedback$send, _p67.authToken, _p66._0.trackToken, true));
+								} else {
+									return _elm_lang$core$Platform_Cmd$none;
+								}
+							}(),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'RemovedFeedBack':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
-					{
-						ctor: '::',
-						_0: function () {
-							var _p13 = _elm_lang$core$List$head(model.songQueue);
-							if (_p13.ctor === 'Just') {
-								return A2(
-									_elm_lang$http$Http$send,
-									_user$project$Main$SentFeedBack,
-									A3(_user$project$Main$sendFeedback, model.authToken, _p13._0.trackToken, false));
-							} else {
-								return _elm_lang$core$Platform_Cmd$none;
-							}
-						}(),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$core$Native_Utils.eq(
-								_elm_lang$core$List$length(model.songQueue),
-								1) ? A2(
-								_elm_lang$http$Http$send,
-								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Main$getNextSongs, _p6._0, model.authToken, true)) : _elm_lang$core$Platform_Cmd$none,
-							_1: {ctor: '[]'}
-						}
-					});
+					{ctor: '[]'});
 			case 'SentFeedBack':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					model,
 					{ctor: '[]'});
 			case 'SetAudio':
-				var _p14 = _p6._0;
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
+				var _p69 = _p22._0;
+				var _p68 = model.state;
+				if (_p68.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
-						{audioLevel: _p14}),
-					{
-						ctor: '::',
-						_0: _user$project$Main$audioLevel(_p14),
-						_1: {ctor: '[]'}
-					});
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p68._0,
+										{audioLevel: _p69}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$audioLevel(_p69),
+							_1: {ctor: '[]'}
+						});
+				}
 			case 'HoveringAudio':
+				var _p70 = model.state;
+				if (_p70.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p70._0,
+										{audioHover: true}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'UnHoveringAudio':
+				var _p71 = model.state;
+				if (_p71.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p71._0,
+										{audioHover: false}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'BackToStations':
+				var _p72 = model.state;
+				if (_p72.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p72._0,
+										{playingState: _user$project$Main$SelectingStation}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'Mdl':
+				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p22._0, model);
+			case 'NoOp':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+			case 'BackToPlaying':
+				var _p73 = model.state;
+				if (_p73.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p73._0,
+										{playingState: _user$project$Main$Normal}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'Mute':
+				var _p74 = model.state;
+				if (_p74.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p74._0,
+										{audioLevel: 0}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'UnMute':
+				var _p75 = model.state;
+				if (_p75.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p75._0,
+										{audioLevel: 1}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'Logout':
 				return A2(
 					_elm_lang$core$Platform_Cmd_ops['!'],
 					_elm_lang$core$Native_Utils.update(
 						model,
-						{audioHover: true}),
+						{
+							state: _user$project$Main$LoggingIn(
+								{email: '', password: '', remember: false})
+						}),
 					{ctor: '[]'});
 			default:
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					_elm_lang$core$Native_Utils.update(
+				var _p76 = model.state;
+				if (_p76.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$LoggingIn(
+									_elm_lang$core$Native_Utils.update(
+										_p76._0,
+										{remember: _p22._0}))
+							}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
-						{audioHover: false}),
-					{ctor: '[]'});
+						{ctor: '[]'});
+				}
 		}
 	});
+var _user$project$Main$LoginRemember = {ctor: 'LoginRemember'};
 var _user$project$Main$Login = {ctor: 'Login'};
 var _user$project$Main$InputPassword = function (a) {
 	return {ctor: 'InputPassword', _0: a};
@@ -1418,391 +2181,380 @@ var _user$project$Main$InputEmail = function (a) {
 	return {ctor: 'InputEmail', _0: a};
 };
 var _user$project$Main$viewLogin = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {
+	var _p77 = model.state;
+	if (_p77.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10px'},
-									_1: {ctor: '[]'}
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10px'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
 								}
 							}
 						}
-					}
-				}),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$input,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$style(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '10px'},
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('email'),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$placeholder('Email'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$InputEmail),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				},
-				{ctor: '[]'}),
-			_1: {
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$input,
+					_elm_lang$html$Html$h3,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$type_('password'),
-						_1: {
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '0'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Log in'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '30px'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '25px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'width', _1: '450px'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'height', _1: '35px'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$InputPassword),
-								_1: {ctor: '[]'}
+								_0: _elm_lang$html$Html_Attributes$type_('email'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('Email'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$InputEmail),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$type_('password'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$placeholder('Password'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$InputPassword),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'width', _1: '450px'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'height', _1: '35px'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '30px'},
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: 'auto'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '40px'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'width', _1: '460px'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '10px'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'margin-right', _1: 'auto'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10px'},
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: A2(
+												_elm_lang$html$Html$p,
+												{ctor: '[]'},
+												{
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Remember me'),
+													_1: {ctor: '[]'}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_lang$html$Html$input,
+													{
+														ctor: '::',
+														_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Events$onCheck(_user$project$Main$RememberMe),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$html$Html_Attributes$style(
+																	{
+																		ctor: '::',
+																		_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '7px'},
+																		_1: {
+																			ctor: '::',
+																			_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '5px'},
+																			_1: {ctor: '[]'}
+																		}
+																	}),
+																_1: {ctor: '[]'}
+															}
+														}
+													},
+													{ctor: '[]'}),
+												_1: {ctor: '[]'}
+											}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A5(
+											_debois$elm_mdl$Material_Button$render,
+											_user$project$Main$Mdl,
+											{
+												ctor: '::',
+												_0: 102321,
+												_1: {ctor: '[]'}
+											},
+											model.mdl,
+											{
+												ctor: '::',
+												_0: _p77._0.remember ? _debois$elm_mdl$Material_Options$onClick(_user$project$Main$LoginRemember) : _debois$elm_mdl$Material_Options$onClick(_user$project$Main$Login),
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$raised,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Button$ripple,
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'margin-right', '10px'),
+															_1: {
+																ctor: '::',
+																_0: A2(_debois$elm_mdl$Material_Options$css, 'margin-left', 'auto'),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Log in'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+	} else {
+		return _elm_lang$html$Html$text('');
+	}
+};
+var _user$project$Main$view = function (model) {
+	var _p78 = model.state;
+	if (_p78.ctor === 'Playing') {
+		var _p83 = _p78._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '30px'},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$audio,
+					{
+						ctor: '::',
+						_0: _user$project$Main$onEnded(
+							function () {
+								var _p79 = _p83.currentStation;
+								if (_p79.ctor === 'Just') {
+									return _p79._0.id;
+								} else {
+									return '';
+								}
+							}()),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$id('songAudio'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(
+									function () {
+										var _p81 = _elm_lang$core$List$head(
+											function () {
+												var _p80 = model.state;
+												if (_p80.ctor === 'Playing') {
+													return _p80._0.songQueue;
+												} else {
+													return {ctor: '[]'};
+												}
+											}());
+										if (_p81.ctor === 'Just') {
+											return _p81._0.audioURL;
+										} else {
+											return '';
+										}
+									}()),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$autoplay(true),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					},
 					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$style(
-								{
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10px'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'height', _1: '40px'},
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Login),
-								_1: {ctor: '[]'}
-							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Log in'),
-							_1: {ctor: '[]'}
-						}),
+					_0: function () {
+						var _p82 = _p83.playingState;
+						if (_p82.ctor === 'Normal') {
+							return _user$project$Main$viewPlayer(model);
+						} else {
+							return _user$project$Main$viewStationSelector(model);
+						}
+					}(),
 					_1: {ctor: '[]'}
 				}
-			}
-		});
-};
-var _user$project$Main$view = function (model) {
-	var _p15 = model.state;
-	switch (_p15.ctor) {
-		case 'LoggingIn':
-			return _user$project$Main$viewLogin(model);
-		case 'SelectingStation':
-			return _user$project$Main$viewStations(model);
-		case 'Paused':
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$audio,
-						{
-							ctor: '::',
-							_0: _user$project$Main$onEnded(model.currentStation.id),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id('songAudio'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$src(
-										function () {
-											var _p16 = _elm_lang$core$List$head(model.songQueue);
-											if (_p16.ctor === 'Just') {
-												return _p16._0.audioURL;
-											} else {
-												return '';
-											}
-										}()),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$autoplay(true),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('view'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#ffffff'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'height', _1: '550px'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
-																	_1: {
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-																		_1: {
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '100px'},
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _user$project$Main$viewTopBar(model),
-								_1: {
-									ctor: '::',
-									_0: _user$project$Main$viewSongInfo(model),
-									_1: {
-										ctor: '::',
-										_0: _user$project$Main$viewProgressBar(model),
-										_1: {
-											ctor: '::',
-											_0: A2(_user$project$Main$viewControls, model, model.currentStation.id),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								},
-								A2(_elm_lang$core$List$map, _user$project$Main$viewSong, model.songQueue)),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$p,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											_elm_lang$core$Basics$toString(model.audioLevel)),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				});
-		default:
-			return A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$audio,
-						{
-							ctor: '::',
-							_0: _user$project$Main$onEnded(model.currentStation.id),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id('songAudio'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$src(
-										function () {
-											var _p17 = _elm_lang$core$List$head(model.songQueue);
-											if (_p17.ctor === 'Just') {
-												return _p17._0.audioURL;
-											} else {
-												return '';
-											}
-										}()),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$autoplay(true),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class('view'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#ffffff'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'background-size', _1: 'cover'},
-												_1: {
-													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'height', _1: '550px'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
-														_1: {
-															ctor: '::',
-															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-															_1: {
-																ctor: '::',
-																_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-																_1: {
-																	ctor: '::',
-																	_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
-																	_1: {
-																		ctor: '::',
-																		_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-																		_1: {
-																			ctor: '::',
-																			_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '100px'},
-																			_1: {ctor: '[]'}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}
-							},
-							{
-								ctor: '::',
-								_0: _user$project$Main$viewTopBar(model),
-								_1: {
-									ctor: '::',
-									_0: _user$project$Main$viewSongInfo(model),
-									_1: {
-										ctor: '::',
-										_0: _user$project$Main$viewProgressBar(model),
-										_1: {
-											ctor: '::',
-											_0: A2(_user$project$Main$viewControls, model, model.currentStation.id),
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$div,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$style(
-										{
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								},
-								A2(_elm_lang$core$List$map, _user$project$Main$viewSong, model.songQueue)),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$p,
-									{ctor: '[]'},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											_elm_lang$core$Basics$toString(model.audioLevel)),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				});
+			});
+	} else {
+		return _user$project$Main$viewLogin(model);
 	}
 };
-var _user$project$Main$main = _elm_lang$html$Html$program(
-	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
+var _user$project$Main$main = _elm_lang$html$Html$programWithFlags(
+	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})(_elm_lang$core$Json_Decode$string);

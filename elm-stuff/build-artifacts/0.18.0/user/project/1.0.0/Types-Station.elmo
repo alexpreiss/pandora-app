@@ -1,0 +1,79 @@
+var _user$project$Types_Station$decodeListLast = F2(
+	function (decoder, $default) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (list) {
+				return _elm_lang$core$Native_Utils.eq(
+					_elm_lang$core$List$length(list),
+					0) ? _elm_lang$core$Json_Decode$succeed($default) : A2(
+					_elm_lang$core$Json_Decode$index,
+					_elm_lang$core$List$length(list) - 1,
+					decoder);
+			},
+			_elm_lang$core$Json_Decode$list(
+				_elm_lang$core$Json_Decode$succeed(
+					{ctor: '_Tuple0'})));
+	});
+var _user$project$Types_Station$Station = F3(
+	function (a, b, c) {
+		return {id: a, name: b, art: c};
+	});
+var _user$project$Types_Station$stationDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$Types_Station$Station,
+	A2(_elm_lang$core$Json_Decode$field, 'stationId', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$field,
+				'art',
+				A2(
+					_user$project$Types_Station$decodeListLast,
+					A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
+					'img/illfigurethisout')),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Json_Decode$succeed('img/illfigurethisout'),
+				_1: {ctor: '[]'}
+			}
+		}));
+var _user$project$Types_Station$stationListDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'stations',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$list(_user$project$Types_Station$stationDecoder));
+var _user$project$Types_Station$get = function (authToken) {
+	return _elm_lang$http$Http$request(
+		{
+			method: 'POST',
+			headers: {
+				ctor: '::',
+				_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+					_1: {ctor: '[]'}
+				}
+			},
+			url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/getStations',
+			body: _elm_lang$http$Http$jsonBody(
+				_elm_lang$core$Json_Encode$object(
+					{
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple2',
+							_0: 'pageSize',
+							_1: _elm_lang$core$Json_Encode$int(300)
+						},
+						_1: {ctor: '[]'}
+					})),
+			expect: _elm_lang$http$Http$expectJson(_user$project$Types_Station$stationListDecoder),
+			timeout: _elm_lang$core$Maybe$Nothing,
+			withCredentials: false
+		});
+};
