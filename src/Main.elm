@@ -81,6 +81,7 @@ type State
         , audioHover : Bool
         , isPlaying : Bool
         , playingState : PlayingState
+        , seek : Float
         }
 
 
@@ -143,7 +144,7 @@ init userToken =
         }
             ! []
     else
-        { state = Playing { authToken = userToken, stations = [], currentStation = Nothing, songQueue = [], currentTime = 0.0, previousSongs = [], audioLevel = 1, audioHover = False, isPlaying = False, playingState = SelectingStation }
+        { state = Playing { authToken = userToken, seek = 0, stations = [], currentStation = Nothing, songQueue = [], currentTime = 0.0, previousSongs = [], audioLevel = 1, audioHover = False, isPlaying = False, playingState = SelectingStation }
         , mdl = Material.model
         }
             ! [ Http.send GotStations (Station.get userToken) ]
@@ -165,7 +166,7 @@ login info =
         , headers =
             [ Http.header "X-CsrfToken" "coolestToken"
             ]
-        , url = "http://localhost:8080/api?url=https://www.pandora.com/api/v1/auth/login"
+        , url = "https://www.pandora.com/api/v1/auth/login"
         , body =
             Http.jsonBody
                 (Encode.object
@@ -214,6 +215,8 @@ type Msg
     | UnMute
     | RememberMe Bool
     | LoggedInRemember (Result Http.Error String)
+    | SetSeekLocation Float
+    | SetNewTime Float
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -283,6 +286,7 @@ update msg model =
                                         , audioHover = False
                                         , isPlaying = False
                                         , playingState = SelectingStation
+                                        , seek = 0
                                         }
                             }
                                 ! [ Http.send GotStations (Station.get token)
@@ -317,6 +321,7 @@ update msg model =
                                         , audioHover = False
                                         , isPlaying = False
                                         , playingState = SelectingStation
+                                        , seek = 0
                                         }
                             }
                                 ! [ Http.send GotStations (Station.get token) ]
@@ -696,6 +701,26 @@ update msg model =
                 Playing record ->
                     model ! []
 
+        SetSeekLocation coord ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | seek = coord } } ! [ getProgressBarWidth () ]
+
+        SetNewTime totalWidth ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    let
+                        newTime =
+                            (record.seek / totalWidth) * (toFloat (currentSong model).trackLength)
+                    in
+                        { model | state = Playing { record | currentTime = newTime } } ! [ sendNewTime newTime ]
+
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
@@ -713,6 +738,15 @@ port audioLevel : Float -> Cmd msg
 port rememberMe : String -> Cmd msg
 
 
+port getProgressBarWidth : () -> Cmd msg
+
+
+port sendProgressBarWidth : (Float -> msg) -> Sub msg
+
+
+port sendNewTime : Float -> Cmd msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.state of
@@ -726,6 +760,7 @@ subscriptions model =
                   else
                     Sub.none
                 , Material.subscriptions Mdl model
+                , sendProgressBarWidth SetNewTime
                 ]
 
 
@@ -736,6 +771,11 @@ subscriptions model =
 onEnded : String -> Attribute Msg
 onEnded stationId =
     Html.Events.on "ended" (Decode.succeed (SongEnded stationId))
+
+
+onClickXVal : Attribute Msg
+onClickXVal =
+    Html.Events.on "click" (Decode.map SetSeekLocation (Decode.field "clientX" Decode.float))
 
 
 onHover : Attribute Msg
@@ -769,7 +809,7 @@ viewTopMenu modelMdl playingState =
     div
         [ style
             [ ( "margin-left", "auto" )
-            , ( "user-select", "none" )
+            , ( "-webkit-user-select", "none" )
             ]
         ]
         [ let
@@ -811,7 +851,7 @@ audioSelector modelAudioLevel modelAudioHover =
                 , ( "margin-left", "10px" )
                 , ( "margin-top", "5px" )
                 , ( "z-index", "3" )
-                , ( "user-select", "none" )
+                , ( "-webkit-user-select", "none" )
                 ]
             , class "material-icons topIcons"
             , (if modelAudioLevel == 0 then
@@ -845,7 +885,8 @@ viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl play
                 , ( "position", "absolute" )
                 , ( "left", "0" )
                 , ( "right", "0" )
-                , ( "margin-top", "6px" )
+                , ( "padding-top", "6px" )
+                , ( "height", "10%" )
                 ]
             ]
             [ text modelCurrentStationName ]
@@ -885,16 +926,17 @@ viewProgressBar model =
                 [ style
                     [ ( "width", "100%" )
                     , ( "height", "5px" )
-                    , ( "background-color", "#323842" )
-                    , ( "border-top", "1px black solid" )
-                    , ( "border-bottom", "1px black solid" )
+                    , ( "background-color", "black" )
                     ]
+                , onClickXVal
+                , id "progressBar"
                 ]
                 [ div
                     [ style
                         [ ( "height", "5px" )
                         , ( "width", ((toString (timePercentage fields.currentTime fields.songQueue)) ++ "%") )
                         , ( "background-color", "white" )
+                        , ( "border-top", "1px black solid" )
                         ]
                     ]
                     []
@@ -908,12 +950,18 @@ viewControls model stationId =
             div [] []
 
         Playing fields ->
-            div [ style [ ( "margin-top", "auto" ), ( "user-select", "none" ) ] ]
+            div
+                [ style
+                    [ ( "margin-top", "auto" )
+                    , ( "-webkit-user-select", "none" )
+                    , ( "height", "10%" )
+                    ]
+                ]
                 [ viewProgressBar model
                 , div
                     [ style
-                        [ ( "width", "650px" )
-                        , ( "height", "60px" )
+                        [ ( "width", "100%" )
+                        , ( "height", "100%" )
                         , ( "background-color", "#323842" )
                         , ( "display", "flex" )
                         , ( "justify-content", "center" )
@@ -1019,12 +1067,11 @@ viewSongInfo model =
                     , ( "flex-direction", "column" )
                     , ( "align-items", "center" )
                     , ( "margin-top", "2.75%" )
+                    , ( "height", "60%" )
                     ]
                 ]
                 [ img
-                    [ height 335
-                    , width 335
-                    , style [ ( "user-select", "none" ) ]
+                    [ style [ ( "-webkit-user-select", "none" ), ( "height", "100%" ) ]
                     , src
                         (case (List.head fields.songQueue) of
                             Just song ->
@@ -1038,10 +1085,10 @@ viewSongInfo model =
                     []
                 , p
                     [ style
-                        [ ( "font-size", "16px" )
-                        , ( "margin-top", "15px" )
+                        [ ( "margin-top", "4%" )
                         , ( "margin-bottom", "0px" )
                         ]
+                    , class "songTitle"
                     ]
                     [ text
                         (case (List.head fields.songQueue) of
@@ -1057,9 +1104,9 @@ viewSongInfo model =
                     ]
                 , p
                     [ style
-                        [ ( "font-size", "14px" )
-                        , ( "margin-top", "5px" )
+                        [ ( "margin-top", "5px" )
                         ]
+                    , class "songDetails"
                     ]
                     [ text
                         (case (List.head fields.songQueue) of
@@ -1082,10 +1129,9 @@ viewLogin model =
                     [ ( "display", "flex" )
                     , ( "flex-direction", "column" )
                     , ( "width", "650px" )
-                    , ( "height", "350px" )
+                    , ( "height", "100%" )
                     , ( "margin", "auto" )
                     , ( "margin-top", "10px" )
-                    , ( "border", "1px black solid" )
                     , ( "padding-top", "30px" )
                     , ( "padding-bottom", "30px" )
                     ]
@@ -1124,7 +1170,7 @@ viewLogin model =
                     []
                 , div
                     [ style
-                        [ ( "margin-top", "auto" )
+                        [ ( "margin-top", "10%" )
                         , ( "height", "40px" )
                         , ( "width", "460px" )
                         , ( "align-self", "center" )
@@ -1173,13 +1219,15 @@ viewLogin model =
 viewStation : String -> String -> String -> Grid.Cell Msg
 viewStation id name url =
     Grid.cell
-        [ Grid.size Desktop 4
+        [ Grid.size Desktop 3
         , Options.css "margin-bottom" "25px "
+        , Options.css "text-align" "center"
         ]
         [ div
             [ style
                 [ ( "width", "150px" )
                 , ( "height", "175px" )
+                , ( "margin", "auto" )
                 ]
             , onClick (StartStation id name url)
             ]
@@ -1188,7 +1236,7 @@ viewStation id name url =
                     [ ( "height", "150px" )
                     , ( "width", "150px" )
                     , ( "border", "1px solid black" )
-                    , ( "user-select", "none" )
+                    , ( "-webkit-user-select", "none" )
                     ]
                 , src url
                 ]
@@ -1207,17 +1255,15 @@ viewStationSelector model =
         Playing fields ->
             div
                 [ style
-                    [ ( "min-height", "550px" )
-                    , ( "max-height", "550px" )
-                    , ( "width", "650px" )
-                    , ( "border", "black 1px solid" )
+                    [ ( "height", "100%" )
+                    , ( "width", "100%" )
                     , ( "margin", "auto" )
                     , ( "display", "flex" )
                     , ( "flex-direction", "column" )
                     ]
                 ]
                 [ viewTopBar fields.audioLevel (getCurrentStation model).name fields.audioHover model.mdl fields.playingState
-                , Grid.grid [ Grid.maxWidth "650px", Options.css "margin" "0px", Options.css "overflow-y" "auto" ]
+                , Grid.grid [ Options.css "width" "100%", Options.css "margin" "0px", Options.css "overflow-y" "auto" ]
                     (List.map
                         (\station ->
                             viewStation
@@ -1240,12 +1286,11 @@ viewPlayer model =
         Playing record ->
             div
                 [ style
-                    [ ( "height", "550px" )
-                    , ( "width", "650px" )
+                    [ ( "height", "100%" )
+                    , ( "width", "100%" )
                     , ( "display", "flex" )
                     , ( "flex-direction", "column" )
                     , ( "margin", "auto" )
-                    , ( "border", "black 1px solid" )
                     ]
                 ]
                 [ viewTopBar record.audioLevel
@@ -1269,10 +1314,7 @@ view model =
     case model.state of
         Playing fields ->
             div
-                [ style
-                    [ ( "margin-top", "30px" )
-                    ]
-                ]
+                [ style [ ( "height", "100%" ) ] ]
                 [ audio
                     [ onEnded
                         (case (fields.currentStation) of

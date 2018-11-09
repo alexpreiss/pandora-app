@@ -69,7 +69,7 @@ var _user$project$Types_Fragment$getNext = F3(
 						_1: {ctor: '[]'}
 					}
 				},
-				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/playlist/getFragment',
+				url: 'https://www.pandora.com/api/v1/playlist/getFragment',
 				body: _elm_lang$http$Http$jsonBody(
 					_elm_lang$core$Json_Encode$object(
 						{

@@ -12,7 +12,7 @@ var _user$project$Types_Feedback$send = F3(
 						_1: {ctor: '[]'}
 					}
 				},
-				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/addFeedback',
+				url: 'https://www.pandora.com/api/v1/station/addFeedback',
 				body: _elm_lang$http$Http$jsonBody(
 					_elm_lang$core$Json_Encode$object(
 						{
@@ -52,7 +52,7 @@ var _user$project$Types_Feedback$remove = F2(
 						_1: {ctor: '[]'}
 					}
 				},
-				url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/deleteFeedback',
+				url: 'https://www.pandora.com/api/v1/station/deleteFeedback',
 				body: _elm_lang$http$Http$jsonBody(
 					_elm_lang$core$Json_Encode$object(
 						{

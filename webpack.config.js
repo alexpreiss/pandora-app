@@ -15,7 +15,7 @@ module.exports = {
     }
   },
   entry: {
-    index: resolve('./src/index.js')
+    index: resolve('./index.js')
   },
   context: resolve('.'),
   output: { path: resolve('./build') },
@@ -43,6 +43,6 @@ module.exports = {
       filename: 'index.html',
       template: resolve('./src/template.html')
     }),
-    new CopyWebpackPlugin([ 'assets' ])
+    new CopyWebpackPlugin([ { from: 'src/main.js', to: 'main.js' } ])
   ]
 }

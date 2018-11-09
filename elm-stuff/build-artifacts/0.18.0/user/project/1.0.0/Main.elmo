@@ -24,7 +24,11 @@ var _user$project$Main$viewSongInfo = function (model) {
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '2.75%'},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'height', _1: '60%'},
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						}
@@ -37,40 +41,36 @@ var _user$project$Main$viewSongInfo = function (model) {
 					_elm_lang$html$Html$img,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$height(335),
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+									_1: {ctor: '[]'}
+								}
+							}),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$width(335),
+							_0: _elm_lang$html$Html_Attributes$src(
+								function () {
+									var _p1 = _elm_lang$core$List$head(_p5.songQueue);
+									if (_p1.ctor === 'Just') {
+										return _p1._0.albumArt;
+									} else {
+										return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAOVBMVEX07/PJycnz8PHj4uLt6u318PPy8PHU1NTHycjc3dzQz9Dz7vLc2tvGxsbLy8vz8fTp5ebm5ubi4+L4IaaGAAACgElEQVR4nO3b226jMBRAUS7xCQm2If3/jx2bpsNVARVGcDx7PfSlUGXrGAiIZhkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+SuR3JnJ2zwFRVfpSqumJhcVhfTCzOzllwaGF+3cJqt4sX+vt+/tKFz8LsJPK8euHeP3P5wr0fjcIT/S007eO3WqOisCndLy+CrmxUFJodhTpm+P8VOpdv/E6us9B5W7al9ckWOitNljWNPDYsXZWFrTGhsM7MlqNTYaF79F/ixK4mKiz0cYn+/L5ePRb1FVa2GWxgbHqF7jXaYvVIVF/YJl9Yrl34FRba4f1wisdhOJf2n1RkfC71djZShYVucDKV8QjDl50UZpjn5XuKIl+T80w7/wqgsjC38elbZmY5vpBbEjOMx1v5CvcW03lZmZ96lBZ2N4gzrg2DnQ5RbeGSKt5vTJduUoW222UyxJQKXdvtMzkSUyr00u1jZLRpSoX2p/CZaGE8k3ZMmWihr+v3XqNlmk7h4J7DDJdpKoWuuvcvk4wfPSZQ6Jy3r2Zw1zg6myZQ6G1bFDJ8PFUMz6a6C7vp1c18vzKNQhenZxY/9i2JwnCvvzC9b+aeQKGzHz7w8KGH1sJw+as/7NcvU62FYYl+KjT9RV9p4ecJRv3zVZWFIXDtNSm5O8WFYYmuTDBe9d+JGgs3TDB6JyosDJeJenWEWXxe3CWqKWyf7zdFnzbb+qqidNsreeurECl+bJpg1O0Tfqgo3PlnKDzPd6Hsd+1CX+537TfZw43ubvm1C49C4RmKAxZo74qFcsBJpidn5yzY+88yE2fnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS9weVjTfmgUbdUgAAAABJRU5ErkJggg==';
+									}
+								}()),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+										_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
 										_1: {ctor: '[]'}
 									}),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$src(
-										function () {
-											var _p1 = _elm_lang$core$List$head(_p5.songQueue);
-											if (_p1.ctor === 'Just') {
-												return _p1._0.albumArt;
-											} else {
-												return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAOVBMVEX07/PJycnz8PHj4uLt6u318PPy8PHU1NTHycjc3dzQz9Dz7vLc2tvGxsbLy8vz8fTp5ebm5ubi4+L4IaaGAAACgElEQVR4nO3b226jMBRAUS7xCQm2If3/jx2bpsNVARVGcDx7PfSlUGXrGAiIZhkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+SuR3JnJ2zwFRVfpSqumJhcVhfTCzOzllwaGF+3cJqt4sX+vt+/tKFz8LsJPK8euHeP3P5wr0fjcIT/S007eO3WqOisCndLy+CrmxUFJodhTpm+P8VOpdv/E6us9B5W7al9ckWOitNljWNPDYsXZWFrTGhsM7MlqNTYaF79F/ixK4mKiz0cYn+/L5ePRb1FVa2GWxgbHqF7jXaYvVIVF/YJl9Yrl34FRba4f1wisdhOJf2n1RkfC71djZShYVucDKV8QjDl50UZpjn5XuKIl+T80w7/wqgsjC38elbZmY5vpBbEjOMx1v5CvcW03lZmZ96lBZ2N4gzrg2DnQ5RbeGSKt5vTJduUoW222UyxJQKXdvtMzkSUyr00u1jZLRpSoX2p/CZaGE8k3ZMmWihr+v3XqNlmk7h4J7DDJdpKoWuuvcvk4wfPSZQ6Jy3r2Zw1zg6myZQ6G1bFDJ8PFUMz6a6C7vp1c18vzKNQhenZxY/9i2JwnCvvzC9b+aeQKGzHz7w8KGH1sJw+as/7NcvU62FYYl+KjT9RV9p4ecJRv3zVZWFIXDtNSm5O8WFYYmuTDBe9d+JGgs3TDB6JyosDJeJenWEWXxe3CWqKWyf7zdFnzbb+qqidNsreeurECl+bJpg1O0Tfqgo3PlnKDzPd6Hsd+1CX+537TfZw43ubvm1C49C4RmKAxZo74qFcsBJpidn5yzY+88yE2fnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS9weVjTfmgUbdUgAAAABJRU5ErkJggg==';
-											}
-										}()),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$style(
-											{
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
-												_1: {ctor: '[]'}
-											}),
-										_1: {ctor: '[]'}
-									}
-								}
+								_1: {ctor: '[]'}
 							}
 						}
 					},
@@ -84,18 +84,18 @@ var _user$project$Main$viewSongInfo = function (model) {
 							_0: _elm_lang$html$Html_Attributes$style(
 								{
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'font-size', _1: '16px'},
+									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '4%'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '15px'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '0px'},
-											_1: {ctor: '[]'}
-										}
+										_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '0px'},
+										_1: {ctor: '[]'}
 									}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('songTitle'),
+								_1: {ctor: '[]'}
+							}
 						},
 						{
 							ctor: '::',
@@ -119,14 +119,14 @@ var _user$project$Main$viewSongInfo = function (model) {
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'font-size', _1: '14px'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
-											_1: {ctor: '[]'}
-										}
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5px'},
+										_1: {ctor: '[]'}
 									}),
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$class('songDetails'),
+									_1: {ctor: '[]'}
+								}
 							},
 							{
 								ctor: '::',
@@ -162,78 +162,6 @@ var _user$project$Main$timePercentage = F2(
 			}
 		}());
 	});
-var _user$project$Main$viewProgressBar = function (model) {
-	var _p7 = model.state;
-	if (_p7.ctor === 'LoggingIn') {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{ctor: '[]'});
-	} else {
-		var _p8 = _p7._0;
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border-top', _1: '1px black solid'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$style(
-							{
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
-								_1: {
-									ctor: '::',
-									_0: {
-										ctor: '_Tuple2',
-										_0: 'width',
-										_1: A2(
-											_elm_lang$core$Basics_ops['++'],
-											_elm_lang$core$Basics$toString(
-												A2(_user$project$Main$timePercentage, _p8.currentTime, _p8.songQueue)),
-											'%')
-									},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
-										_1: {ctor: '[]'}
-									}
-								}
-							}),
-						_1: {ctor: '[]'}
-					},
-					{ctor: '[]'}),
-				_1: {ctor: '[]'}
-			});
-	}
-};
 var _user$project$Main$authDecode = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
@@ -251,7 +179,7 @@ var _user$project$Main$login = function (info) {
 				_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
 				_1: {ctor: '[]'}
 			},
-			url: 'http://localhost:8080/api?url=https://www.pandora.com/api/v1/auth/login',
+			url: 'https://www.pandora.com/api/v1/auth/login',
 			body: _elm_lang$http$Http$jsonBody(
 				_elm_lang$core$Json_Encode$object(
 					{
@@ -289,13 +217,13 @@ var _user$project$Main$login = function (info) {
 		});
 };
 var _user$project$Main$getCurrentStation = function (model) {
-	var _p9 = model.state;
-	if (_p9.ctor === 'LoggingIn') {
+	var _p7 = model.state;
+	if (_p7.ctor === 'LoggingIn') {
 		return {id: '', name: 'Select a station', art: ''};
 	} else {
-		var _p10 = _p9._0.currentStation;
-		if (_p10.ctor === 'Just') {
-			return _p10._0;
+		var _p8 = _p7._0.currentStation;
+		if (_p8.ctor === 'Just') {
+			return _p8._0;
 		} else {
 			return {id: '', name: 'Select a station', art: ''};
 		}
@@ -303,21 +231,21 @@ var _user$project$Main$getCurrentStation = function (model) {
 };
 var _user$project$Main$stateCase = F3(
 	function (model, playing, loggingIn) {
-		var _p11 = model.state;
-		if (_p11.ctor === 'Playing') {
+		var _p9 = model.state;
+		if (_p9.ctor === 'Playing') {
 			return playing;
 		} else {
 			return loggingIn;
 		}
 	});
 var _user$project$Main$currentSong = function (model) {
-	var _p12 = model.state;
-	if (_p12.ctor === 'LoggingIn') {
+	var _p10 = model.state;
+	if (_p10.ctor === 'LoggingIn') {
 		return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: ''};
 	} else {
-		var _p13 = _elm_lang$core$List$head(_p12._0.songQueue);
-		if (_p13.ctor === 'Just') {
-			return _p13._0;
+		var _p11 = _elm_lang$core$List$head(_p10._0.songQueue);
+		if (_p11.ctor === 'Just') {
+			return _p11._0;
 		} else {
 			return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: ''};
 		}
@@ -343,6 +271,17 @@ var _user$project$Main$rememberMe = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return v;
 	});
+var _user$project$Main$getProgressBarWidth = _elm_lang$core$Native_Platform.outgoingPort(
+	'getProgressBarWidth',
+	function (v) {
+		return null;
+	});
+var _user$project$Main$sendProgressBarWidth = _elm_lang$core$Native_Platform.incomingPort('sendProgressBarWidth', _elm_lang$core$Json_Decode$float);
+var _user$project$Main$sendNewTime = _elm_lang$core$Native_Platform.outgoingPort(
+	'sendNewTime',
+	function (v) {
+		return v;
+	});
 var _user$project$Main$Model = F2(
 	function (a, b) {
 		return {state: a, mdl: b};
@@ -362,6 +301,95 @@ var _user$project$Main$Playing = function (a) {
 };
 var _user$project$Main$LoggingIn = function (a) {
 	return {ctor: 'LoggingIn', _0: a};
+};
+var _user$project$Main$SetNewTime = function (a) {
+	return {ctor: 'SetNewTime', _0: a};
+};
+var _user$project$Main$SetSeekLocation = function (a) {
+	return {ctor: 'SetSeekLocation', _0: a};
+};
+var _user$project$Main$onClickXVal = A2(
+	_elm_lang$html$Html_Events$on,
+	'click',
+	A2(
+		_elm_lang$core$Json_Decode$map,
+		_user$project$Main$SetSeekLocation,
+		A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$float)));
+var _user$project$Main$viewProgressBar = function (model) {
+	var _p12 = model.state;
+	if (_p12.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		var _p13 = _p12._0;
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'black'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Main$onClickXVal,
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$id('progressBar'),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '5px'},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'width',
+										_1: A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(
+												A2(_user$project$Main$timePercentage, _p13.currentTime, _p13.songQueue)),
+											'%')
+									},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-top', _1: '1px black solid'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {ctor: '[]'}
+			});
+	}
 };
 var _user$project$Main$LoggedInRemember = function (a) {
 	return {ctor: 'LoggedInRemember', _0: a};
@@ -390,7 +418,7 @@ var _user$project$Main$viewTopMenu = F2(
 						_0: {ctor: '_Tuple2', _0: 'margin-left', _1: 'auto'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+							_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
 							_1: {ctor: '[]'}
 						}
 					}),
@@ -618,7 +646,7 @@ var _user$project$Main$audioSelector = F2(
 											_0: {ctor: '_Tuple2', _0: 'z-index', _1: '3'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+												_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
 												_1: {ctor: '[]'}
 											}
 										}
@@ -683,8 +711,12 @@ var _user$project$Main$viewTopBar = F5(
 											_0: {ctor: '_Tuple2', _0: 'right', _1: '0'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '6px'},
-												_1: {ctor: '[]'}
+												_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '6px'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'height', _1: '10%'},
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
@@ -754,7 +786,11 @@ var _user$project$Main$subscriptions = function (model) {
 				_1: {
 					ctor: '::',
 					_0: A2(_debois$elm_mdl$Material$subscriptions, _user$project$Main$Mdl, model),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: _user$project$Main$sendProgressBarWidth(_user$project$Main$SetNewTime),
+						_1: {ctor: '[]'}
+					}
 				}
 			});
 	}
@@ -782,8 +818,12 @@ var _user$project$Main$viewControls = F2(
 							_0: {ctor: '_Tuple2', _0: 'margin-top', _1: 'auto'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '10%'},
+									_1: {ctor: '[]'}
+								}
 							}
 						}),
 					_1: {ctor: '[]'}
@@ -800,10 +840,10 @@ var _user$project$Main$viewControls = F2(
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 										_1: {
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'height', _1: '60px'},
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 											_1: {
 												ctor: '::',
 												_0: {ctor: '_Tuple2', _0: 'background-color', _1: '#323842'},
@@ -1032,10 +1072,10 @@ var _user$project$Main$viewPlayer = function (model) {
 				_0: _elm_lang$html$Html_Attributes$style(
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '550px'},
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 							_1: {
 								ctor: '::',
 								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
@@ -1045,11 +1085,7 @@ var _user$project$Main$viewPlayer = function (model) {
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
-											_1: {ctor: '[]'}
-										}
+										_1: {ctor: '[]'}
 									}
 								}
 							}
@@ -1117,11 +1153,15 @@ var _user$project$Main$viewStation = F3(
 			_debois$elm_mdl$Material_Grid$cell,
 			{
 				ctor: '::',
-				_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$Desktop, 4),
+				_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$Desktop, 3),
 				_1: {
 					ctor: '::',
 					_0: A2(_debois$elm_mdl$Material_Options$css, 'margin-bottom', '25px '),
-					_1: {ctor: '[]'}
+					_1: {
+						ctor: '::',
+						_0: A2(_debois$elm_mdl$Material_Options$css, 'text-align', 'center'),
+						_1: {ctor: '[]'}
+					}
 				}
 			},
 			{
@@ -1137,7 +1177,11 @@ var _user$project$Main$viewStation = F3(
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'height', _1: '175px'},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+										_1: {ctor: '[]'}
+									}
 								}
 							}),
 						_1: {
@@ -1165,7 +1209,7 @@ var _user$project$Main$viewStation = F3(
 												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'user-select', _1: 'none'},
+													_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
 													_1: {ctor: '[]'}
 												}
 											}
@@ -1219,28 +1263,20 @@ var _user$project$Main$viewStationSelector = function (model) {
 				_0: _elm_lang$html$Html_Attributes$style(
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'min-height', _1: '550px'},
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 						_1: {
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'max-height', _1: '550px'},
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
+								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'border', _1: 'black 1px solid'},
+									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-										_1: {
-											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-											_1: {
-												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-												_1: {ctor: '[]'}
-											}
-										}
+										_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+										_1: {ctor: '[]'}
 									}
 								}
 							}
@@ -1263,7 +1299,7 @@ var _user$project$Main$viewStationSelector = function (model) {
 						_debois$elm_mdl$Material_Grid$grid,
 						{
 							ctor: '::',
-							_0: _debois$elm_mdl$Material_Grid$maxWidth('650px'),
+							_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
 							_1: {
 								ctor: '::',
 								_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '0px'),
@@ -1309,6 +1345,7 @@ var _user$project$Main$init = function (userToken) {
 			state: _user$project$Main$Playing(
 				{
 					authToken: userToken,
+					seek: 0,
 					stations: {ctor: '[]'},
 					currentStation: _elm_lang$core$Maybe$Nothing,
 					songQueue: {ctor: '[]'},
@@ -1443,7 +1480,8 @@ var _user$project$Main$update = F2(
 											audioLevel: 1.0,
 											audioHover: false,
 											isPlaying: false,
-											playingState: _user$project$Main$SelectingStation
+											playingState: _user$project$Main$SelectingStation,
+											seek: 0
 										})
 								}),
 							{
@@ -1493,7 +1531,8 @@ var _user$project$Main$update = F2(
 											audioLevel: 1.0,
 											audioHover: false,
 											isPlaying: false,
-											playingState: _user$project$Main$SelectingStation
+											playingState: _user$project$Main$SelectingStation,
+											seek: 0
 										})
 								}),
 							{
@@ -2150,7 +2189,7 @@ var _user$project$Main$update = F2(
 								{email: '', password: '', remember: false})
 						}),
 					{ctor: '[]'});
-			default:
+			case 'RememberMe':
 				var _p76 = model.state;
 				if (_p76.ctor === 'LoggingIn') {
 					return A2(
@@ -2170,6 +2209,58 @@ var _user$project$Main$update = F2(
 						model,
 						{ctor: '[]'});
 				}
+			case 'SetSeekLocation':
+				var _p77 = model.state;
+				if (_p77.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p77._0,
+										{seek: _p22._0}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$getProgressBarWidth(
+								{ctor: '_Tuple0'}),
+							_1: {ctor: '[]'}
+						});
+				}
+			default:
+				var _p78 = model.state;
+				if (_p78.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p79 = _p78._0;
+					var newTime = (_p79.seek / _p22._0) * _elm_lang$core$Basics$toFloat(
+						_user$project$Main$currentSong(model).trackLength);
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p79,
+										{currentTime: newTime}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$sendNewTime(newTime),
+							_1: {ctor: '[]'}
+						});
+				}
 		}
 	});
 var _user$project$Main$LoginRemember = {ctor: 'LoginRemember'};
@@ -2181,8 +2272,8 @@ var _user$project$Main$InputEmail = function (a) {
 	return {ctor: 'InputEmail', _0: a};
 };
 var _user$project$Main$viewLogin = function (model) {
-	var _p77 = model.state;
-	if (_p77.ctor === 'LoggingIn') {
+	var _p80 = model.state;
+	if (_p80.ctor === 'LoggingIn') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -2199,7 +2290,7 @@ var _user$project$Main$viewLogin = function (model) {
 								_0: {ctor: '_Tuple2', _0: 'width', _1: '650px'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
@@ -2208,15 +2299,11 @@ var _user$project$Main$viewLogin = function (model) {
 											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10px'},
 											_1: {
 												ctor: '::',
-												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px black solid'},
+												_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: 'padding-top', _1: '30px'},
-													_1: {
-														ctor: '::',
-														_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
-														_1: {ctor: '[]'}
-													}
+													_0: {ctor: '_Tuple2', _0: 'padding-bottom', _1: '30px'},
+													_1: {ctor: '[]'}
 												}
 											}
 										}
@@ -2341,7 +2428,7 @@ var _user$project$Main$viewLogin = function (model) {
 									_0: _elm_lang$html$Html_Attributes$style(
 										{
 											ctor: '::',
-											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: 'auto'},
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10%'},
 											_1: {
 												ctor: '::',
 												_0: {ctor: '_Tuple2', _0: 'height', _1: '40px'},
@@ -2441,7 +2528,7 @@ var _user$project$Main$viewLogin = function (model) {
 											model.mdl,
 											{
 												ctor: '::',
-												_0: _p77._0.remember ? _debois$elm_mdl$Material_Options$onClick(_user$project$Main$LoginRemember) : _debois$elm_mdl$Material_Options$onClick(_user$project$Main$Login),
+												_0: _p80._0.remember ? _debois$elm_mdl$Material_Options$onClick(_user$project$Main$LoginRemember) : _debois$elm_mdl$Material_Options$onClick(_user$project$Main$Login),
 												_1: {
 													ctor: '::',
 													_0: _debois$elm_mdl$Material_Button$raised,
@@ -2478,9 +2565,9 @@ var _user$project$Main$viewLogin = function (model) {
 	}
 };
 var _user$project$Main$view = function (model) {
-	var _p78 = model.state;
-	if (_p78.ctor === 'Playing') {
-		var _p83 = _p78._0;
+	var _p81 = model.state;
+	if (_p81.ctor === 'Playing') {
+		var _p86 = _p81._0;
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -2488,7 +2575,7 @@ var _user$project$Main$view = function (model) {
 				_0: _elm_lang$html$Html_Attributes$style(
 					{
 						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '30px'},
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
@@ -2501,9 +2588,9 @@ var _user$project$Main$view = function (model) {
 						ctor: '::',
 						_0: _user$project$Main$onEnded(
 							function () {
-								var _p79 = _p83.currentStation;
-								if (_p79.ctor === 'Just') {
-									return _p79._0.id;
+								var _p82 = _p86.currentStation;
+								if (_p82.ctor === 'Just') {
+									return _p82._0.id;
 								} else {
 									return '';
 								}
@@ -2515,17 +2602,17 @@ var _user$project$Main$view = function (model) {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$src(
 									function () {
-										var _p81 = _elm_lang$core$List$head(
+										var _p84 = _elm_lang$core$List$head(
 											function () {
-												var _p80 = model.state;
-												if (_p80.ctor === 'Playing') {
-													return _p80._0.songQueue;
+												var _p83 = model.state;
+												if (_p83.ctor === 'Playing') {
+													return _p83._0.songQueue;
 												} else {
 													return {ctor: '[]'};
 												}
 											}());
-										if (_p81.ctor === 'Just') {
-											return _p81._0.audioURL;
+										if (_p84.ctor === 'Just') {
+											return _p84._0.audioURL;
 										} else {
 											return '';
 										}
@@ -2542,8 +2629,8 @@ var _user$project$Main$view = function (model) {
 				_1: {
 					ctor: '::',
 					_0: function () {
-						var _p82 = _p83.playingState;
-						if (_p82.ctor === 'Normal') {
+						var _p85 = _p86.playingState;
+						if (_p85.ctor === 'Normal') {
 							return _user$project$Main$viewPlayer(model);
 						} else {
 							return _user$project$Main$viewStationSelector(model);

@@ -13,7 +13,7 @@ remove authToken songId =
             [ Http.header "X-CsrfToken" "coolestToken"
             , Http.header "X-AuthToken" authToken
             ]
-        , url = "http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/deleteFeedback"
+        , url = "https://www.pandora.com/api/v1/station/deleteFeedback"
         , body =
             Http.jsonBody
                 (Encode.object
@@ -35,7 +35,7 @@ send authToken songId isPositive =
             [ Http.header "X-CsrfToken" "coolestToken"
             , Http.header "X-AuthToken" authToken
             ]
-        , url = "http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/addFeedback"
+        , url = "https://www.pandora.com/api/v1/station/addFeedback"
         , body =
             Http.jsonBody
                 (Encode.object

@@ -58,7 +58,7 @@ get authToken =
             [ Http.header "X-CsrfToken" "coolestToken"
             , Http.header "X-AuthToken" authToken
             ]
-        , url = "http://localhost:8080/api?url=https://www.pandora.com/api/v1/station/getStations"
+        , url = "https://www.pandora.com/api/v1/station/getStations"
         , body =
             Http.jsonBody
                 (Encode.object

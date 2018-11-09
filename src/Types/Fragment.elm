@@ -51,7 +51,7 @@ getNext stationId authToken isStationStart =
             [ Http.header "X-CsrfToken" "coolestToken"
             , Http.header "X-AuthToken" authToken
             ]
-        , url = "http://localhost:8080/api?url=https://www.pandora.com/api/v1/playlist/getFragment"
+        , url = "https://www.pandora.com/api/v1/playlist/getFragment"
         , body =
             Http.jsonBody
                 (Encode.object
