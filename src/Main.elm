@@ -7,6 +7,7 @@ import Json.Decode as Decode exposing (Value)
 import Json.Encode as Encode
 import Http exposing (Request)
 import Material.Slider as Slider
+import Material.Spinner as Spinner
 import Material.Options as Options
 import Material.Button as Button
 import Material.Menu as Menu
@@ -21,7 +22,12 @@ import Types.Fragment as Fragment exposing (Song)
 
 main : Program String Model Msg
 main =
-    Html.programWithFlags { init = init, view = view, update = update, subscriptions = subscriptions }
+    Html.programWithFlags
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
 
 
 
@@ -139,12 +145,30 @@ type alias User =
 init : String -> ( Model, Cmd Msg )
 init userToken =
     if userToken == "" then
-        { state = LoggingIn { email = "", password = "", remember = False }
+        { state =
+            LoggingIn
+                { email = ""
+                , password = ""
+                , remember = False
+                }
         , mdl = Material.model
         }
             ! []
     else
-        { state = Playing { authToken = userToken, seek = 0, stations = [], currentStation = Nothing, songQueue = [], currentTime = 0.0, previousSongs = [], audioLevel = 1, audioHover = False, isPlaying = False, playingState = SelectingStation }
+        { state =
+            Playing
+                { authToken = userToken
+                , seek = 0
+                , stations = []
+                , currentStation = Nothing
+                , songQueue = []
+                , currentTime = 0.0
+                , previousSongs = []
+                , audioLevel = 1
+                , audioHover = False
+                , isPlaying = False
+                , playingState = SelectingStation
+                }
         , mdl = Material.model
         }
             ! [ Http.send GotStations (Station.get userToken) ]
@@ -225,7 +249,11 @@ update msg model =
         InputEmail input ->
             case model.state of
                 LoggingIn fields ->
-                    { model | state = LoggingIn { fields | email = input } } ! []
+                    { model
+                        | state =
+                            LoggingIn { fields | email = input }
+                    }
+                        ! []
 
                 Playing fields ->
                     model ! []
@@ -233,7 +261,11 @@ update msg model =
         InputPassword input ->
             case model.state of
                 LoggingIn fields ->
-                    { model | state = LoggingIn { fields | password = input } } ! []
+                    { model
+                        | state =
+                            LoggingIn { fields | password = input }
+                    }
+                        ! []
 
                 Playing fields ->
                     model ! []
@@ -289,7 +321,8 @@ update msg model =
                                         , seek = 0
                                         }
                             }
-                                ! [ Http.send GotStations (Station.get token)
+                                ! [ Http.send GotStations
+                                        (Station.get token)
                                   , rememberMe token
                                   ]
 
@@ -324,7 +357,10 @@ update msg model =
                                         , seek = 0
                                         }
                             }
-                                ! [ Http.send GotStations (Station.get token) ]
+                                ! [ Http.send
+                                        GotStations
+                                        (Station.get token)
+                                  ]
 
                         Err error ->
                             let
@@ -344,7 +380,11 @@ update msg model =
                 Playing fields ->
                     case result of
                         Ok stations ->
-                            { model | state = Playing { fields | stations = stations } } ! []
+                            { model
+                                | state =
+                                    Playing { fields | stations = stations }
+                            }
+                                ! []
 
                         Err error ->
                             let
@@ -373,7 +413,9 @@ update msg model =
                                     , playingState = Normal
                                 }
                     }
-                        ! [ Http.send StartedStation (Fragment.getNext id fields.authToken True) ]
+                        ! [ Http.send StartedStation
+                                (Fragment.getNext id fields.authToken True)
+                          ]
 
         LoadNextSongs id ->
             case model.state of
@@ -382,7 +424,9 @@ update msg model =
 
                 Playing fields ->
                     model
-                        ! [ Http.send LoadedNextSongs (Fragment.getNext id fields.authToken False) ]
+                        ! [ Http.send LoadedNextSongs
+                                (Fragment.getNext id fields.authToken False)
+                          ]
 
         StartedStation result ->
             case model.state of
@@ -396,7 +440,10 @@ update msg model =
                                 | state =
                                     Playing
                                         { fields
-                                            | songQueue = List.append fields.songQueue songs
+                                            | songQueue =
+                                                List.append
+                                                    fields.songQueue
+                                                    songs
                                             , currentTime = 0
                                             , isPlaying = True
                                         }
@@ -423,7 +470,10 @@ update msg model =
                                 | state =
                                     Playing
                                         { fields
-                                            | songQueue = List.append fields.songQueue songs
+                                            | songQueue =
+                                                List.append
+                                                    fields.songQueue
+                                                    songs
                                         }
                             }
                                 ! []
@@ -454,7 +504,8 @@ update msg model =
                                 }
                     }
                         ! [ if List.length fields.songQueue == 1 then
-                                Http.send LoadedNextSongs (Fragment.getNext id fields.authToken False)
+                                Http.send LoadedNextSongs
+                                    (Fragment.getNext id fields.authToken False)
                             else
                                 Cmd.none
                           ]
@@ -475,7 +526,8 @@ update msg model =
                                 }
                     }
                         ! [ if List.length fields.songQueue == 1 then
-                                Http.send LoadedNextSongs (Fragment.getNext id fields.authToken False)
+                                Http.send LoadedNextSongs
+                                    (Fragment.getNext id fields.authToken False)
                             else
                                 Cmd.none
                           ]
@@ -486,7 +538,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | currentTime = fields.currentTime + 1 } } ! []
+                    { model
+                        | state =
+                            Playing { fields | currentTime = fields.currentTime + 1 }
+                    }
+                        ! []
 
         TogglePause ->
             case model.state of
@@ -494,7 +550,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | isPlaying = not fields.isPlaying } } ! [ togglePause () ]
+                    { model
+                        | state =
+                            Playing { fields | isPlaying = not fields.isPlaying }
+                    }
+                        ! [ togglePause () ]
 
         ReplaySong ->
             case model.state of
@@ -527,9 +587,14 @@ update msg model =
                                     , isPlaying = True
                                 }
                     }
-                        ! [ Http.send SentFeedBack (Feedback.send fields.authToken (currentSong model).trackToken False)
+                        ! [ Http.send SentFeedBack
+                                (Feedback.send fields.authToken
+                                    (currentSong model).trackToken
+                                    False
+                                )
                           , (if List.length fields.songQueue == 1 then
-                                Http.send LoadedNextSongs (Fragment.getNext id fields.authToken False)
+                                Http.send LoadedNextSongs
+                                    (Fragment.getNext id fields.authToken False)
                              else
                                 Cmd.none
                             )
@@ -561,7 +626,8 @@ update msg model =
                                             | songQueue =
                                                 case updatedSong of
                                                     Just song ->
-                                                        song :: (List.drop 1 fields.songQueue)
+                                                        song
+                                                            :: (List.drop 1 fields.songQueue)
 
                                                     Nothing ->
                                                         fields.songQueue
@@ -571,7 +637,11 @@ update msg model =
                         updatedModel
                             ! [ (case (List.head fields.songQueue) of
                                     Just song ->
-                                        Http.send RemovedFeedBack (Feedback.remove fields.authToken song.trackToken)
+                                        Http.send RemovedFeedBack
+                                            (Feedback.remove
+                                                fields.authToken
+                                                song.trackToken
+                                            )
 
                                     Nothing ->
                                         Cmd.none
@@ -604,7 +674,11 @@ update msg model =
                                             | songQueue =
                                                 case updatedSong of
                                                     Just song ->
-                                                        song :: (List.drop 1 fields.songQueue)
+                                                        song
+                                                            :: (List.drop
+                                                                    1
+                                                                    fields.songQueue
+                                                               )
 
                                                     Nothing ->
                                                         fields.songQueue
@@ -614,7 +688,12 @@ update msg model =
                         updatedModel
                             ! [ (case (List.head fields.songQueue) of
                                     Just song ->
-                                        Http.send SentFeedBack (Feedback.send fields.authToken song.trackToken True)
+                                        Http.send SentFeedBack
+                                            (Feedback.send
+                                                fields.authToken
+                                                song.trackToken
+                                                True
+                                            )
 
                                     Nothing ->
                                         Cmd.none
@@ -633,7 +712,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | audioLevel = level } } ! [ audioLevel level ]
+                    { model
+                        | state =
+                            Playing { fields | audioLevel = level }
+                    }
+                        ! [ audioLevel level ]
 
         HoveringAudio ->
             case model.state of
@@ -641,7 +724,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | audioHover = True } } ! []
+                    { model
+                        | state =
+                            Playing { fields | audioHover = True }
+                    }
+                        ! []
 
         UnHoveringAudio ->
             case model.state of
@@ -649,7 +736,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | audioHover = False } } ! []
+                    { model
+                        | state =
+                            Playing { fields | audioHover = False }
+                    }
+                        ! []
 
         BackToStations ->
             case model.state of
@@ -657,7 +748,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | playingState = SelectingStation } } ! []
+                    { model
+                        | state =
+                            Playing { fields | playingState = SelectingStation }
+                    }
+                        ! []
 
         Mdl msg ->
             Material.update Mdl msg model
@@ -671,7 +766,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | playingState = Normal } } ! []
+                    { model
+                        | state =
+                            Playing { fields | playingState = Normal }
+                    }
+                        ! []
 
         Mute ->
             case model.state of
@@ -679,7 +778,11 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | audioLevel = 0 } } ! []
+                    { model
+                        | state =
+                            Playing { fields | audioLevel = 0 }
+                    }
+                        ! [ audioLevel 0 ]
 
         UnMute ->
             case model.state of
@@ -687,16 +790,31 @@ update msg model =
                     model ! []
 
                 Playing fields ->
-                    { model | state = Playing { fields | audioLevel = 1 } } ! []
+                    { model
+                        | state =
+                            Playing { fields | audioLevel = 1 }
+                    }
+                        ! [ audioLevel 1 ]
 
         Logout ->
-            { model | state = LoggingIn { email = "", password = "", remember = False } }
+            { model
+                | state =
+                    LoggingIn
+                        { email = ""
+                        , password = ""
+                        , remember = False
+                        }
+            }
                 ! []
 
         RememberMe val ->
             case model.state of
                 LoggingIn record ->
-                    { model | state = LoggingIn { record | remember = val } } ! []
+                    { model
+                        | state =
+                            LoggingIn { record | remember = val }
+                    }
+                        ! []
 
                 Playing record ->
                     model ! []
@@ -707,7 +825,11 @@ update msg model =
                     model ! []
 
                 Playing record ->
-                    { model | state = Playing { record | seek = coord } } ! [ getProgressBarWidth () ]
+                    { model
+                        | state =
+                            Playing { record | seek = coord }
+                    }
+                        ! [ getProgressBarWidth () ]
 
         SetNewTime totalWidth ->
             case model.state of
@@ -717,9 +839,16 @@ update msg model =
                 Playing record ->
                     let
                         newTime =
-                            (record.seek / totalWidth) * (toFloat (currentSong model).trackLength)
+                            (record.seek
+                                / totalWidth
+                            )
+                                * (toFloat (currentSong model).trackLength)
                     in
-                        { model | state = Playing { record | currentTime = newTime } } ! [ sendNewTime newTime ]
+                        { model
+                            | state =
+                                Playing { record | currentTime = newTime }
+                        }
+                            ! [ sendNewTime newTime ]
 
 
 
@@ -770,22 +899,31 @@ subscriptions model =
 
 onEnded : String -> Attribute Msg
 onEnded stationId =
-    Html.Events.on "ended" (Decode.succeed (SongEnded stationId))
+    Html.Events.on "ended"
+        (Decode.succeed (SongEnded stationId))
 
 
 onClickXVal : Attribute Msg
 onClickXVal =
-    Html.Events.on "click" (Decode.map SetSeekLocation (Decode.field "clientX" Decode.float))
+    Html.Events.on "click"
+        (Decode.map
+            SetSeekLocation
+            (Decode.field "clientX" Decode.float)
+        )
 
 
 onHover : Attribute Msg
 onHover =
-    Html.Events.on "mouseover" (Decode.succeed HoveringAudio)
+    Html.Events.on
+        "mouseover"
+        (Decode.succeed HoveringAudio)
 
 
 onUnHover : Attribute Msg
 onUnHover =
-    Html.Events.on "mouseout" (Decode.succeed UnHoveringAudio)
+    Html.Events.on
+        "mouseout"
+        (Decode.succeed UnHoveringAudio)
 
 
 audioSlider : Float -> String -> Html Msg
@@ -824,9 +962,19 @@ viewTopMenu modelMdl playingState =
                 modelMdl
                 [ Menu.bottomRight, Menu.icon "keyboard_arrow_down" ]
                 [ (if playingState == SelectingStation then
-                    Menu.item [ Menu.onSelect BackToPlaying, padding, Menu.divider ] [ i "arrow_back", text "Back" ]
+                    Menu.item
+                        [ Menu.onSelect BackToPlaying
+                        , padding
+                        , Menu.divider
+                        ]
+                        [ i "arrow_back", text "Back" ]
                    else
-                    Menu.item [ Menu.onSelect BackToStations, padding, Menu.divider ] [ i "apps", text "Stations" ]
+                    Menu.item
+                        [ Menu.onSelect BackToStations
+                        , padding
+                        , Menu.divider
+                        ]
+                        [ i "apps", text "Stations" ]
                   )
                 , Menu.item
                     [ Menu.onSelect Logout, padding ]
@@ -876,7 +1024,13 @@ audioSelector modelAudioLevel modelAudioHover =
         ]
 
 
-viewTopBar : Float -> String -> Bool -> Material.Model -> PlayingState -> Html Msg
+viewTopBar :
+    Float
+    -> String
+    -> Bool
+    -> Material.Model
+    -> PlayingState
+    -> Html Msg
 viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState =
     div [ style [ ( "position", "relative" ) ] ]
         [ p
@@ -934,7 +1088,16 @@ viewProgressBar model =
                 [ div
                     [ style
                         [ ( "height", "5px" )
-                        , ( "width", ((toString (timePercentage fields.currentTime fields.songQueue)) ++ "%") )
+                        , ( "width"
+                          , ((toString
+                                (timePercentage
+                                    fields.currentTime
+                                    fields.songQueue
+                                )
+                             )
+                                ++ "%"
+                            )
+                          )
                         , ( "background-color", "white" )
                         , ( "border-top", "1px black solid" )
                         ]
@@ -972,7 +1135,12 @@ viewControls model stationId =
                             ( "", "" )
                           )
                         ]
-                    , if not fields.isPlaying && fields.playingState == SelectingStation then
+                    , if
+                        not
+                            fields.isPlaying
+                            && fields.playingState
+                            == SelectingStation
+                      then
                         onClick NoOp
                       else if fields.playingState == SelectingStation then
                         onClick BackToPlaying
@@ -1071,14 +1239,17 @@ viewSongInfo model =
                     ]
                 ]
                 [ img
-                    [ style [ ( "-webkit-user-select", "none" ), ( "height", "100%" ) ]
+                    [ style
+                        [ ( "-webkit-user-select", "none" )
+                        , ( "height", "100%" )
+                        ]
                     , src
                         (case (List.head fields.songQueue) of
                             Just song ->
                                 song.albumArt
 
                             Nothing ->
-                                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAOVBMVEX07/PJycnz8PHj4uLt6u318PPy8PHU1NTHycjc3dzQz9Dz7vLc2tvGxsbLy8vz8fTp5ebm5ubi4+L4IaaGAAACgElEQVR4nO3b226jMBRAUS7xCQm2If3/jx2bpsNVARVGcDx7PfSlUGXrGAiIZhkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP+SuR3JnJ2zwFRVfpSqumJhcVhfTCzOzllwaGF+3cJqt4sX+vt+/tKFz8LsJPK8euHeP3P5wr0fjcIT/S007eO3WqOisCndLy+CrmxUFJodhTpm+P8VOpdv/E6us9B5W7al9ckWOitNljWNPDYsXZWFrTGhsM7MlqNTYaF79F/ixK4mKiz0cYn+/L5ePRb1FVa2GWxgbHqF7jXaYvVIVF/YJl9Yrl34FRba4f1wisdhOJf2n1RkfC71djZShYVucDKV8QjDl50UZpjn5XuKIl+T80w7/wqgsjC38elbZmY5vpBbEjOMx1v5CvcW03lZmZ96lBZ2N4gzrg2DnQ5RbeGSKt5vTJduUoW222UyxJQKXdvtMzkSUyr00u1jZLRpSoX2p/CZaGE8k3ZMmWihr+v3XqNlmk7h4J7DDJdpKoWuuvcvk4wfPSZQ6Jy3r2Zw1zg6myZQ6G1bFDJ8PFUMz6a6C7vp1c18vzKNQhenZxY/9i2JwnCvvzC9b+aeQKGzHz7w8KGH1sJw+as/7NcvU62FYYl+KjT9RV9p4ecJRv3zVZWFIXDtNSm5O8WFYYmuTDBe9d+JGgs3TDB6JyosDJeJenWEWXxe3CWqKWyf7zdFnzbb+qqidNsreeurECl+bJpg1O0Tfqgo3PlnKDzPd6Hsd+1CX+537TfZw43ubvm1C49C4RmKAxZo74qFcsBJpidn5yzY+88yE2fnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAS9weVjTfmgUbdUgAAAABJRU5ErkJggg=="
+                                "fillerIMG.jpg"
                         )
                     , style [ ( "border", "1px black solid" ) ]
                     ]
@@ -1090,17 +1261,16 @@ viewSongInfo model =
                         ]
                     , class "songTitle"
                     ]
-                    [ text
-                        (case (List.head fields.songQueue) of
-                            Just song ->
-                                song.songTitle
+                    [ (case (List.head fields.songQueue) of
+                        Just song ->
+                            text song.songTitle
 
-                            Nothing ->
-                                if fields.currentStation == Nothing then
-                                    "Select a station to listen"
-                                else
-                                    "Loading..."
-                        )
+                        Nothing ->
+                            if fields.currentStation == Nothing then
+                                text "Select a station to listen"
+                            else
+                                Spinner.spinner [ Spinner.active True ]
+                      )
                     ]
                 , p
                     [ style
@@ -1262,8 +1432,16 @@ viewStationSelector model =
                     , ( "flex-direction", "column" )
                     ]
                 ]
-                [ viewTopBar fields.audioLevel (getCurrentStation model).name fields.audioHover model.mdl fields.playingState
-                , Grid.grid [ Options.css "width" "100%", Options.css "margin" "0px", Options.css "overflow-y" "auto" ]
+                [ viewTopBar fields.audioLevel
+                    (getCurrentStation model).name
+                    fields.audioHover
+                    model.mdl
+                    fields.playingState
+                , Grid.grid
+                    [ Options.css "width" "100%"
+                    , Options.css "margin" "0px"
+                    , Options.css "overflow-y" "auto"
+                    ]
                     (List.map
                         (\station ->
                             viewStation

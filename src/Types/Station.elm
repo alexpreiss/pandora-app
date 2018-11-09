@@ -33,10 +33,10 @@ stationDecoder =
             [ (Decode.field "art"
                 (decodeListLast
                     (Decode.field "url" Decode.string)
-                    "img/illfigurethisout"
+                    "fillerImg.jpg"
                 )
               )
-            , (Decode.succeed "img/illfigurethisout")
+            , (Decode.succeed "fillerIMG.jpg")
             ]
         )
 

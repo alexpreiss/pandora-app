@@ -32,10 +32,10 @@ var _user$project$Types_Station$stationDecoder = A4(
 				A2(
 					_user$project$Types_Station$decodeListLast,
 					A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
-					'img/illfigurethisout')),
+					'fillerImg.jpg')),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$core$Json_Decode$succeed('img/illfigurethisout'),
+				_0: _elm_lang$core$Json_Decode$succeed('fillerIMG.jpg'),
 				_1: {ctor: '[]'}
 			}
 		}));
