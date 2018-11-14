@@ -1,46 +1,54 @@
-'use strict'
-const electron = require('electron')
+import './css/globalStyle.css'
 
-const app = electron.app // this is our app
-const BrowserWindow = electron.BrowserWindow // This is a Module that creates windows
+import Elm from './Main.elm'
 
-let mainWindow // saves a global reference to mainWindow so it doesn't get garbage collected
-
-app.on('ready', createWindow) // called when electron has initialized
-
+  const app = Elm.Main.embed(
+    document.querySelector('div'),
+    localStorage.authToken || null
+  )
 
 
-// This will create our app window, no surprise there
-function createWindow () {
-  mainWindow = new BrowserWindow({
-    width: 650,
-    height: 550,
-    minWidth : 650,
-    minHeight: 550,
-  })
+// I dont think the elements have loaded at this point, but I still need to have
+// this function insdie this file, because I need to have the app constant
 
-  const cookie = {url: 'https://www.pandora.com', name: 'csrftoken', value: 'coolestToken'}
-  electron.session.defaultSession.cookies.set(cookie, (error) => {
-    if (error) console.error(error)
-  })
+function togglePause() {
+  const song = document.getElementById('songAudio')
+  if (song.paused) {
+    song.play()
+  }
+  else {
 
-  // display the index.html file
-  mainWindow.loadURL(`file://${ __dirname }/index.html`)
-
-
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
+    song.pause()
+  }
+}
+function replaySong() {
+  const song = document.getElementById('songAudio')
+  song.currentTime = 0
 }
 
-/* Mac Specific things */
+function seekTrack(newTime) {
+  const song = document.getElementById('songAudio')
+  song.currentTime = newTime
+}
 
-// when you close all the windows on a non-mac OS it quits the app
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') { app.quit() }
-})
+function setAudio(level) {
+  const song = document.getElementById('songAudio')
+  song.volume = level
+}
 
-// if there is no mainWindow it creates one (like when you click the dock icon)
-app.on('activate', () => {
-  if (mainWindow === null) { createWindow() }
-})
+function rememberMe(token) {
+   localStorage.setItem('authToken', token)}
+
+ function progressBarWidth() {
+  const progressBar = document.getElementById('progressBar')
+  app.ports.sendProgressBarWidth.send((progressBar.getBoundingClientRect()).width)
+}
+
+
+
+app.ports.getProgressBarWidth.subscribe ( progressBarWidth )
+app.ports.togglePause.subscribe( togglePause )
+app.ports.replaySong.subscribe( replaySong )
+app.ports.audioLevel.subscribe( setAudio )
+app.ports.rememberMe.subscribe( rememberMe )
+app.ports.sendNewTime.subscribe( seekTrack )

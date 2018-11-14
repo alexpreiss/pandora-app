@@ -1,54 +1,68 @@
-import './css/globalStyle.css'
+'use strict'
+const electron = require('electron')
 
-import Elm from './Main.elm'
-
-  const app = Elm.Main.embed(
-    document.querySelector('div'),
-    localStorage.authToken
-  )
+const app = electron.app // this is our app
+const globalShortcut = electron.globalShortcut
+const BrowserWindow = electron.BrowserWindow // This is a Module that creates windows
 
 
-// I dont think the elements have loaded at this point, but I still need to have
-// this function insdie this file, because I need to have the app constant
+let mainWindow // saves a global reference to mainWindow so it doesn't get garbage collected
 
-function togglePause() {
-  const song = document.getElementById('songAudio')
-  if (song.paused) {
-    song.play()
+app.on('ready', createWindow) // called when electron has initialized
+
+
+
+// This will create our app window, no surprise there
+function createWindow () {
+  mainWindow = new BrowserWindow({
+    width: 650,
+    height: 550,
+    minWidth : 650,
+    minHeight: 550,
+    title: 'Pandora',
+    icon: '~/Documents/GitHub/pandora-app/assets/icon.png'
+  })
+
+  const cookie = {url: 'https://www.pandora.com', name: 'csrftoken', value: 'coolestToken'}
+  electron.session.defaultSession.cookies.set(cookie, (error) => {
+    if (error) console.error(error)
+  })
+
+
+  // display the index.html file
+  mainWindow.loadURL(`file://${ __dirname }/index.html`)
+
+  var registered = globalShortcut.register('mediaplaypause', function () {
+    console.log('mediaplaypause pressed');
+  });
+  if (!registered) {
+    console.log('mediaplaypause registration failed');
+  } else {
+    console.log('mediaplaypause registration bound!');
   }
-  else {
 
-    song.pause()
+  var registered = globalShortcut.register('medianexttrack', function () {
+    console.log('medianexttrack pressed');
+  });
+  if (!registered) {
+    console.log('medianexttrack registration failed');
+  } else {
+    console.log('medianexttrack registration bound!');
   }
-}
-function replaySong() {
-  const song = document.getElementById('songAudio')
-  song.currentTime = 0
-}
 
-function seekTrack(newTime) {
-  const song = document.getElementById('songAudio')
-  song.currentTime = newTime
+  mainWindow.on('closed', function () {
+    mainWindow = null
+  })
 }
 
-function setAudio(level) {
-  const song = document.getElementById('songAudio')
-  song.volume = level
-}
+/* Mac Specific things */
 
-function rememberMe(token) {
-   localStorage.setItem('authToken', token)}
+// when you close all the windows on a non-mac OS it quits the app
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') { app.quit() }
+})
 
- function progressBarWidth() {
-  const progressBar = document.getElementById('progressBar')
-  app.ports.sendProgressBarWidth.send((progressBar.getBoundingClientRect()).width)
-}
-
-
-
-app.ports.getProgressBarWidth.subscribe ( progressBarWidth )
-app.ports.togglePause.subscribe( togglePause )
-app.ports.replaySong.subscribe( replaySong )
-app.ports.audioLevel.subscribe( setAudio )
-app.ports.rememberMe.subscribe( rememberMe )
-app.ports.sendNewTime.subscribe( seekTrack )
+// if there is no mainWindow it creates one (like when you click the dock icon)
+app.on('activate', () => {
+  if (mainWindow === null) { createWindow() }
+})

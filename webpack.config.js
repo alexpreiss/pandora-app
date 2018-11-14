@@ -15,7 +15,7 @@ module.exports = {
     }
   },
   entry: {
-    index: resolve('./src/index.js')
+    main: resolve('./src/main.js')
   },
   context: resolve('.'),
   output: { path: resolve('./build') },
@@ -39,10 +39,10 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       inject: true,
-      chunks: [ 'index' ],
+      chunks: [ 'main' ],
       filename: 'index.html',
       template: resolve('./src/template.html')
     }),
-    new CopyWebpackPlugin([ { from: 'src/main.js', to: 'main.js' }, "assets" ])
+    new CopyWebpackPlugin([ { from: 'src/index.js', to: 'index.js' }, "assets" ])
   ]
 }

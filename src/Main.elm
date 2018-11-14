@@ -20,7 +20,7 @@ import Types.Station as Station exposing (Station)
 import Types.Fragment as Fragment exposing (Song)
 
 
-main : Program String Model Msg
+main : Program (Maybe String) Model Msg
 main =
     Html.programWithFlags
         { init = init
@@ -68,6 +68,8 @@ currentSong model =
 type PlayingState
     = Normal
     | SelectingStation
+    | SelectingPlaying
+    | PreviousSongs
 
 
 type State
@@ -142,36 +144,38 @@ type alias User =
     }
 
 
-init : String -> ( Model, Cmd Msg )
+init : Maybe String -> ( Model, Cmd Msg )
 init userToken =
-    if userToken == "" then
-        { state =
-            LoggingIn
-                { email = ""
-                , password = ""
-                , remember = False
-                }
-        , mdl = Material.model
-        }
-            ! []
-    else
-        { state =
-            Playing
-                { authToken = userToken
-                , seek = 0
-                , stations = []
-                , currentStation = Nothing
-                , songQueue = []
-                , currentTime = 0.0
-                , previousSongs = []
-                , audioLevel = 1
-                , audioHover = False
-                , isPlaying = False
-                , playingState = SelectingStation
-                }
-        , mdl = Material.model
-        }
-            ! [ Http.send GotStations (Station.get userToken) ]
+    case userToken of
+        Just string ->
+            { state =
+                Playing
+                    { authToken = string
+                    , seek = 0
+                    , stations = []
+                    , currentStation = Nothing
+                    , songQueue = []
+                    , currentTime = 0.0
+                    , previousSongs = []
+                    , audioLevel = 1
+                    , audioHover = False
+                    , isPlaying = False
+                    , playingState = SelectingStation
+                    }
+            , mdl = Material.model
+            }
+                ! [ Http.send GotStations (Station.get string) ]
+
+        Nothing ->
+            { state =
+                LoggingIn
+                    { email = ""
+                    , password = ""
+                    , remember = False
+                    }
+            , mdl = Material.model
+            }
+                ! []
 
 
 
@@ -241,6 +245,8 @@ type Msg
     | LoggedInRemember (Result Http.Error String)
     | SetSeekLocation Float
     | SetNewTime Float
+    | ToPreviousSongs
+    | PlayPreviousSong Song
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -521,6 +527,8 @@ update msg model =
                             Playing
                                 { fields
                                     | songQueue = (List.drop 1 fields.songQueue)
+                                    , previousSongs =
+                                        currentSong model :: fields.previousSongs
                                     , currentTime = 0
                                     , isPlaying = True
                                 }
@@ -583,6 +591,8 @@ update msg model =
                             Playing
                                 { fields
                                     | songQueue = (List.drop 1 fields.songQueue)
+                                    , previousSongs =
+                                        currentSong model :: fields.previousSongs
                                     , currentTime = 0
                                     , isPlaying = True
                                 }
@@ -850,6 +860,33 @@ update msg model =
                         }
                             ! [ sendNewTime newTime ]
 
+        ToPreviousSongs ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | playingState = PreviousSongs } } ! []
+
+        PlayPreviousSong song ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model
+                        | state =
+                            Playing
+                                { record
+                                    | songQueue = song :: record.songQueue
+                                    , currentTime = 0
+                                    , isPlaying = True
+                                    , previousSongs = List.filter (\songTest -> not (songTest.trackToken == song.trackToken)) record.previousSongs
+                                    , playingState = Normal
+                                }
+                    }
+                        ! []
+
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
@@ -942,8 +979,8 @@ audioSlider modelAudioLevel visibleVal =
         ]
 
 
-viewTopMenu : Material.Model -> PlayingState -> Html Msg
-viewTopMenu modelMdl playingState =
+viewTopMenu : Material.Model -> PlayingState -> List Song -> Html Msg
+viewTopMenu modelMdl playingState previousSongs =
     div
         [ style
             [ ( "margin-left", "auto" )
@@ -961,30 +998,88 @@ viewTopMenu modelMdl playingState =
                 [ 2 ]
                 modelMdl
                 [ Menu.bottomRight, Menu.icon "keyboard_arrow_down" ]
-                [ (if playingState == SelectingStation then
-                    Menu.item
-                        [ Menu.onSelect BackToPlaying
-                        , padding
-                        , Menu.divider
+                (case playingState of
+                    Normal ->
+                        [ Menu.item
+                            [ Menu.onSelect BackToStations
+                            , padding
+                            ]
+                            [ i "apps", text "Stations" ]
+                        , Menu.item
+                            [ Menu.onSelect ToPreviousSongs
+                            , (if previousSongs == [] then
+                                Menu.disabled
+                               else
+                                Options.disabled False
+                              )
+                            , padding
+                            , Menu.divider
+                            ]
+                            [ i "first_page", text "Previous Songs" ]
+                        , Menu.item
+                            [ Menu.onSelect Logout
+                            , padding
+                            ]
+                            [ i "clear", text "Log out" ]
                         ]
-                        [ i "arrow_back", text "Back" ]
-                   else
-                    Menu.item
-                        [ Menu.onSelect BackToStations
-                        , padding
-                        , Menu.divider
+
+                    SelectingPlaying ->
+                        [ Menu.item
+                            [ Menu.onSelect BackToPlaying
+                            , padding
+                            ]
+                            [ i "play_circle_outline", text "Player" ]
+                        , Menu.item
+                            [ Menu.onSelect ToPreviousSongs
+                            , padding
+                            , Menu.divider
+                            ]
+                            [ i "first_page", text "Previous Songs" ]
+                        , Menu.item
+                            [ Menu.onSelect Logout, padding ]
+                            [ i "clear", text "Log out" ]
                         ]
-                        [ i "apps", text "Stations" ]
-                  )
-                , Menu.item
-                    [ Menu.onSelect Logout, padding ]
-                    [ i "clear", text "Log out" ]
-                ]
+
+                    SelectingStation ->
+                        [ Menu.item
+                            [ Menu.onSelect BackToPlaying
+                            , padding
+                            , Menu.disabled
+                            ]
+                            [ i "play_circle_outline", text "Player" ]
+                        , Menu.item
+                            [ Menu.onSelect ToPreviousSongs
+                            , Menu.disabled
+                            , padding
+                            , Menu.divider
+                            ]
+                            [ i "first_page", text "Previous Songs" ]
+                        , Menu.item
+                            [ Menu.onSelect Logout, padding ]
+                            [ i "clear", text "Log out" ]
+                        ]
+
+                    PreviousSongs ->
+                        [ Menu.item
+                            [ Menu.onSelect BackToPlaying
+                            , padding
+                            ]
+                            [ i "play_circle_outline", text "Player" ]
+                        , Menu.item
+                            [ Menu.onSelect BackToStations
+                            , padding
+                            ]
+                            [ i "apps", text "Stations" ]
+                        , Menu.item
+                            [ Menu.onSelect Logout, padding ]
+                            [ i "clear", text "Log out" ]
+                        ]
+                )
         ]
 
 
-audioSelector : Float -> Bool -> Html Msg
-audioSelector modelAudioLevel modelAudioHover =
+audioSelector : Float -> Bool -> List Song -> Html Msg
+audioSelector modelAudioLevel modelAudioHover modelPreviousSongs =
     div
         [ onHover
         , onUnHover
@@ -1030,8 +1125,9 @@ viewTopBar :
     -> Bool
     -> Material.Model
     -> PlayingState
+    -> List Song
     -> Html Msg
-viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState =
+viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState modelPreviousSongs =
     div [ style [ ( "position", "relative" ) ] ]
         [ p
             [ style
@@ -1051,7 +1147,8 @@ viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl play
             ]
             [ audioSelector modelAudioLevel
                 modelAudioHover
-            , viewTopMenu modelMdl playingState
+                modelPreviousSongs
+            , viewTopMenu modelMdl playingState modelPreviousSongs
             ]
         ]
 
@@ -1242,6 +1339,7 @@ viewSongInfo model =
                     [ style
                         [ ( "-webkit-user-select", "none" )
                         , ( "height", "100%" )
+                        , ( "box-shadow", "0.25px 0.25px black" )
                         ]
                     , src
                         (case (List.head fields.songQueue) of
@@ -1406,6 +1504,7 @@ viewStation id name url =
                     [ ( "height", "150px" )
                     , ( "width", "150px" )
                     , ( "border", "1px solid black" )
+                    , ( "box-shadow", "0.25px 0.25px black" )
                     , ( "-webkit-user-select", "none" )
                     ]
                 , src url
@@ -1416,6 +1515,58 @@ viewStation id name url =
         ]
 
 
+viewPreviousSong : Song -> Grid.Cell Msg
+viewPreviousSong song =
+    Grid.cell
+        [ Grid.size Desktop 3
+        , Options.css "margin-bottom" "25px "
+        , Options.css "text-align" "center"
+        ]
+        [ div
+            [ style
+                [ ( "width", "150px" )
+                , ( "height", "175px" )
+                , ( "margin", "auto" )
+                ]
+            , onClick (PlayPreviousSong song)
+            ]
+            [ img
+                [ style
+                    [ ( "height", "150px" )
+                    , ( "width", "150px" )
+                    , ( "border", "1px solid black" )
+                    , ( "box-shadow", "0.25px 0.25px black" )
+                    , ( "-webkit-user-select", "none" )
+                    ]
+                , src song.albumArt
+                ]
+                []
+            , p [ style [ ( "text-align", "center" ) ] ] [ text song.songTitle ]
+            ]
+        ]
+
+
+viewPreviousSongs : Model -> Html Msg
+viewPreviousSongs model =
+    case model.state of
+        LoggingIn record ->
+            div [] []
+
+        Playing record ->
+            Grid.grid
+                [ Options.css "width" "100%"
+                , Options.css "margin" "0px"
+                , Options.css "overflow-y" "auto"
+                ]
+                (List.map
+                    (\song ->
+                        viewPreviousSong
+                            song
+                    )
+                    record.previousSongs
+                )
+
+
 viewStationSelector : Model -> Html Msg
 viewStationSelector model =
     case model.state of
@@ -1423,40 +1574,24 @@ viewStationSelector model =
             div [] []
 
         Playing fields ->
-            div
-                [ style
-                    [ ( "height", "100%" )
-                    , ( "width", "100%" )
-                    , ( "margin", "auto" )
-                    , ( "display", "flex" )
-                    , ( "flex-direction", "column" )
-                    ]
+            Grid.grid
+                [ Options.css "width" "100%"
+                , Options.css "margin" "0px"
+                , Options.css "overflow-y" "auto"
                 ]
-                [ viewTopBar fields.audioLevel
-                    (getCurrentStation model).name
-                    fields.audioHover
-                    model.mdl
-                    fields.playingState
-                , Grid.grid
-                    [ Options.css "width" "100%"
-                    , Options.css "margin" "0px"
-                    , Options.css "overflow-y" "auto"
-                    ]
-                    (List.map
-                        (\station ->
-                            viewStation
-                                station.id
-                                station.name
-                                station.art
-                        )
-                        fields.stations
+                (List.map
+                    (\station ->
+                        viewStation
+                            station.id
+                            station.name
+                            station.art
                     )
-                , viewControls model (getCurrentStation model).id
-                ]
+                    fields.stations
+                )
 
 
-viewPlayer : Model -> Html Msg
-viewPlayer model =
+viewPlayer : Model -> Html Msg -> Html Msg
+viewPlayer model content =
     case model.state of
         LoggingIn record ->
             div [] []
@@ -1482,7 +1617,8 @@ viewPlayer model =
                     record.audioHover
                     model.mdl
                     record.playingState
-                , viewSongInfo model
+                    record.previousSongs
+                , content
                 , viewControls model (getCurrentStation model).id
                 ]
 
@@ -1526,10 +1662,16 @@ view model =
                     []
                 , (case fields.playingState of
                     Normal ->
-                        viewPlayer model
+                        viewPlayer model (viewSongInfo model)
+
+                    SelectingPlaying ->
+                        viewPlayer model (viewStationSelector model)
 
                     SelectingStation ->
-                        viewStationSelector model
+                        viewPlayer model (viewStationSelector model)
+
+                    PreviousSongs ->
+                        viewPlayer model (viewPreviousSongs model)
                   )
                 ]
 

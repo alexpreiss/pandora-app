@@ -48,7 +48,11 @@ var _user$project$Main$viewSongInfo = function (model) {
 								_1: {
 									ctor: '::',
 									_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'box-shadow', _1: '0.25px 0.25px black'},
+										_1: {ctor: '[]'}
+									}
 								}
 							}),
 						_1: {
@@ -298,6 +302,8 @@ var _user$project$Main$User = F4(
 	function (a, b, c, d) {
 		return {email: a, authToken: b, audioLevel: c, lastStation: d};
 	});
+var _user$project$Main$PreviousSongs = {ctor: 'PreviousSongs'};
+var _user$project$Main$SelectingPlaying = {ctor: 'SelectingPlaying'};
 var _user$project$Main$SelectingStation = {ctor: 'SelectingStation'};
 var _user$project$Main$Normal = {ctor: 'Normal'};
 var _user$project$Main$Playing = function (a) {
@@ -306,6 +312,144 @@ var _user$project$Main$Playing = function (a) {
 var _user$project$Main$LoggingIn = function (a) {
 	return {ctor: 'LoggingIn', _0: a};
 };
+var _user$project$Main$PlayPreviousSong = function (a) {
+	return {ctor: 'PlayPreviousSong', _0: a};
+};
+var _user$project$Main$viewPreviousSong = function (song) {
+	return A2(
+		_debois$elm_mdl$Material_Grid$cell,
+		{
+			ctor: '::',
+			_0: A2(_debois$elm_mdl$Material_Grid$size, _debois$elm_mdl$Material_Grid$Desktop, 3),
+			_1: {
+				ctor: '::',
+				_0: A2(_debois$elm_mdl$Material_Options$css, 'margin-bottom', '25px '),
+				_1: {
+					ctor: '::',
+					_0: A2(_debois$elm_mdl$Material_Options$css, 'text-align', 'center'),
+					_1: {ctor: '[]'}
+				}
+			}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '175px'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(
+							_user$project$Main$PlayPreviousSong(song)),
+						_1: {ctor: '[]'}
+					}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$img,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'height', _1: '150px'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'box-shadow', _1: '0.25px 0.25px black'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(song.albumArt),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$p,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(song.songTitle),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Main$viewPreviousSongs = function (model) {
+	var _p12 = model.state;
+	if (_p12.ctor === 'LoggingIn') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'});
+	} else {
+		return A2(
+			_debois$elm_mdl$Material_Grid$grid,
+			{
+				ctor: '::',
+				_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
+				_1: {
+					ctor: '::',
+					_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '0px'),
+					_1: {
+						ctor: '::',
+						_0: A2(_debois$elm_mdl$Material_Options$css, 'overflow-y', 'auto'),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (song) {
+					return _user$project$Main$viewPreviousSong(song);
+				},
+				_p12._0.previousSongs));
+	}
+};
+var _user$project$Main$ToPreviousSongs = {ctor: 'ToPreviousSongs'};
 var _user$project$Main$SetNewTime = function (a) {
 	return {ctor: 'SetNewTime', _0: a};
 };
@@ -320,14 +464,14 @@ var _user$project$Main$onClickXVal = A2(
 		_user$project$Main$SetSeekLocation,
 		A2(_elm_lang$core$Json_Decode$field, 'clientX', _elm_lang$core$Json_Decode$float)));
 var _user$project$Main$viewProgressBar = function (model) {
-	var _p12 = model.state;
-	if (_p12.ctor === 'LoggingIn') {
+	var _p13 = model.state;
+	if (_p13.ctor === 'LoggingIn') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '[]'},
 			{ctor: '[]'});
 	} else {
-		var _p13 = _p12._0;
+		var _p14 = _p13._0;
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -374,7 +518,7 @@ var _user$project$Main$viewProgressBar = function (model) {
 										_1: A2(
 											_elm_lang$core$Basics_ops['++'],
 											_elm_lang$core$Basics$toString(
-												A2(_user$project$Main$timePercentage, _p13.currentTime, _p13.songQueue)),
+												A2(_user$project$Main$timePercentage, _p14.currentTime, _p14.songQueue)),
 											'%')
 									},
 									_1: {
@@ -410,8 +554,8 @@ var _user$project$Main$Mdl = function (a) {
 	return {ctor: 'Mdl', _0: a};
 };
 var _user$project$Main$BackToStations = {ctor: 'BackToStations'};
-var _user$project$Main$viewTopMenu = F2(
-	function (modelMdl, playingState) {
+var _user$project$Main$viewTopMenu = F3(
+	function (modelMdl, playingState, previousSongs) {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -460,80 +604,321 @@ var _user$project$Main$viewTopMenu = F2(
 								_1: {ctor: '[]'}
 							}
 						},
-						{
-							ctor: '::',
-							_0: _elm_lang$core$Native_Utils.eq(playingState, _user$project$Main$SelectingStation) ? A2(
-								_debois$elm_mdl$Material_Menu$item,
-								{
-									ctor: '::',
-									_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToPlaying),
-									_1: {
+						function () {
+							var _p15 = playingState;
+							switch (_p15.ctor) {
+								case 'Normal':
+									return {
 										ctor: '::',
-										_0: padding,
+										_0: A2(
+											_debois$elm_mdl$Material_Menu$item,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToStations),
+												_1: {
+													ctor: '::',
+													_0: padding,
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: i('apps'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Stations'),
+													_1: {ctor: '[]'}
+												}
+											}),
 										_1: {
 											ctor: '::',
-											_0: _debois$elm_mdl$Material_Menu$divider,
-											_1: {ctor: '[]'}
+											_0: A2(
+												_debois$elm_mdl$Material_Menu$item,
+												{
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$ToPreviousSongs),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$core$Native_Utils.eq(
+															previousSongs,
+															{ctor: '[]'}) ? _debois$elm_mdl$Material_Menu$disabled : _debois$elm_mdl$Material_Options$disabled(false),
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {
+																ctor: '::',
+																_0: _debois$elm_mdl$Material_Menu$divider,
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												},
+												{
+													ctor: '::',
+													_0: i('first_page'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Previous Songs'),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Menu$item,
+													{
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {ctor: '[]'}
+														}
+													},
+													{
+														ctor: '::',
+														_0: i('clear'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Log out'),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
-									}
-								},
-								{
-									ctor: '::',
-									_0: i('arrow_back'),
-									_1: {
+									};
+								case 'SelectingPlaying':
+									return {
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Back'),
-										_1: {ctor: '[]'}
-									}
-								}) : A2(
-								_debois$elm_mdl$Material_Menu$item,
-								{
-									ctor: '::',
-									_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToStations),
-									_1: {
-										ctor: '::',
-										_0: padding,
+										_0: A2(
+											_debois$elm_mdl$Material_Menu$item,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToPlaying),
+												_1: {
+													ctor: '::',
+													_0: padding,
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: i('play_circle_outline'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Player'),
+													_1: {ctor: '[]'}
+												}
+											}),
 										_1: {
 											ctor: '::',
-											_0: _debois$elm_mdl$Material_Menu$divider,
-											_1: {ctor: '[]'}
+											_0: A2(
+												_debois$elm_mdl$Material_Menu$item,
+												{
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$ToPreviousSongs),
+													_1: {
+														ctor: '::',
+														_0: padding,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Menu$divider,
+															_1: {ctor: '[]'}
+														}
+													}
+												},
+												{
+													ctor: '::',
+													_0: i('first_page'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Previous Songs'),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Menu$item,
+													{
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {ctor: '[]'}
+														}
+													},
+													{
+														ctor: '::',
+														_0: i('clear'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Log out'),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
-									}
-								},
-								{
-									ctor: '::',
-									_0: i('apps'),
-									_1: {
+									};
+								case 'SelectingStation':
+									return {
 										ctor: '::',
-										_0: _elm_lang$html$Html$text('Stations'),
-										_1: {ctor: '[]'}
-									}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_debois$elm_mdl$Material_Menu$item,
-									{
-										ctor: '::',
-										_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+										_0: A2(
+											_debois$elm_mdl$Material_Menu$item,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToPlaying),
+												_1: {
+													ctor: '::',
+													_0: padding,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$disabled,
+														_1: {ctor: '[]'}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: i('play_circle_outline'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Player'),
+													_1: {ctor: '[]'}
+												}
+											}),
 										_1: {
 											ctor: '::',
-											_0: padding,
-											_1: {ctor: '[]'}
+											_0: A2(
+												_debois$elm_mdl$Material_Menu$item,
+												{
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$ToPreviousSongs),
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$disabled,
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {
+																ctor: '::',
+																_0: _debois$elm_mdl$Material_Menu$divider,
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												},
+												{
+													ctor: '::',
+													_0: i('first_page'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Previous Songs'),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Menu$item,
+													{
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {ctor: '[]'}
+														}
+													},
+													{
+														ctor: '::',
+														_0: i('clear'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Log out'),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
-									},
-									{
+									};
+								default:
+									return {
 										ctor: '::',
-										_0: i('clear'),
+										_0: A2(
+											_debois$elm_mdl$Material_Menu$item,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToPlaying),
+												_1: {
+													ctor: '::',
+													_0: padding,
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: i('play_circle_outline'),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html$text('Player'),
+													_1: {ctor: '[]'}
+												}
+											}),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html$text('Log out'),
-											_1: {ctor: '[]'}
+											_0: A2(
+												_debois$elm_mdl$Material_Menu$item,
+												{
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$BackToStations),
+													_1: {
+														ctor: '::',
+														_0: padding,
+														_1: {ctor: '[]'}
+													}
+												},
+												{
+													ctor: '::',
+													_0: i('apps'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html$text('Stations'),
+														_1: {ctor: '[]'}
+													}
+												}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_debois$elm_mdl$Material_Menu$item,
+													{
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Menu$onSelect(_user$project$Main$Logout),
+														_1: {
+															ctor: '::',
+															_0: padding,
+															_1: {ctor: '[]'}
+														}
+													},
+													{
+														ctor: '::',
+														_0: i('clear'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html$text('Log out'),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}
 										}
-									}),
-								_1: {ctor: '[]'}
+									};
 							}
-						});
+						}());
 				}(),
 				_1: {ctor: '[]'}
 			});
@@ -603,8 +988,8 @@ var _user$project$Main$audioSlider = F2(
 				}
 			});
 	});
-var _user$project$Main$audioSelector = F2(
-	function (modelAudioLevel, modelAudioHover) {
+var _user$project$Main$audioSelector = F3(
+	function (modelAudioLevel, modelAudioHover, modelPreviousSongs) {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -680,8 +1065,8 @@ var _user$project$Main$audioSelector = F2(
 				}
 			});
 	});
-var _user$project$Main$viewTopBar = F5(
-	function (modelAudioLevel, modelCurrentStationName, modelAudioHover, modelMdl, playingState) {
+var _user$project$Main$viewTopBar = F6(
+	function (modelAudioLevel, modelCurrentStationName, modelAudioHover, modelMdl, playingState, modelPreviousSongs) {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -749,10 +1134,10 @@ var _user$project$Main$viewTopBar = F5(
 						},
 						{
 							ctor: '::',
-							_0: A2(_user$project$Main$audioSelector, modelAudioLevel, modelAudioHover),
+							_0: A3(_user$project$Main$audioSelector, modelAudioLevel, modelAudioHover, modelPreviousSongs),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Main$viewTopMenu, modelMdl, playingState),
+								_0: A3(_user$project$Main$viewTopMenu, modelMdl, playingState, modelPreviousSongs),
 								_1: {ctor: '[]'}
 							}
 						}),
@@ -774,8 +1159,8 @@ var _user$project$Main$SetCurrentTime = function (a) {
 	return {ctor: 'SetCurrentTime', _0: a};
 };
 var _user$project$Main$subscriptions = function (model) {
-	var _p14 = model.state;
-	if (_p14.ctor === 'LoggingIn') {
+	var _p16 = model.state;
+	if (_p16.ctor === 'LoggingIn') {
 		return _elm_lang$core$Platform_Sub$batch(
 			{
 				ctor: '::',
@@ -786,7 +1171,7 @@ var _user$project$Main$subscriptions = function (model) {
 		return _elm_lang$core$Platform_Sub$batch(
 			{
 				ctor: '::',
-				_0: _p14._0.isPlaying ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$SetCurrentTime) : _elm_lang$core$Platform_Sub$none,
+				_0: _p16._0.isPlaying ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$Main$SetCurrentTime) : _elm_lang$core$Platform_Sub$none,
 				_1: {
 					ctor: '::',
 					_0: A2(_debois$elm_mdl$Material$subscriptions, _user$project$Main$Mdl, model),
@@ -804,14 +1189,14 @@ var _user$project$Main$SkipSong = function (a) {
 };
 var _user$project$Main$viewControls = F2(
 	function (model, stationId) {
-		var _p15 = model.state;
-		if (_p15.ctor === 'LoggingIn') {
+		var _p17 = model.state;
+		if (_p17.ctor === 'LoggingIn') {
 			return A2(
 				_elm_lang$html$Html$div,
 				{ctor: '[]'},
 				{ctor: '[]'});
 		} else {
-			var _p16 = _p15._0;
+			var _p18 = _p17._0;
 			return A2(
 				_elm_lang$html$Html$div,
 				{
@@ -862,7 +1247,7 @@ var _user$project$Main$viewControls = F2(
 															_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
 															_1: {
 																ctor: '::',
-																_0: _elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation) ? {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'} : {ctor: '_Tuple2', _0: '', _1: ''},
+																_0: _elm_lang$core$Native_Utils.eq(_p18.playingState, _user$project$Main$SelectingStation) ? {ctor: '_Tuple2', _0: 'cursor', _1: 'pointer'} : {ctor: '_Tuple2', _0: '', _1: ''},
 																_1: {ctor: '[]'}
 															}
 														}
@@ -873,7 +1258,7 @@ var _user$project$Main$viewControls = F2(
 									}),
 								_1: {
 									ctor: '::',
-									_0: ((!_p16.isPlaying) && _elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation)) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : (_elm_lang$core$Native_Utils.eq(_p16.playingState, _user$project$Main$SelectingStation) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$BackToPlaying) : _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp)),
+									_0: ((!_p18.isPlaying) && _elm_lang$core$Native_Utils.eq(_p18.playingState, _user$project$Main$SelectingStation)) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : (_elm_lang$core$Native_Utils.eq(_p18.playingState, _user$project$Main$SelectingStation) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$BackToPlaying) : _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp)),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -887,7 +1272,7 @@ var _user$project$Main$viewControls = F2(
 										_1: {
 											ctor: '::',
 											_0: _elm_lang$core$Native_Utils.eq(
-												_p16.songQueue,
+												_p18.songQueue,
 												{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(
 												_user$project$Main$SendThumbsDown(stationId)),
 											_1: {
@@ -917,7 +1302,7 @@ var _user$project$Main$viewControls = F2(
 											_1: {
 												ctor: '::',
 												_0: _elm_lang$core$Native_Utils.eq(
-													_p16.songQueue,
+													_p18.songQueue,
 													{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(_user$project$Main$ReplaySong),
 												_1: {
 													ctor: '::',
@@ -950,7 +1335,7 @@ var _user$project$Main$viewControls = F2(
 												_1: {
 													ctor: '::',
 													_0: _elm_lang$core$Native_Utils.eq(
-														_p16.songQueue,
+														_p18.songQueue,
 														{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(_user$project$Main$TogglePause),
 													_1: {
 														ctor: '::',
@@ -975,7 +1360,7 @@ var _user$project$Main$viewControls = F2(
 											{
 												ctor: '::',
 												_0: _elm_lang$html$Html$text(
-													_p16.isPlaying ? 'pause' : 'play_arrow'),
+													_p18.isPlaying ? 'pause' : 'play_arrow'),
 												_1: {ctor: '[]'}
 											}),
 										_1: {
@@ -1000,7 +1385,7 @@ var _user$project$Main$viewControls = F2(
 														_1: {
 															ctor: '::',
 															_0: _elm_lang$core$Native_Utils.eq(
-																_p16.songQueue,
+																_p18.songQueue,
 																{ctor: '[]'}) ? _elm_lang$html$Html_Events$onClick(_user$project$Main$NoOp) : _elm_lang$html$Html_Events$onClick(
 																_user$project$Main$SkipSong(stationId)),
 															_1: {ctor: '[]'}
@@ -1060,74 +1445,76 @@ var _user$project$Main$viewControls = F2(
 				});
 		}
 	});
-var _user$project$Main$viewPlayer = function (model) {
-	var _p17 = model.state;
-	if (_p17.ctor === 'LoggingIn') {
-		return A2(
-			_elm_lang$html$Html$div,
-			{ctor: '[]'},
-			{ctor: '[]'});
-	} else {
-		var _p19 = _p17._0;
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-						_1: {
+var _user$project$Main$viewPlayer = F2(
+	function (model, content) {
+		var _p19 = model.state;
+		if (_p19.ctor === 'LoggingIn') {
+			return A2(
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
+				{ctor: '[]'});
+		} else {
+			var _p21 = _p19._0;
+			return A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
 							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
 								_1: {
 									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
 									_1: {
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-										_1: {ctor: '[]'}
+										_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
+											_1: {ctor: '[]'}
+										}
 									}
 								}
 							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A5(
-					_user$project$Main$viewTopBar,
-					_p19.audioLevel,
-					function () {
-						var _p18 = _p19.currentStation;
-						if (_p18.ctor === 'Just') {
-							return _p18._0.name;
-						} else {
-							return '';
-						}
-					}(),
-					_p19.audioHover,
-					model.mdl,
-					_p19.playingState),
-				_1: {
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
 					ctor: '::',
-					_0: _user$project$Main$viewSongInfo(model),
+					_0: A6(
+						_user$project$Main$viewTopBar,
+						_p21.audioLevel,
+						function () {
+							var _p20 = _p21.currentStation;
+							if (_p20.ctor === 'Just') {
+								return _p20._0.name;
+							} else {
+								return '';
+							}
+						}(),
+						_p21.audioHover,
+						model.mdl,
+						_p21.playingState,
+						_p21.previousSongs),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_user$project$Main$viewControls,
-							model,
-							_user$project$Main$getCurrentStation(model).id),
-						_1: {ctor: '[]'}
+						_0: content,
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_user$project$Main$viewControls,
+								model,
+								_user$project$Main$getCurrentStation(model).id),
+							_1: {ctor: '[]'}
+						}
 					}
-				}
-			});
-	}
-};
+				});
+		}
+	});
 var _user$project$Main$SongEnded = function (a) {
 	return {ctor: 'SongEnded', _0: a};
 };
@@ -1213,8 +1600,12 @@ var _user$project$Main$viewStation = F3(
 												_0: {ctor: '_Tuple2', _0: 'border', _1: '1px solid black'},
 												_1: {
 													ctor: '::',
-													_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
-													_1: {ctor: '[]'}
+													_0: {ctor: '_Tuple2', _0: 'box-shadow', _1: '0.25px 0.25px black'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: '-webkit-user-select', _1: 'none'},
+														_1: {ctor: '[]'}
+													}
 												}
 											}
 										}
@@ -1252,135 +1643,91 @@ var _user$project$Main$viewStation = F3(
 			});
 	});
 var _user$project$Main$viewStationSelector = function (model) {
-	var _p20 = model.state;
-	if (_p20.ctor === 'LoggingIn') {
+	var _p22 = model.state;
+	if (_p22.ctor === 'LoggingIn') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '[]'},
 			{ctor: '[]'});
 	} else {
-		var _p21 = _p20._0;
 		return A2(
-			_elm_lang$html$Html$div,
+			_debois$elm_mdl$Material_Grid$grid,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$style(
-					{
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
-							_1: {
-								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-								_1: {
-									ctor: '::',
-									_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-									_1: {
-										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A5(
-					_user$project$Main$viewTopBar,
-					_p21.audioLevel,
-					_user$project$Main$getCurrentStation(model).name,
-					_p21.audioHover,
-					model.mdl,
-					_p21.playingState),
+				_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
 				_1: {
 					ctor: '::',
-					_0: A2(
-						_debois$elm_mdl$Material_Grid$grid,
-						{
-							ctor: '::',
-							_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '100%'),
-							_1: {
-								ctor: '::',
-								_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '0px'),
-								_1: {
-									ctor: '::',
-									_0: A2(_debois$elm_mdl$Material_Options$css, 'overflow-y', 'auto'),
-									_1: {ctor: '[]'}
-								}
-							}
-						},
-						A2(
-							_elm_lang$core$List$map,
-							function (station) {
-								return A3(_user$project$Main$viewStation, station.id, station.name, station.art);
-							},
-							_p21.stations)),
+					_0: A2(_debois$elm_mdl$Material_Options$css, 'margin', '0px'),
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_user$project$Main$viewControls,
-							model,
-							_user$project$Main$getCurrentStation(model).id),
+						_0: A2(_debois$elm_mdl$Material_Options$css, 'overflow-y', 'auto'),
 						_1: {ctor: '[]'}
 					}
 				}
-			});
+			},
+			A2(
+				_elm_lang$core$List$map,
+				function (station) {
+					return A3(_user$project$Main$viewStation, station.id, station.name, station.art);
+				},
+				_p22._0.stations));
 	}
 };
 var _user$project$Main$GotStations = function (a) {
 	return {ctor: 'GotStations', _0: a};
 };
 var _user$project$Main$init = function (userToken) {
-	return _elm_lang$core$Native_Utils.eq(userToken, '') ? A2(
-		_elm_lang$core$Platform_Cmd_ops['!'],
-		{
-			state: _user$project$Main$LoggingIn(
-				{email: '', password: '', remember: false}),
-			mdl: _debois$elm_mdl$Material$model
-		},
-		{ctor: '[]'}) : A2(
-		_elm_lang$core$Platform_Cmd_ops['!'],
-		{
-			state: _user$project$Main$Playing(
-				{
-					authToken: userToken,
-					seek: 0,
-					stations: {ctor: '[]'},
-					currentStation: _elm_lang$core$Maybe$Nothing,
-					songQueue: {ctor: '[]'},
-					currentTime: 0.0,
-					previousSongs: {ctor: '[]'},
-					audioLevel: 1,
-					audioHover: false,
-					isPlaying: false,
-					playingState: _user$project$Main$SelectingStation
-				}),
-			mdl: _debois$elm_mdl$Material$model
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$http$Http$send,
-				_user$project$Main$GotStations,
-				_user$project$Types_Station$get(userToken)),
-			_1: {ctor: '[]'}
-		});
+	var _p23 = userToken;
+	if (_p23.ctor === 'Just') {
+		var _p24 = _p23._0;
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			{
+				state: _user$project$Main$Playing(
+					{
+						authToken: _p24,
+						seek: 0,
+						stations: {ctor: '[]'},
+						currentStation: _elm_lang$core$Maybe$Nothing,
+						songQueue: {ctor: '[]'},
+						currentTime: 0.0,
+						previousSongs: {ctor: '[]'},
+						audioLevel: 1,
+						audioHover: false,
+						isPlaying: false,
+						playingState: _user$project$Main$SelectingStation
+					}),
+				mdl: _debois$elm_mdl$Material$model
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$http$Http$send,
+					_user$project$Main$GotStations,
+					_user$project$Types_Station$get(_p24)),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$core$Platform_Cmd_ops['!'],
+			{
+				state: _user$project$Main$LoggingIn(
+					{email: '', password: '', remember: false}),
+				mdl: _debois$elm_mdl$Material$model
+			},
+			{ctor: '[]'});
+	}
 };
 var _user$project$Main$LoggedIn = function (a) {
 	return {ctor: 'LoggedIn', _0: a};
 };
 var _user$project$Main$update = F2(
 	function (msg, model) {
-		var _p22 = msg;
-		switch (_p22.ctor) {
+		var _p25 = msg;
+		switch (_p25.ctor) {
 			case 'InputEmail':
-				var _p23 = model.state;
-				if (_p23.ctor === 'LoggingIn') {
+				var _p26 = model.state;
+				if (_p26.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1388,8 +1735,8 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$LoggingIn(
 									_elm_lang$core$Native_Utils.update(
-										_p23._0,
-										{email: _p22._0}))
+										_p26._0,
+										{email: _p25._0}))
 							}),
 						{ctor: '[]'});
 				} else {
@@ -1399,8 +1746,8 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'InputPassword':
-				var _p24 = model.state;
-				if (_p24.ctor === 'LoggingIn') {
+				var _p27 = model.state;
+				if (_p27.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1408,8 +1755,8 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$LoggingIn(
 									_elm_lang$core$Native_Utils.update(
-										_p24._0,
-										{password: _p22._0}))
+										_p27._0,
+										{password: _p25._0}))
 							}),
 						{ctor: '[]'});
 				} else {
@@ -1419,9 +1766,9 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'Login':
-				var _p25 = model.state;
-				if (_p25.ctor === 'LoggingIn') {
-					var _p26 = _p25._0;
+				var _p28 = model.state;
+				if (_p28.ctor === 'LoggingIn') {
+					var _p29 = _p28._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
@@ -1431,7 +1778,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoggedIn,
 								_user$project$Main$login(
-									{email: _p26.email, password: _p26.password})),
+									{email: _p29.email, password: _p29.password})),
 							_1: {ctor: '[]'}
 						});
 				} else {
@@ -1441,9 +1788,9 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'LoginRemember':
-				var _p27 = model.state;
-				if (_p27.ctor === 'LoggingIn') {
-					var _p28 = _p27._0;
+				var _p30 = model.state;
+				if (_p30.ctor === 'LoggingIn') {
+					var _p31 = _p30._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
@@ -1453,7 +1800,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoggedInRemember,
 								_user$project$Main$login(
-									{email: _p28.email, password: _p28.password})),
+									{email: _p31.email, password: _p31.password})),
 							_1: {ctor: '[]'}
 						});
 				} else {
@@ -1463,60 +1810,9 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'LoggedInRemember':
-				var _p29 = model.state;
-				if (_p29.ctor === 'LoggingIn') {
-					var _p30 = _p22._0;
-					if (_p30.ctor === 'Ok') {
-						var _p31 = _p30._0;
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							_elm_lang$core$Native_Utils.update(
-								model,
-								{
-									state: _user$project$Main$Playing(
-										{
-											authToken: _p31,
-											stations: {ctor: '[]'},
-											currentStation: _elm_lang$core$Maybe$Nothing,
-											songQueue: {ctor: '[]'},
-											currentTime: 0.0,
-											previousSongs: {ctor: '[]'},
-											audioLevel: 1.0,
-											audioHover: false,
-											isPlaying: false,
-											playingState: _user$project$Main$SelectingStation,
-											seek: 0
-										})
-								}),
-							{
-								ctor: '::',
-								_0: A2(
-									_elm_lang$http$Http$send,
-									_user$project$Main$GotStations,
-									_user$project$Types_Station$get(_p31)),
-								_1: {
-									ctor: '::',
-									_0: _user$project$Main$rememberMe(_p31),
-									_1: {ctor: '[]'}
-								}
-							});
-					} else {
-						var log = A2(_elm_lang$core$Debug$log, 'Error logging in', 'This broke');
-						return A2(
-							_elm_lang$core$Platform_Cmd_ops['!'],
-							model,
-							{ctor: '[]'});
-					}
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				}
-			case 'LoggedIn':
 				var _p32 = model.state;
 				if (_p32.ctor === 'LoggingIn') {
-					var _p33 = _p22._0;
+					var _p33 = _p25._0;
 					if (_p33.ctor === 'Ok') {
 						var _p34 = _p33._0;
 						return A2(
@@ -1545,6 +1841,57 @@ var _user$project$Main$update = F2(
 									_elm_lang$http$Http$send,
 									_user$project$Main$GotStations,
 									_user$project$Types_Station$get(_p34)),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Main$rememberMe(_p34),
+									_1: {ctor: '[]'}
+								}
+							});
+					} else {
+						var log = A2(_elm_lang$core$Debug$log, 'Error logging in', 'This broke');
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+					}
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				}
+			case 'LoggedIn':
+				var _p35 = model.state;
+				if (_p35.ctor === 'LoggingIn') {
+					var _p36 = _p25._0;
+					if (_p36.ctor === 'Ok') {
+						var _p37 = _p36._0;
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{
+									state: _user$project$Main$Playing(
+										{
+											authToken: _p37,
+											stations: {ctor: '[]'},
+											currentStation: _elm_lang$core$Maybe$Nothing,
+											songQueue: {ctor: '[]'},
+											currentTime: 0.0,
+											previousSongs: {ctor: '[]'},
+											audioLevel: 1.0,
+											audioHover: false,
+											isPlaying: false,
+											playingState: _user$project$Main$SelectingStation,
+											seek: 0
+										})
+								}),
+							{
+								ctor: '::',
+								_0: A2(
+									_elm_lang$http$Http$send,
+									_user$project$Main$GotStations,
+									_user$project$Types_Station$get(_p37)),
 								_1: {ctor: '[]'}
 							});
 					} else {
@@ -1561,15 +1908,15 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'GotStations':
-				var _p35 = model.state;
-				if (_p35.ctor === 'LoggingIn') {
+				var _p38 = model.state;
+				if (_p38.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p36 = _p22._0;
-					if (_p36.ctor === 'Ok') {
+					var _p39 = _p25._0;
+					if (_p39.ctor === 'Ok') {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
@@ -1577,12 +1924,12 @@ var _user$project$Main$update = F2(
 								{
 									state: _user$project$Main$Playing(
 										_elm_lang$core$Native_Utils.update(
-											_p35._0,
-											{stations: _p36._0}))
+											_p38._0,
+											{stations: _p39._0}))
 								}),
 							{ctor: '[]'});
 					} else {
-						var log = A2(_elm_lang$core$Debug$log, 'Error fetching stations', _p36._0);
+						var log = A2(_elm_lang$core$Debug$log, 'Error fetching stations', _p39._0);
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							model,
@@ -1590,15 +1937,15 @@ var _user$project$Main$update = F2(
 					}
 				}
 			case 'StartStation':
-				var _p39 = _p22._0;
-				var _p37 = model.state;
-				if (_p37.ctor === 'LoggingIn') {
+				var _p42 = _p25._0;
+				var _p40 = model.state;
+				if (_p40.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p38 = _p37._0;
+					var _p41 = _p40._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1606,10 +1953,10 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p38,
+										_p41,
 										{
 											currentStation: _elm_lang$core$Maybe$Just(
-												{id: _p39, name: _p22._1, art: _p22._2}),
+												{id: _p42, name: _p25._1, art: _p25._2}),
 											songQueue: {ctor: '[]'},
 											playingState: _user$project$Main$Normal
 										}))
@@ -1619,13 +1966,13 @@ var _user$project$Main$update = F2(
 							_0: A2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$StartedStation,
-								A3(_user$project$Types_Fragment$getNext, _p39, _p38.authToken, true)),
+								A3(_user$project$Types_Fragment$getNext, _p42, _p41.authToken, true)),
 							_1: {ctor: '[]'}
 						});
 				}
 			case 'LoadNextSongs':
-				var _p40 = model.state;
-				if (_p40.ctor === 'LoggingIn') {
+				var _p43 = model.state;
+				if (_p43.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
@@ -1639,21 +1986,21 @@ var _user$project$Main$update = F2(
 							_0: A2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Types_Fragment$getNext, _p22._0, _p40._0.authToken, false)),
+								A3(_user$project$Types_Fragment$getNext, _p25._0, _p43._0.authToken, false)),
 							_1: {ctor: '[]'}
 						});
 				}
 			case 'StartedStation':
-				var _p41 = model.state;
-				if (_p41.ctor === 'LoggingIn') {
+				var _p44 = model.state;
+				if (_p44.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p43 = _p41._0;
-					var _p42 = _p22._0;
-					if (_p42.ctor === 'Ok') {
+					var _p46 = _p44._0;
+					var _p45 = _p25._0;
+					if (_p45.ctor === 'Ok') {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
@@ -1661,9 +2008,9 @@ var _user$project$Main$update = F2(
 								{
 									state: _user$project$Main$Playing(
 										_elm_lang$core$Native_Utils.update(
-											_p43,
+											_p46,
 											{
-												songQueue: A2(_elm_lang$core$List$append, _p43.songQueue, _p42._0),
+												songQueue: A2(_elm_lang$core$List$append, _p46.songQueue, _p45._0),
 												currentTime: 0,
 												isPlaying: true
 											}))
@@ -1678,16 +2025,16 @@ var _user$project$Main$update = F2(
 					}
 				}
 			case 'LoadedNextSongs':
-				var _p44 = model.state;
-				if (_p44.ctor === 'LoggingIn') {
+				var _p47 = model.state;
+				if (_p47.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p46 = _p44._0;
-					var _p45 = _p22._0;
-					if (_p45.ctor === 'Ok') {
+					var _p49 = _p47._0;
+					var _p48 = _p25._0;
+					if (_p48.ctor === 'Ok') {
 						return A2(
 							_elm_lang$core$Platform_Cmd_ops['!'],
 							_elm_lang$core$Native_Utils.update(
@@ -1695,9 +2042,9 @@ var _user$project$Main$update = F2(
 								{
 									state: _user$project$Main$Playing(
 										_elm_lang$core$Native_Utils.update(
-											_p46,
+											_p49,
 											{
-												songQueue: A2(_elm_lang$core$List$append, _p46.songQueue, _p45._0)
+												songQueue: A2(_elm_lang$core$List$append, _p49.songQueue, _p48._0)
 											}))
 								}),
 							{ctor: '[]'});
@@ -1710,14 +2057,14 @@ var _user$project$Main$update = F2(
 					}
 				}
 			case 'SongEnded':
-				var _p47 = model.state;
-				if (_p47.ctor === 'LoggingIn') {
+				var _p50 = model.state;
+				if (_p50.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p48 = _p47._0;
+					var _p51 = _p50._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1725,13 +2072,13 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p48,
+										_p51,
 										{
-											songQueue: A2(_elm_lang$core$List$drop, 1, _p48.songQueue),
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p51.songQueue),
 											previousSongs: {
 												ctor: '::',
 												_0: _user$project$Main$currentSong(model),
-												_1: _p48.previousSongs
+												_1: _p51.previousSongs
 											},
 											currentTime: 0,
 											isPlaying: true
@@ -1740,23 +2087,23 @@ var _user$project$Main$update = F2(
 						{
 							ctor: '::',
 							_0: _elm_lang$core$Native_Utils.eq(
-								_elm_lang$core$List$length(_p48.songQueue),
+								_elm_lang$core$List$length(_p51.songQueue),
 								1) ? A2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Types_Fragment$getNext, _p22._0, _p48.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+								A3(_user$project$Types_Fragment$getNext, _p25._0, _p51.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
 							_1: {ctor: '[]'}
 						});
 				}
 			case 'SkipSong':
-				var _p49 = model.state;
-				if (_p49.ctor === 'LoggingIn') {
+				var _p52 = model.state;
+				if (_p52.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p50 = _p49._0;
+					var _p53 = _p52._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1764,9 +2111,14 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p50,
+										_p53,
 										{
-											songQueue: A2(_elm_lang$core$List$drop, 1, _p50.songQueue),
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p53.songQueue),
+											previousSongs: {
+												ctor: '::',
+												_0: _user$project$Main$currentSong(model),
+												_1: _p53.previousSongs
+											},
 											currentTime: 0,
 											isPlaying: true
 										}))
@@ -1774,23 +2126,23 @@ var _user$project$Main$update = F2(
 						{
 							ctor: '::',
 							_0: _elm_lang$core$Native_Utils.eq(
-								_elm_lang$core$List$length(_p50.songQueue),
+								_elm_lang$core$List$length(_p53.songQueue),
 								1) ? A2(
 								_elm_lang$http$Http$send,
 								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Types_Fragment$getNext, _p22._0, _p50.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+								A3(_user$project$Types_Fragment$getNext, _p25._0, _p53.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
 							_1: {ctor: '[]'}
 						});
 				}
 			case 'SetCurrentTime':
-				var _p51 = model.state;
-				if (_p51.ctor === 'LoggingIn') {
+				var _p54 = model.state;
+				if (_p54.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p52 = _p51._0;
+					var _p55 = _p54._0;
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -1798,63 +2150,12 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p52,
-										{currentTime: _p52.currentTime + 1}))
+										_p55,
+										{currentTime: _p55.currentTime + 1}))
 							}),
 						{ctor: '[]'});
 				}
 			case 'TogglePause':
-				var _p53 = model.state;
-				if (_p53.ctor === 'LoggingIn') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				} else {
-					var _p54 = _p53._0;
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: _user$project$Main$Playing(
-									_elm_lang$core$Native_Utils.update(
-										_p54,
-										{isPlaying: !_p54.isPlaying}))
-							}),
-						{
-							ctor: '::',
-							_0: _user$project$Main$togglePause(
-								{ctor: '_Tuple0'}),
-							_1: {ctor: '[]'}
-						});
-				}
-			case 'ReplaySong':
-				var _p55 = model.state;
-				if (_p55.ctor === 'LoggingIn') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: _user$project$Main$Playing(
-									_elm_lang$core$Native_Utils.update(
-										_p55._0,
-										{currentTime: 0, isPlaying: true}))
-							}),
-						{
-							ctor: '::',
-							_0: _user$project$Main$replaySong(
-								{ctor: '_Tuple0'}),
-							_1: {ctor: '[]'}
-						});
-				}
-			case 'SendThumbsDown':
 				var _p56 = model.state;
 				if (_p56.ctor === 'LoggingIn') {
 					return A2(
@@ -1871,8 +2172,64 @@ var _user$project$Main$update = F2(
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
 										_p57,
+										{isPlaying: !_p57.isPlaying}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$togglePause(
+								{ctor: '_Tuple0'}),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'ReplaySong':
+				var _p58 = model.state;
+				if (_p58.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p58._0,
+										{currentTime: 0, isPlaying: true}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$replaySong(
+								{ctor: '_Tuple0'}),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'SendThumbsDown':
+				var _p59 = model.state;
+				if (_p59.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p60 = _p59._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p60,
 										{
-											songQueue: A2(_elm_lang$core$List$drop, 1, _p57.songQueue),
+											songQueue: A2(_elm_lang$core$List$drop, 1, _p60.songQueue),
+											previousSongs: {
+												ctor: '::',
+												_0: _user$project$Main$currentSong(model),
+												_1: _p60.previousSongs
+											},
 											currentTime: 0,
 											isPlaying: true
 										}))
@@ -1884,37 +2241,37 @@ var _user$project$Main$update = F2(
 								_user$project$Main$SentFeedBack,
 								A3(
 									_user$project$Types_Feedback$send,
-									_p57.authToken,
+									_p60.authToken,
 									_user$project$Main$currentSong(model).trackToken,
 									false)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$core$Native_Utils.eq(
-									_elm_lang$core$List$length(_p57.songQueue),
+									_elm_lang$core$List$length(_p60.songQueue),
 									1) ? A2(
 									_elm_lang$http$Http$send,
 									_user$project$Main$LoadedNextSongs,
-									A3(_user$project$Types_Fragment$getNext, _p22._0, _p57.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+									A3(_user$project$Types_Fragment$getNext, _p25._0, _p60.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
 								_1: {ctor: '[]'}
 							}
 						});
 				}
 			case 'RemoveThumbsUp':
-				var _p58 = model.state;
-				if (_p58.ctor === 'LoggingIn') {
+				var _p61 = model.state;
+				if (_p61.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p62 = _p58._0;
-					var song = _elm_lang$core$List$head(_p62.songQueue);
+					var _p65 = _p61._0;
+					var song = _elm_lang$core$List$head(_p65.songQueue);
 					var updatedSong = function () {
-						var _p59 = song;
-						if (_p59.ctor === 'Just') {
+						var _p62 = song;
+						if (_p62.ctor === 'Just') {
 							return _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
-									_p59._0,
+									_p62._0,
 									{rating: 0}));
 						} else {
 							return _elm_lang$core$Maybe$Nothing;
@@ -1925,18 +2282,18 @@ var _user$project$Main$update = F2(
 						{
 							state: _user$project$Main$Playing(
 								_elm_lang$core$Native_Utils.update(
-									_p62,
+									_p65,
 									{
 										songQueue: function () {
-											var _p60 = updatedSong;
-											if (_p60.ctor === 'Just') {
+											var _p63 = updatedSong;
+											if (_p63.ctor === 'Just') {
 												return {
 													ctor: '::',
-													_0: _p60._0,
-													_1: A2(_elm_lang$core$List$drop, 1, _p62.songQueue)
+													_0: _p63._0,
+													_1: A2(_elm_lang$core$List$drop, 1, _p65.songQueue)
 												};
 											} else {
-												return _p62.songQueue;
+												return _p65.songQueue;
 											}
 										}()
 									}))
@@ -1947,12 +2304,12 @@ var _user$project$Main$update = F2(
 						{
 							ctor: '::',
 							_0: function () {
-								var _p61 = _elm_lang$core$List$head(_p62.songQueue);
-								if (_p61.ctor === 'Just') {
+								var _p64 = _elm_lang$core$List$head(_p65.songQueue);
+								if (_p64.ctor === 'Just') {
 									return A2(
 										_elm_lang$http$Http$send,
 										_user$project$Main$RemovedFeedBack,
-										A2(_user$project$Types_Feedback$remove, _p62.authToken, _p61._0.trackToken));
+										A2(_user$project$Types_Feedback$remove, _p65.authToken, _p64._0.trackToken));
 								} else {
 									return _elm_lang$core$Platform_Cmd$none;
 								}
@@ -1961,21 +2318,21 @@ var _user$project$Main$update = F2(
 						});
 				}
 			case 'SendThumbsUp':
-				var _p63 = model.state;
-				if (_p63.ctor === 'LoggingIn') {
+				var _p66 = model.state;
+				if (_p66.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p67 = _p63._0;
-					var song = _elm_lang$core$List$head(_p67.songQueue);
+					var _p70 = _p66._0;
+					var song = _elm_lang$core$List$head(_p70.songQueue);
 					var updatedSong = function () {
-						var _p64 = song;
-						if (_p64.ctor === 'Just') {
+						var _p67 = song;
+						if (_p67.ctor === 'Just') {
 							return _elm_lang$core$Maybe$Just(
 								_elm_lang$core$Native_Utils.update(
-									_p64._0,
+									_p67._0,
 									{rating: 1}));
 						} else {
 							return _elm_lang$core$Maybe$Nothing;
@@ -1986,18 +2343,18 @@ var _user$project$Main$update = F2(
 						{
 							state: _user$project$Main$Playing(
 								_elm_lang$core$Native_Utils.update(
-									_p67,
+									_p70,
 									{
 										songQueue: function () {
-											var _p65 = updatedSong;
-											if (_p65.ctor === 'Just') {
+											var _p68 = updatedSong;
+											if (_p68.ctor === 'Just') {
 												return {
 													ctor: '::',
-													_0: _p65._0,
-													_1: A2(_elm_lang$core$List$drop, 1, _p67.songQueue)
+													_0: _p68._0,
+													_1: A2(_elm_lang$core$List$drop, 1, _p70.songQueue)
 												};
 											} else {
-												return _p67.songQueue;
+												return _p70.songQueue;
 											}
 										}()
 									}))
@@ -2008,12 +2365,12 @@ var _user$project$Main$update = F2(
 						{
 							ctor: '::',
 							_0: function () {
-								var _p66 = _elm_lang$core$List$head(_p67.songQueue);
-								if (_p66.ctor === 'Just') {
+								var _p69 = _elm_lang$core$List$head(_p70.songQueue);
+								if (_p69.ctor === 'Just') {
 									return A2(
 										_elm_lang$http$Http$send,
 										_user$project$Main$SentFeedBack,
-										A3(_user$project$Types_Feedback$send, _p67.authToken, _p66._0.trackToken, true));
+										A3(_user$project$Types_Feedback$send, _p70.authToken, _p69._0.trackToken, true));
 								} else {
 									return _elm_lang$core$Platform_Cmd$none;
 								}
@@ -2032,51 +2389,7 @@ var _user$project$Main$update = F2(
 					model,
 					{ctor: '[]'});
 			case 'SetAudio':
-				var _p69 = _p22._0;
-				var _p68 = model.state;
-				if (_p68.ctor === 'LoggingIn') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: _user$project$Main$Playing(
-									_elm_lang$core$Native_Utils.update(
-										_p68._0,
-										{audioLevel: _p69}))
-							}),
-						{
-							ctor: '::',
-							_0: _user$project$Main$audioLevel(_p69),
-							_1: {ctor: '[]'}
-						});
-				}
-			case 'HoveringAudio':
-				var _p70 = model.state;
-				if (_p70.ctor === 'LoggingIn') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: _user$project$Main$Playing(
-									_elm_lang$core$Native_Utils.update(
-										_p70._0,
-										{audioHover: true}))
-							}),
-						{ctor: '[]'});
-				}
-			case 'UnHoveringAudio':
+				var _p72 = _p25._0;
 				var _p71 = model.state;
 				if (_p71.ctor === 'LoggingIn') {
 					return A2(
@@ -2092,38 +2405,15 @@ var _user$project$Main$update = F2(
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
 										_p71._0,
-										{audioHover: false}))
+										{audioLevel: _p72}))
 							}),
-						{ctor: '[]'});
+						{
+							ctor: '::',
+							_0: _user$project$Main$audioLevel(_p72),
+							_1: {ctor: '[]'}
+						});
 				}
-			case 'BackToStations':
-				var _p72 = model.state;
-				if (_p72.ctor === 'LoggingIn') {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
-				} else {
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.update(
-							model,
-							{
-								state: _user$project$Main$Playing(
-									_elm_lang$core$Native_Utils.update(
-										_p72._0,
-										{playingState: _user$project$Main$SelectingStation}))
-							}),
-						{ctor: '[]'});
-				}
-			case 'Mdl':
-				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p22._0, model);
-			case 'NoOp':
-				return A2(
-					_elm_lang$core$Platform_Cmd_ops['!'],
-					model,
-					{ctor: '[]'});
-			case 'BackToPlaying':
+			case 'HoveringAudio':
 				var _p73 = model.state;
 				if (_p73.ctor === 'LoggingIn') {
 					return A2(
@@ -2139,11 +2429,11 @@ var _user$project$Main$update = F2(
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
 										_p73._0,
-										{playingState: _user$project$Main$Normal}))
+										{audioHover: true}))
 							}),
 						{ctor: '[]'});
 				}
-			case 'Mute':
+			case 'UnHoveringAudio':
 				var _p74 = model.state;
 				if (_p74.ctor === 'LoggingIn') {
 					return A2(
@@ -2159,15 +2449,11 @@ var _user$project$Main$update = F2(
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
 										_p74._0,
-										{audioLevel: 0}))
+										{audioHover: false}))
 							}),
-						{
-							ctor: '::',
-							_0: _user$project$Main$audioLevel(0),
-							_1: {ctor: '[]'}
-						});
+						{ctor: '[]'});
 				}
-			case 'UnMute':
+			case 'BackToStations':
 				var _p75 = model.state;
 				if (_p75.ctor === 'LoggingIn') {
 					return A2(
@@ -2183,6 +2469,77 @@ var _user$project$Main$update = F2(
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
 										_p75._0,
+										{playingState: _user$project$Main$SelectingStation}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'Mdl':
+				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p25._0, model);
+			case 'NoOp':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					model,
+					{ctor: '[]'});
+			case 'BackToPlaying':
+				var _p76 = model.state;
+				if (_p76.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p76._0,
+										{playingState: _user$project$Main$Normal}))
+							}),
+						{ctor: '[]'});
+				}
+			case 'Mute':
+				var _p77 = model.state;
+				if (_p77.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p77._0,
+										{audioLevel: 0}))
+							}),
+						{
+							ctor: '::',
+							_0: _user$project$Main$audioLevel(0),
+							_1: {ctor: '[]'}
+						});
+				}
+			case 'UnMute':
+				var _p78 = model.state;
+				if (_p78.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p78._0,
 										{audioLevel: 1}))
 							}),
 						{
@@ -2202,8 +2559,8 @@ var _user$project$Main$update = F2(
 						}),
 					{ctor: '[]'});
 			case 'RememberMe':
-				var _p76 = model.state;
-				if (_p76.ctor === 'LoggingIn') {
+				var _p79 = model.state;
+				if (_p79.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -2211,8 +2568,8 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$LoggingIn(
 									_elm_lang$core$Native_Utils.update(
-										_p76._0,
-										{remember: _p22._0}))
+										_p79._0,
+										{remember: _p25._0}))
 							}),
 						{ctor: '[]'});
 				} else {
@@ -2222,8 +2579,8 @@ var _user$project$Main$update = F2(
 						{ctor: '[]'});
 				}
 			case 'SetSeekLocation':
-				var _p77 = model.state;
-				if (_p77.ctor === 'LoggingIn') {
+				var _p80 = model.state;
+				if (_p80.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
@@ -2236,8 +2593,8 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p77._0,
-										{seek: _p22._0}))
+										_p80._0,
+										{seek: _p25._0}))
 							}),
 						{
 							ctor: '::',
@@ -2246,16 +2603,16 @@ var _user$project$Main$update = F2(
 							_1: {ctor: '[]'}
 						});
 				}
-			default:
-				var _p78 = model.state;
-				if (_p78.ctor === 'LoggingIn') {
+			case 'SetNewTime':
+				var _p81 = model.state;
+				if (_p81.ctor === 'LoggingIn') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						model,
 						{ctor: '[]'});
 				} else {
-					var _p79 = _p78._0;
-					var newTime = (_p79.seek / _p22._0) * _elm_lang$core$Basics$toFloat(
+					var _p82 = _p81._0;
+					var newTime = (_p82.seek / _p25._0) * _elm_lang$core$Basics$toFloat(
 						_user$project$Main$currentSong(model).trackLength);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
@@ -2264,7 +2621,7 @@ var _user$project$Main$update = F2(
 							{
 								state: _user$project$Main$Playing(
 									_elm_lang$core$Native_Utils.update(
-										_p79,
+										_p82,
 										{currentTime: newTime}))
 							}),
 						{
@@ -2272,6 +2629,59 @@ var _user$project$Main$update = F2(
 							_0: _user$project$Main$sendNewTime(newTime),
 							_1: {ctor: '[]'}
 						});
+				}
+			case 'ToPreviousSongs':
+				var _p83 = model.state;
+				if (_p83.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p83._0,
+										{playingState: _user$project$Main$PreviousSongs}))
+							}),
+						{ctor: '[]'});
+				}
+			default:
+				var _p86 = _p25._0;
+				var _p84 = model.state;
+				if (_p84.ctor === 'LoggingIn') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						model,
+						{ctor: '[]'});
+				} else {
+					var _p85 = _p84._0;
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								state: _user$project$Main$Playing(
+									_elm_lang$core$Native_Utils.update(
+										_p85,
+										{
+											songQueue: {ctor: '::', _0: _p86, _1: _p85.songQueue},
+											currentTime: 0,
+											isPlaying: true,
+											previousSongs: A2(
+												_elm_lang$core$List$filter,
+												function (songTest) {
+													return !_elm_lang$core$Native_Utils.eq(songTest.trackToken, _p86.trackToken);
+												},
+												_p85.previousSongs),
+											playingState: _user$project$Main$Normal
+										}))
+							}),
+						{ctor: '[]'});
 				}
 		}
 	});
@@ -2284,8 +2694,8 @@ var _user$project$Main$InputEmail = function (a) {
 	return {ctor: 'InputEmail', _0: a};
 };
 var _user$project$Main$viewLogin = function (model) {
-	var _p80 = model.state;
-	if (_p80.ctor === 'LoggingIn') {
+	var _p87 = model.state;
+	if (_p87.ctor === 'LoggingIn') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -2540,7 +2950,7 @@ var _user$project$Main$viewLogin = function (model) {
 											model.mdl,
 											{
 												ctor: '::',
-												_0: _p80._0.remember ? _debois$elm_mdl$Material_Options$onClick(_user$project$Main$LoginRemember) : _debois$elm_mdl$Material_Options$onClick(_user$project$Main$Login),
+												_0: _p87._0.remember ? _debois$elm_mdl$Material_Options$onClick(_user$project$Main$LoginRemember) : _debois$elm_mdl$Material_Options$onClick(_user$project$Main$Login),
 												_1: {
 													ctor: '::',
 													_0: _debois$elm_mdl$Material_Button$raised,
@@ -2577,9 +2987,9 @@ var _user$project$Main$viewLogin = function (model) {
 	}
 };
 var _user$project$Main$view = function (model) {
-	var _p81 = model.state;
-	if (_p81.ctor === 'Playing') {
-		var _p86 = _p81._0;
+	var _p88 = model.state;
+	if (_p88.ctor === 'Playing') {
+		var _p93 = _p88._0;
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -2600,9 +3010,9 @@ var _user$project$Main$view = function (model) {
 						ctor: '::',
 						_0: _user$project$Main$onEnded(
 							function () {
-								var _p82 = _p86.currentStation;
-								if (_p82.ctor === 'Just') {
-									return _p82._0.id;
+								var _p89 = _p93.currentStation;
+								if (_p89.ctor === 'Just') {
+									return _p89._0.id;
 								} else {
 									return '';
 								}
@@ -2614,17 +3024,17 @@ var _user$project$Main$view = function (model) {
 								ctor: '::',
 								_0: _elm_lang$html$Html_Attributes$src(
 									function () {
-										var _p84 = _elm_lang$core$List$head(
+										var _p91 = _elm_lang$core$List$head(
 											function () {
-												var _p83 = model.state;
-												if (_p83.ctor === 'Playing') {
-													return _p83._0.songQueue;
+												var _p90 = model.state;
+												if (_p90.ctor === 'Playing') {
+													return _p90._0.songQueue;
 												} else {
 													return {ctor: '[]'};
 												}
 											}());
-										if (_p84.ctor === 'Just') {
-											return _p84._0.audioURL;
+										if (_p91.ctor === 'Just') {
+											return _p91._0.audioURL;
 										} else {
 											return '';
 										}
@@ -2641,11 +3051,28 @@ var _user$project$Main$view = function (model) {
 				_1: {
 					ctor: '::',
 					_0: function () {
-						var _p85 = _p86.playingState;
-						if (_p85.ctor === 'Normal') {
-							return _user$project$Main$viewPlayer(model);
-						} else {
-							return _user$project$Main$viewStationSelector(model);
+						var _p92 = _p93.playingState;
+						switch (_p92.ctor) {
+							case 'Normal':
+								return A2(
+									_user$project$Main$viewPlayer,
+									model,
+									_user$project$Main$viewSongInfo(model));
+							case 'SelectingPlaying':
+								return A2(
+									_user$project$Main$viewPlayer,
+									model,
+									_user$project$Main$viewStationSelector(model));
+							case 'SelectingStation':
+								return A2(
+									_user$project$Main$viewPlayer,
+									model,
+									_user$project$Main$viewStationSelector(model));
+							default:
+								return A2(
+									_user$project$Main$viewPlayer,
+									model,
+									_user$project$Main$viewPreviousSongs(model));
 						}
 					}(),
 					_1: {ctor: '[]'}
@@ -2656,4 +3083,14 @@ var _user$project$Main$view = function (model) {
 	}
 };
 var _user$project$Main$main = _elm_lang$html$Html$programWithFlags(
-	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})(_elm_lang$core$Json_Decode$string);
+	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})(
+	_elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: _elm_lang$core$Json_Decode$null(_elm_lang$core$Maybe$Nothing),
+			_1: {
+				ctor: '::',
+				_0: A2(_elm_lang$core$Json_Decode$map, _elm_lang$core$Maybe$Just, _elm_lang$core$Json_Decode$string),
+				_1: {ctor: '[]'}
+			}
+		}));
