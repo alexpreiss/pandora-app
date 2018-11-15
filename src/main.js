@@ -4,12 +4,9 @@ import Elm from './Main.elm'
 
   const app = Elm.Main.embed(
     document.querySelector('div'),
-    localStorage.authToken || null
+    { authToken : (localStorage.authToken || null)
+    , audioLevel : (localStorage.audioLevel ? +localStorage.audioLevel : null ) }
   )
-
-
-// I dont think the elements have loaded at this point, but I still need to have
-// this function insdie this file, because I need to have the app constant
 
 function togglePause() {
   const song = document.getElementById('songAudio')
@@ -34,6 +31,7 @@ function seekTrack(newTime) {
 function setAudio(level) {
   const song = document.getElementById('songAudio')
   song.volume = level
+  localStorage.setItem('audioLevel', level)
 }
 
 function rememberMe(token) {

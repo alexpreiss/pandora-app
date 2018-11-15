@@ -20,7 +20,7 @@ import Types.Station as Station exposing (Station)
 import Types.Fragment as Fragment exposing (Song)
 
 
-main : Program (Maybe String) Model Msg
+main : Program Flags Model Msg
 main =
     Html.programWithFlags
         { init = init
@@ -144,27 +144,39 @@ type alias User =
     }
 
 
-init : Maybe String -> ( Model, Cmd Msg )
-init userToken =
-    case userToken of
-        Just string ->
+type alias Flags =
+    { authToken : Maybe String
+    , audioLevel : Maybe Float
+    }
+
+
+init : Flags -> ( Model, Cmd Msg )
+init flags =
+    case flags.authToken of
+        Just token ->
             { state =
                 Playing
-                    { authToken = string
+                    { authToken = token
                     , seek = 0
                     , stations = []
                     , currentStation = Nothing
                     , songQueue = []
                     , currentTime = 0.0
                     , previousSongs = []
-                    , audioLevel = 1
+                    , audioLevel =
+                        case flags.audioLevel of
+                            Just level ->
+                                level
+
+                            Nothing ->
+                                1.0
                     , audioHover = False
                     , isPlaying = False
                     , playingState = SelectingStation
                     }
             , mdl = Material.model
             }
-                ! [ Http.send GotStations (Station.get string) ]
+                ! [ Http.send GotStations (Station.get token) ]
 
         Nothing ->
             { state =
@@ -760,7 +772,7 @@ update msg model =
                 Playing fields ->
                     { model
                         | state =
-                            Playing { fields | playingState = SelectingStation }
+                            Playing { fields | playingState = SelectingPlaying }
                     }
                         ! []
 
@@ -1033,6 +1045,11 @@ viewTopMenu modelMdl playingState previousSongs =
                             [ Menu.onSelect ToPreviousSongs
                             , padding
                             , Menu.divider
+                            , (if previousSongs == [] then
+                                Menu.disabled
+                               else
+                                Options.disabled False
+                              )
                             ]
                             [ i "first_page", text "Previous Songs" ]
                         , Menu.item
@@ -1128,7 +1145,12 @@ viewTopBar :
     -> List Song
     -> Html Msg
 viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState modelPreviousSongs =
-    div [ style [ ( "position", "relative" ) ] ]
+    div
+        [ style
+            [ ( "position", "relative" )
+            , ( "height", "10%" )
+            ]
+        ]
         [ p
             [ style
                 [ ( "text-align", "center" )
@@ -1136,7 +1158,6 @@ viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl play
                 , ( "left", "0" )
                 , ( "right", "0" )
                 , ( "padding-top", "6px" )
-                , ( "height", "10%" )
                 ]
             ]
             [ text modelCurrentStationName ]
@@ -1203,6 +1224,125 @@ viewProgressBar model =
                 ]
 
 
+controller : Model -> Bool -> String -> List (Html Msg)
+controller model notClickable stationId =
+    case model.state of
+        LoggingIn fields ->
+            []
+
+        Playing fields ->
+            if notClickable then
+                [ i
+                    [ class "material-icons controlIcons"
+                    , onClick (SendThumbsDown stationId)
+                    , style
+                        [ ( "font-size", "20px" )
+                        ]
+                    ]
+                    [ text "thumb_down_alt" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , onClick ReplaySong
+                    , style
+                        [ ( "font-size", "26px" )
+                        , ( "margin-left", "20px" )
+                        ]
+                    ]
+                    [ text "replay" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , onClick TogglePause
+                    , style
+                        [ ( "font-size", "40px" )
+                        , ( "margin-left", "10px" )
+                        , ( "margin-right", "10px" )
+                        ]
+                    ]
+                    [ text
+                        (if fields.isPlaying then
+                            "pause"
+                         else
+                            "play_arrow"
+                        )
+                    ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "26px" )
+                        , ( "margin-right", "20px" )
+                        ]
+                    , onClick (SkipSong stationId)
+                    ]
+                    [ text "skip_next" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , (if (currentSong model).rating == 1 then
+                        onClick (RemoveThumbsUp stationId)
+                       else
+                        onClick (SendThumbsUp stationId)
+                      )
+                    , style
+                        [ ( "font-size", "20px" )
+                        , (if (currentSong model).rating == 1 then
+                            ( "color", "#6499ef" )
+                           else
+                            ( "opacity", "1" )
+                          )
+                        ]
+                    ]
+                    [ text "thumb_up_alt" ]
+                ]
+            else
+                [ i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "20px" )
+                        ]
+                    ]
+                    [ text "thumb_down_alt" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "26px" )
+                        , ( "margin-left", "20px" )
+                        ]
+                    ]
+                    [ text "replay" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "40px" )
+                        , ( "margin-left", "10px" )
+                        , ( "margin-right", "10px" )
+                        ]
+                    ]
+                    [ text
+                        "play_arrow"
+                    ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "26px" )
+                        , ( "margin-right", "20px" )
+                        ]
+                    , onClick (SkipSong stationId)
+                    ]
+                    [ text "skip_next" ]
+                , i
+                    [ class "material-icons controlIcons"
+                    , style
+                        [ ( "font-size", "20px" )
+                        , (if (currentSong model).rating == 1 then
+                            ( "color", "#6499ef" )
+                           else
+                            ( "opacity", "1" )
+                          )
+                        ]
+                    ]
+                    [ text "thumb_up_alt" ]
+                ]
+
+
 viewControls : Model -> String -> Html Msg
 viewControls model stationId =
     case model.state of
@@ -1218,104 +1358,63 @@ viewControls model stationId =
                     ]
                 ]
                 [ viewProgressBar model
-                , div
-                    [ style
-                        [ ( "width", "100%" )
-                        , ( "height", "100%" )
-                        , ( "background-color", "#323842" )
-                        , ( "display", "flex" )
-                        , ( "justify-content", "center" )
-                        , ( "align-items", "center" )
-                        , (if fields.playingState == SelectingStation then
-                            ( "cursor", "pointer" )
-                           else
-                            ( "", "" )
-                          )
-                        ]
-                    , if
-                        not
-                            fields.isPlaying
-                            && fields.playingState
-                            == SelectingStation
-                      then
-                        onClick NoOp
-                      else if fields.playingState == SelectingStation then
-                        onClick BackToPlaying
-                      else
-                        onClick NoOp
-                    ]
-                    [ i
-                        [ class "material-icons controlIcons"
-                        , if fields.songQueue == [] then
-                            onClick NoOp
-                          else
-                            onClick (SendThumbsDown stationId)
-                        , style
-                            [ ( "font-size", "20px" )
+                , (case fields.playingState of
+                    Normal ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "100%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                ]
                             ]
-                        ]
-                        [ text "thumb_down_alt" ]
-                    , i
-                        [ class "material-icons controlIcons"
-                        , if fields.songQueue == [] then
-                            onClick NoOp
-                          else
-                            onClick ReplaySong
-                        , style
-                            [ ( "font-size", "26px" )
-                            , ( "margin-left", "20px" )
+                            (controller model True stationId)
+
+                    SelectingPlaying ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "100%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                , ( "cursor", "pointer" )
+                                ]
+                            , onClick BackToPlaying
                             ]
-                        ]
-                        [ text "replay" ]
-                    , i
-                        [ class "material-icons controlIcons"
-                        , if fields.songQueue == [] then
-                            onClick NoOp
-                          else
-                            onClick TogglePause
-                        , style
-                            [ ( "font-size", "40px" )
-                            , ( "margin-left", "10px" )
-                            , ( "margin-right", "10px" )
+                            (controller model True stationId)
+
+                    SelectingStation ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "100%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                ]
                             ]
-                        ]
-                        [ text
-                            (if fields.isPlaying then
-                                "pause"
-                             else
-                                "play_arrow"
-                            )
-                        ]
-                    , i
-                        [ class "material-icons controlIcons"
-                        , style
-                            [ ( "font-size", "26px" )
-                            , ( "margin-right", "20px" )
+                            (controller model False stationId)
+
+                    PreviousSongs ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "100%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                , ( "cursor", "pointer" )
+                                ]
+                            , onClick BackToPlaying
                             ]
-                        , if fields.songQueue == [] then
-                            onClick NoOp
-                          else
-                            onClick (SkipSong stationId)
-                        ]
-                        [ text "skip_next" ]
-                    , i
-                        [ class "material-icons controlIcons"
-                        , (if (currentSong model).rating == 1 then
-                            onClick (RemoveThumbsUp stationId)
-                           else
-                            onClick (SendThumbsUp stationId)
-                          )
-                        , style
-                            [ ( "font-size", "20px" )
-                            , (if (currentSong model).rating == 1 then
-                                ( "color", "#6499ef" )
-                               else
-                                ( "opacity", "1" )
-                              )
-                            ]
-                        ]
-                        [ text "thumb_up_alt" ]
-                    ]
+                            (controller model True stationId)
+                  )
                 ]
 
 
