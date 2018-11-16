@@ -1,6 +1,6 @@
 
 
-## development
+## Development
 
 Start dev server with 'npm start'
 
