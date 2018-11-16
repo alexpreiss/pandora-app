@@ -65,17 +65,6 @@ currentSong model =
                     , trackToken = ""
                     }
 
-        Failed error ->
-            { songTitle = ""
-            , trackLength = 0
-            , rating = 0
-            , audioURL = ""
-            , artistName = ""
-            , albumTitle = ""
-            , albumArt = ""
-            , trackToken = ""
-            }
-
 
 type PlayingState
     = Normal
@@ -89,6 +78,7 @@ type State
         { email : String
         , password : String
         , remember : Bool
+        , failed : Bool
         }
     | Playing
         { authToken : String
@@ -103,7 +93,6 @@ type State
         , playingState : PlayingState
         , seek : Float
         }
-    | Failed String
 
 
 stateCase : Model -> a -> a -> a -> a
@@ -114,9 +103,6 @@ stateCase model playing loggingIn failed =
 
         LoggingIn fields ->
             loggingIn
-
-        Failed error ->
-            failed
 
 
 getCurrentStation : Model -> Station
@@ -139,16 +125,13 @@ getCurrentStation model =
                     , art = ""
                     }
 
-        Failed fields ->
-            { id = ""
-            , name = "Select a station"
-            , art = ""
-            }
-
 
 type alias Model =
     { state : State
     , mdl : Material.Model
+    , getStationError : Bool
+    , startStationError : Bool
+    , loadingSongError : Bool
     }
 
 
@@ -197,6 +180,9 @@ init flags =
                     , playingState = SelectingStation
                     }
             , mdl = Material.model
+            , getStationError = False
+            , startStationError = False
+            , loadingSongError = False
             }
                 ! [ Http.send GotStations (Station.get token) ]
 
@@ -206,8 +192,12 @@ init flags =
                     { email = ""
                     , password = ""
                     , remember = False
+                    , failed = False
                     }
             , mdl = Material.model
+            , getStationError = False
+            , startStationError = False
+            , loadingSongError = False
             }
                 ! []
 
@@ -221,7 +211,11 @@ authDecode =
     (Decode.at [ "authToken" ] Decode.string)
 
 
-login : { email : String, password : String } -> Request String
+login :
+    { email : String
+    , password : String
+    }
+    -> Request String
 login info =
     Http.request
         { method = "POST"
@@ -305,9 +299,6 @@ update msg model =
                 Playing fields ->
                     model ! []
 
-                Failed error ->
-                    model ! []
-
         InputPassword input ->
             case model.state of
                 LoggingIn fields ->
@@ -318,9 +309,6 @@ update msg model =
                         ! []
 
                 Playing fields ->
-                    model ! []
-
-                Failed error ->
                     model ! []
 
         Login ->
@@ -338,9 +326,6 @@ update msg model =
                 Playing fields ->
                     model ! []
 
-                Failed error ->
-                    model ! []
-
         LoginRemember ->
             case model.state of
                 LoggingIn fields ->
@@ -354,9 +339,6 @@ update msg model =
                           ]
 
                 Playing fields ->
-                    model ! []
-
-                Failed error ->
                     model ! []
 
         LoggedInRemember result ->
@@ -386,12 +368,9 @@ update msg model =
                                   ]
 
                         Err error ->
-                            { model | state = Failed ("Error logging in: " ++ toString error) } ! []
+                            { model | state = LoggingIn { fields | failed = True } } ! []
 
                 Playing fields ->
-                    model ! []
-
-                Failed error ->
                     model ! []
 
         LoggedIn result ->
@@ -421,12 +400,9 @@ update msg model =
                                   ]
 
                         Err error ->
-                            { model | state = Failed ("Error logging in: " ++ toString error) } ! []
+                            { model | state = LoggingIn { fields | failed = True } } ! []
 
                 Playing fields ->
-                    model ! []
-
-                Failed error ->
                     model ! []
 
         GotStations result ->
@@ -444,10 +420,7 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            { model | state = Failed ("Error loading stations: " ++ toString error) } ! []
-
-                Failed error ->
-                    model ! []
+                            { model | getStationError = True } ! []
 
         StartStation id name art ->
             case model.state of
@@ -473,9 +446,6 @@ update msg model =
                                 (Fragment.getNext id fields.authToken True)
                           ]
 
-                Failed error ->
-                    model ! []
-
         LoadNextSongs id ->
             case model.state of
                 LoggingIn fields ->
@@ -486,9 +456,6 @@ update msg model =
                         ! [ Http.send LoadedNextSongs
                                 (Fragment.getNext id fields.authToken False)
                           ]
-
-                Failed error ->
-                    model ! []
 
         StartedStation result ->
             case model.state of
@@ -513,11 +480,8 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            { model | state = Failed ("Error starting station: " ++ toString error) }
+                            { model | startStationError = True }
                                 ! []
-
-                Failed error ->
-                    model ! []
 
         LoadedNextSongs result ->
             case model.state of
@@ -540,10 +504,7 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            { model | state = Failed ("Error loading songs: " ++ toString error) } ! []
-
-                Failed error ->
-                    model ! []
+                            { model | loadingSongError = True } ! []
 
         SongEnded id ->
             case model.state of
@@ -569,9 +530,6 @@ update msg model =
                                 Cmd.none
                           ]
 
-                Failed error ->
-                    model ! []
-
         SkipSong id ->
             case model.state of
                 LoggingIn fields ->
@@ -596,9 +554,6 @@ update msg model =
                                 Cmd.none
                           ]
 
-                Failed error ->
-                    model ! []
-
         SetCurrentTime _ ->
             case model.state of
                 LoggingIn fields ->
@@ -611,9 +566,6 @@ update msg model =
                     }
                         ! []
 
-                Failed error ->
-                    model ! []
-
         TogglePause ->
             case model.state of
                 LoggingIn fields ->
@@ -625,9 +577,6 @@ update msg model =
                             Playing { fields | isPlaying = not fields.isPlaying }
                     }
                         ! [ togglePause () ]
-
-                Failed error ->
-                    model ! []
 
         ReplaySong ->
             case model.state of
@@ -644,9 +593,6 @@ update msg model =
                                 }
                     }
                         ! [ replaySong () ]
-
-                Failed error ->
-                    model ! []
 
         SendThumbsDown id ->
             case model.state of
@@ -677,9 +623,6 @@ update msg model =
                                 Cmd.none
                             )
                           ]
-
-                Failed error ->
-                    model ! []
 
         RemoveThumbsUp id ->
             case model.state of
@@ -728,9 +671,6 @@ update msg model =
                                         Cmd.none
                                 )
                               ]
-
-                Failed error ->
-                    model ! []
 
         SendThumbsUp id ->
             case model.state of
@@ -784,9 +724,6 @@ update msg model =
                                 )
                               ]
 
-                Failed error ->
-                    model ! []
-
         RemovedFeedBack result ->
             model ! []
 
@@ -805,9 +742,6 @@ update msg model =
                     }
                         ! [ audioLevel level ]
 
-                Failed error ->
-                    model ! []
-
         HoveringAudio ->
             case model.state of
                 LoggingIn fields ->
@@ -819,9 +753,6 @@ update msg model =
                             Playing { fields | audioHover = True }
                     }
                         ! []
-
-                Failed error ->
-                    model ! []
 
         UnHoveringAudio ->
             case model.state of
@@ -835,23 +766,25 @@ update msg model =
                     }
                         ! []
 
-                Failed error ->
-                    model ! []
-
         BackToStations ->
             case model.state of
                 LoggingIn fields ->
-                    model ! []
+                    { model
+                        | getStationError = False
+                        , loadingSongError = False
+                        , startStationError = False
+                    }
+                        ! []
 
                 Playing fields ->
                     { model
                         | state =
                             Playing { fields | playingState = SelectingPlaying }
+                        , getStationError = False
+                        , loadingSongError = False
+                        , startStationError = False
                     }
                         ! []
-
-                Failed error ->
-                    model ! []
 
         Mdl msg ->
             Material.update Mdl msg model
@@ -862,17 +795,22 @@ update msg model =
         BackToPlaying ->
             case model.state of
                 LoggingIn fields ->
-                    model ! []
+                    { model
+                        | getStationError = False
+                        , loadingSongError = False
+                        , startStationError = False
+                    }
+                        ! []
 
                 Playing fields ->
                     { model
                         | state =
                             Playing { fields | playingState = Normal }
+                        , getStationError = False
+                        , loadingSongError = False
+                        , startStationError = False
                     }
                         ! []
-
-                Failed error ->
-                    model ! []
 
         Mute ->
             case model.state of
@@ -886,9 +824,6 @@ update msg model =
                     }
                         ! [ audioLevel 0 ]
 
-                Failed error ->
-                    model ! []
-
         UnMute ->
             case model.state of
                 LoggingIn fields ->
@@ -901,9 +836,6 @@ update msg model =
                     }
                         ! [ audioLevel 1 ]
 
-                Failed error ->
-                    model ! []
-
         Logout ->
             { model
                 | state =
@@ -911,6 +843,7 @@ update msg model =
                         { email = ""
                         , password = ""
                         , remember = False
+                        , failed = False
                         }
             }
                 ! [ logOutLocalStorage () ]
@@ -927,9 +860,6 @@ update msg model =
                 Playing record ->
                     model ! []
 
-                Failed error ->
-                    model ! []
-
         SetSeekLocation coord ->
             case model.state of
                 LoggingIn record ->
@@ -941,9 +871,6 @@ update msg model =
                             Playing { record | seek = coord }
                     }
                         ! [ getProgressBarWidth () ]
-
-                Failed error ->
-                    model ! []
 
         SetNewTime totalWidth ->
             case model.state of
@@ -964,9 +891,6 @@ update msg model =
                         }
                             ! [ sendNewTime newTime ]
 
-                Failed error ->
-                    model ! []
-
         ToPreviousSongs ->
             case model.state of
                 LoggingIn record ->
@@ -974,9 +898,6 @@ update msg model =
 
                 Playing record ->
                     { model | state = Playing { record | playingState = PreviousSongs } } ! []
-
-                Failed error ->
-                    model ! []
 
         PlayPreviousSong song ->
             case model.state of
@@ -996,9 +917,6 @@ update msg model =
                                 }
                     }
                         ! []
-
-                Failed error ->
-                    model ! []
 
 
 
@@ -1037,16 +955,20 @@ subscriptions model =
 
         Playing fields ->
             Sub.batch
-                [ if fields.isPlaying then
+                [ if
+                    fields.isPlaying
+                        && not
+                            (model.getStationError
+                                || model.loadingSongError
+                                || model.startStationError
+                            )
+                  then
                     Time.every Time.second SetCurrentTime
                   else
                     Sub.none
                 , Material.subscriptions Mdl model
                 , sendProgressBarWidth SetNewTime
                 ]
-
-        Failed error ->
-            Sub.batch [ Sub.none ]
 
 
 
@@ -1331,9 +1253,6 @@ viewProgressBar model =
                     []
                 ]
 
-        Failed error ->
-            text error
-
 
 controller : Model -> Bool -> String -> List (Html Msg)
 controller model notClickable stationId =
@@ -1489,9 +1408,6 @@ controller model notClickable stationId =
                     [ text "thumb_up_alt" ]
                 ]
 
-        Failed error ->
-            [ text error ]
-
 
 viewControls : Model -> String -> Html Msg
 viewControls model stationId =
@@ -1567,9 +1483,6 @@ viewControls model stationId =
                   )
                 ]
 
-        Failed error ->
-            text error
-
 
 viewSongInfo : Model -> Html Msg
 viewSongInfo model =
@@ -1578,75 +1491,77 @@ viewSongInfo model =
             div [] []
 
         Playing fields ->
-            div
-                [ style
-                    [ ( "display", "flex" )
-                    , ( "flex-direction", "column" )
-                    , ( "align-items", "center" )
-                    , ( "margin-top", "1%" )
-                    , ( "height", "60%" )
-                    ]
-                ]
-                [ img
+            if model.startStationError then
+                h3 [ style [ ( "text-align", "center" ) ] ] [ text "Error starting station :(" ]
+            else if model.loadingSongError then
+                h3 [ style [ ( "text-align", "center" ) ] ] [ text "Error loading song :(" ]
+            else
+                div
                     [ style
-                        [ ( "-webkit-user-select", "none" )
-                        , ( "height", "100%" )
-                        , ( "box-shadow", "0.25px 0.25px black" )
+                        [ ( "display", "flex" )
+                        , ( "flex-direction", "column" )
+                        , ( "align-items", "center" )
+                        , ( "margin-top", "1%" )
+                        , ( "height", "60%" )
                         ]
-                    , src
-                        (case (List.head fields.songQueue) of
+                    ]
+                    [ img
+                        [ style
+                            [ ( "-webkit-user-select", "none" )
+                            , ( "height", "100%" )
+                            , ( "box-shadow", "0.25px 0.25px black" )
+                            ]
+                        , src
+                            (case (List.head fields.songQueue) of
+                                Just song ->
+                                    song.albumArt
+
+                                Nothing ->
+                                    "fillerIMG.jpg"
+                            )
+                        , style
+                            [ ( "border", "1px black solid" )
+                            ]
+                        ]
+                        []
+                    , p
+                        [ style
+                            [ ( "margin-top", "4%" )
+                            , ( "margin-bottom", "0px" )
+                            ]
+                        , class "songTitle"
+                        ]
+                        [ (case (List.head fields.songQueue) of
                             Just song ->
-                                song.albumArt
+                                text song.songTitle
 
                             Nothing ->
-                                "fillerIMG.jpg"
-                        )
-                    , style
-                        [ ( "border", "1px black solid" )
+                                if fields.currentStation == Nothing then
+                                    text "Select a station to listen"
+                                else
+                                    Spinner.spinner [ Spinner.active True ]
+                          )
+                        ]
+                    , p
+                        [ style
+                            [ ( "margin-top", "5px" )
+                            ]
+                        , class "songDetails"
+                        ]
+                        [ text
+                            (case (List.head fields.songQueue) of
+                                Just song ->
+                                    song.artistName ++ " - " ++ song.albumTitle
+
+                                Nothing ->
+                                    ""
+                            )
                         ]
                     ]
-                    []
-                , p
-                    [ style
-                        [ ( "margin-top", "4%" )
-                        , ( "margin-bottom", "0px" )
-                        ]
-                    , class "songTitle"
-                    ]
-                    [ (case (List.head fields.songQueue) of
-                        Just song ->
-                            text song.songTitle
-
-                        Nothing ->
-                            if fields.currentStation == Nothing then
-                                text "Select a station to listen"
-                            else
-                                Spinner.spinner [ Spinner.active True ]
-                      )
-                    ]
-                , p
-                    [ style
-                        [ ( "margin-top", "5px" )
-                        ]
-                    , class "songDetails"
-                    ]
-                    [ text
-                        (case (List.head fields.songQueue) of
-                            Just song ->
-                                song.artistName ++ " - " ++ song.albumTitle
-
-                            Nothing ->
-                                ""
-                        )
-                    ]
-                ]
-
-        Failed error ->
-            text error
 
 
-viewLogin : Model -> Bool -> Html Msg
-viewLogin model remember =
+viewLogin : Model -> Bool -> Bool -> Html Msg
+viewLogin model remember failed =
     div
         [ style
             [ ( "display", "flex" )
@@ -1733,6 +1648,16 @@ viewLogin model remember =
                 ]
                 [ text "Log in" ]
             ]
+        , if failed then
+            p
+                [ style
+                    [ ( "color", "red" )
+                    , ( "text-align", "center" )
+                    ]
+                ]
+                [ text "Invalid username or password" ]
+          else
+            text ""
         ]
 
 
@@ -1828,26 +1753,26 @@ viewPreviousSongs model =
                     record.previousSongs
                 )
 
-        Failed error ->
-            text error
-
 
 viewStationSelector : Model -> List Station -> Html Msg
 viewStationSelector model stations =
-    Grid.grid
-        [ Options.css "width" "100%"
-        , Options.css "margin" "0px"
-        , Options.css "overflow-y" "auto"
-        ]
-        (List.map
-            (\station ->
-                viewStation
-                    station.id
-                    station.name
-                    station.art
+    if model.getStationError then
+        h3 [ style [ ( "text-align", "center" ) ] ] [ text "Error retrieving stations :(" ]
+    else
+        Grid.grid
+            [ Options.css "width" "100%"
+            , Options.css "margin" "0px"
+            , Options.css "overflow-y" "auto"
+            ]
+            (List.map
+                (\station ->
+                    viewStation
+                        station.id
+                        station.name
+                        station.art
+                )
+                stations
             )
-            stations
-        )
 
 
 viewPlayer :
@@ -1912,9 +1837,6 @@ view model =
 
                                     LoggingIn fields ->
                                         []
-
-                                    Failed error ->
-                                        []
                                 )
                             )
                          of
@@ -1950,22 +1872,4 @@ view model =
                 ]
 
         LoggingIn fields ->
-            viewLogin model fields.remember
-
-        Failed error ->
-            div []
-                [ p
-                    [ onClick Logout
-                    , style
-                        [ ( "cursor", "pointer" )
-                        ]
-                    , class "logOut"
-                    ]
-                    [ text "Logout" ]
-                , p
-                    [ style
-                        [ ( "text-align", "center" )
-                        ]
-                    ]
-                    [ text error ]
-                ]
+            viewLogin model fields.remember fields.failed
