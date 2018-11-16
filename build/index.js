@@ -16,9 +16,9 @@ app.on('ready', createWindow) // called when electron has initialized
 function createWindow () {
   mainWindow = new BrowserWindow({
     width: 650,
-    height: 550,
+    height: 572,
     minWidth : 650,
-    minHeight: 550,
+    minHeight: 572,
     title: 'Pandora',
     icon: '~/Documents/GitHub/pandora-app/assets/icon.png'
   })

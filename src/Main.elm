@@ -13,6 +13,7 @@ import Material.Button as Button
 import Material.Menu as Menu
 import Material.Icon as Icon
 import Material.Grid as Grid exposing (Device(..))
+import Material.Tooltip as Tooltip
 import Material
 import Time
 import Types.Feedback as Feedback
@@ -64,6 +65,17 @@ currentSong model =
                     , trackToken = ""
                     }
 
+        Failed error ->
+            { songTitle = ""
+            , trackLength = 0
+            , rating = 0
+            , audioURL = ""
+            , artistName = ""
+            , albumTitle = ""
+            , albumArt = ""
+            , trackToken = ""
+            }
+
 
 type PlayingState
     = Normal
@@ -91,16 +103,20 @@ type State
         , playingState : PlayingState
         , seek : Float
         }
+    | Failed String
 
 
-stateCase : Model -> a -> a -> a
-stateCase model playing loggingIn =
+stateCase : Model -> a -> a -> a -> a
+stateCase model playing loggingIn failed =
     case model.state of
         Playing fields ->
             playing
 
         LoggingIn fields ->
             loggingIn
+
+        Failed error ->
+            failed
 
 
 getCurrentStation : Model -> Station
@@ -122,6 +138,12 @@ getCurrentStation model =
                     , name = "Select a station"
                     , art = ""
                     }
+
+        Failed fields ->
+            { id = ""
+            , name = "Select a station"
+            , art = ""
+            }
 
 
 type alias Model =
@@ -222,43 +244,50 @@ login info =
         }
 
 
-type Msg
+type
+    Msg
+    -- Auth
     = InputEmail String
     | InputPassword String
     | Login
-    | LoginRemember
-    | LoggedIn (Result Http.Error String)
-    | GotStations (Result Http.Error (List Station))
-    | StartStation String String String
-    | LoadNextSongs String
-    | LoadedNextSongs (Result Http.Error (List Song))
-    | StartedStation (Result Http.Error (List Song))
-    | SongEnded String
-    | SkipSong String
-    | SetCurrentTime Float
-    | ReplaySong
-    | SendThumbsDown String
-    | SendThumbsUp String
-    | SentFeedBack (Result Http.Error String)
-    | SetAudio Float
-    | HoveringAudio
-    | UnHoveringAudio
-    | RemoveThumbsUp String
-    | RemovedFeedBack (Result Http.Error String)
-    | TogglePause
-    | BackToStations
-    | Mdl (Material.Msg Msg)
     | Logout
-    | NoOp
-    | BackToPlaying
-    | Mute
-    | UnMute
+    | LoginRemember
     | RememberMe Bool
+    | LoggedIn (Result Http.Error String)
     | LoggedInRemember (Result Http.Error String)
+    | GotStations (Result Http.Error (List Station))
+      -- Controls
+    | StartStation String String String
+    | StartedStation (Result Http.Error (List Song))
+    | TogglePause
+    | ReplaySong
+    | SetCurrentTime Float
     | SetSeekLocation Float
     | SetNewTime Float
+    | SongEnded String
+    | SkipSong String
+    | LoadNextSongs String
+    | LoadedNextSongs (Result Http.Error (List Song))
+      --  Audio
+    | SetAudio Float
+    | Mute
+    | UnMute
+    | HoveringAudio
+    | UnHoveringAudio
+      -- Navigation
+    | BackToStations
+    | BackToPlaying
     | ToPreviousSongs
     | PlayPreviousSong Song
+      -- Feedback
+    | SendThumbsDown String
+    | SendThumbsUp String
+    | RemoveThumbsUp String
+    | SentFeedBack (Result Http.Error String)
+    | RemovedFeedBack (Result Http.Error String)
+      -- Misc
+    | Mdl (Material.Msg Msg)
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -276,6 +305,9 @@ update msg model =
                 Playing fields ->
                     model ! []
 
+                Failed error ->
+                    model ! []
+
         InputPassword input ->
             case model.state of
                 LoggingIn fields ->
@@ -286,6 +318,9 @@ update msg model =
                         ! []
 
                 Playing fields ->
+                    model ! []
+
+                Failed error ->
                     model ! []
 
         Login ->
@@ -303,6 +338,9 @@ update msg model =
                 Playing fields ->
                     model ! []
 
+                Failed error ->
+                    model ! []
+
         LoginRemember ->
             case model.state of
                 LoggingIn fields ->
@@ -316,6 +354,9 @@ update msg model =
                           ]
 
                 Playing fields ->
+                    model ! []
+
+                Failed error ->
                     model ! []
 
         LoggedInRemember result ->
@@ -345,13 +386,12 @@ update msg model =
                                   ]
 
                         Err error ->
-                            let
-                                log =
-                                    Debug.log "Error logging in" "This broke"
-                            in
-                                model ! []
+                            { model | state = Failed ("Error logging in: " ++ toString error) } ! []
 
                 Playing fields ->
+                    model ! []
+
+                Failed error ->
                     model ! []
 
         LoggedIn result ->
@@ -381,13 +421,12 @@ update msg model =
                                   ]
 
                         Err error ->
-                            let
-                                log =
-                                    Debug.log "Error logging in" "This broke"
-                            in
-                                model ! []
+                            { model | state = Failed ("Error logging in: " ++ toString error) } ! []
 
                 Playing fields ->
+                    model ! []
+
+                Failed error ->
                     model ! []
 
         GotStations result ->
@@ -405,11 +444,10 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            let
-                                log =
-                                    Debug.log "Error fetching stations" error
-                            in
-                                model ! []
+                            { model | state = Failed ("Error loading stations: " ++ toString error) } ! []
+
+                Failed error ->
+                    model ! []
 
         StartStation id name art ->
             case model.state of
@@ -435,6 +473,9 @@ update msg model =
                                 (Fragment.getNext id fields.authToken True)
                           ]
 
+                Failed error ->
+                    model ! []
+
         LoadNextSongs id ->
             case model.state of
                 LoggingIn fields ->
@@ -445,6 +486,9 @@ update msg model =
                         ! [ Http.send LoadedNextSongs
                                 (Fragment.getNext id fields.authToken False)
                           ]
+
+                Failed error ->
+                    model ! []
 
         StartedStation result ->
             case model.state of
@@ -469,12 +513,11 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            let
-                                error =
-                                    Debug.log "Error starting station" "whoop"
-                            in
-                                model
-                                    ! []
+                            { model | state = Failed ("Error starting station: " ++ toString error) }
+                                ! []
+
+                Failed error ->
+                    model ! []
 
         LoadedNextSongs result ->
             case model.state of
@@ -497,12 +540,10 @@ update msg model =
                                 ! []
 
                         Err error ->
-                            let
-                                error =
-                                    Debug.log "Error starting station" "whoop"
-                            in
-                                model
-                                    ! []
+                            { model | state = Failed ("Error loading songs: " ++ toString error) } ! []
+
+                Failed error ->
+                    model ! []
 
         SongEnded id ->
             case model.state of
@@ -521,12 +562,15 @@ update msg model =
                                     , isPlaying = True
                                 }
                     }
-                        ! [ if List.length fields.songQueue == 1 then
+                        ! [ if List.length fields.songQueue == 2 then
                                 Http.send LoadedNextSongs
                                     (Fragment.getNext id fields.authToken False)
                             else
                                 Cmd.none
                           ]
+
+                Failed error ->
+                    model ! []
 
         SkipSong id ->
             case model.state of
@@ -545,12 +589,15 @@ update msg model =
                                     , isPlaying = True
                                 }
                     }
-                        ! [ if List.length fields.songQueue == 1 then
+                        ! [ if List.length fields.songQueue == 2 then
                                 Http.send LoadedNextSongs
                                     (Fragment.getNext id fields.authToken False)
                             else
                                 Cmd.none
                           ]
+
+                Failed error ->
+                    model ! []
 
         SetCurrentTime _ ->
             case model.state of
@@ -564,6 +611,9 @@ update msg model =
                     }
                         ! []
 
+                Failed error ->
+                    model ! []
+
         TogglePause ->
             case model.state of
                 LoggingIn fields ->
@@ -575,6 +625,9 @@ update msg model =
                             Playing { fields | isPlaying = not fields.isPlaying }
                     }
                         ! [ togglePause () ]
+
+                Failed error ->
+                    model ! []
 
         ReplaySong ->
             case model.state of
@@ -591,6 +644,9 @@ update msg model =
                                 }
                     }
                         ! [ replaySong () ]
+
+                Failed error ->
+                    model ! []
 
         SendThumbsDown id ->
             case model.state of
@@ -614,13 +670,16 @@ update msg model =
                                     (currentSong model).trackToken
                                     False
                                 )
-                          , (if List.length fields.songQueue == 1 then
+                          , (if List.length fields.songQueue == 2 then
                                 Http.send LoadedNextSongs
                                     (Fragment.getNext id fields.authToken False)
                              else
                                 Cmd.none
                             )
                           ]
+
+                Failed error ->
+                    model ! []
 
         RemoveThumbsUp id ->
             case model.state of
@@ -669,6 +728,9 @@ update msg model =
                                         Cmd.none
                                 )
                               ]
+
+                Failed error ->
+                    model ! []
 
         SendThumbsUp id ->
             case model.state of
@@ -722,6 +784,9 @@ update msg model =
                                 )
                               ]
 
+                Failed error ->
+                    model ! []
+
         RemovedFeedBack result ->
             model ! []
 
@@ -740,6 +805,9 @@ update msg model =
                     }
                         ! [ audioLevel level ]
 
+                Failed error ->
+                    model ! []
+
         HoveringAudio ->
             case model.state of
                 LoggingIn fields ->
@@ -751,6 +819,9 @@ update msg model =
                             Playing { fields | audioHover = True }
                     }
                         ! []
+
+                Failed error ->
+                    model ! []
 
         UnHoveringAudio ->
             case model.state of
@@ -764,6 +835,9 @@ update msg model =
                     }
                         ! []
 
+                Failed error ->
+                    model ! []
+
         BackToStations ->
             case model.state of
                 LoggingIn fields ->
@@ -775,6 +849,9 @@ update msg model =
                             Playing { fields | playingState = SelectingPlaying }
                     }
                         ! []
+
+                Failed error ->
+                    model ! []
 
         Mdl msg ->
             Material.update Mdl msg model
@@ -794,6 +871,9 @@ update msg model =
                     }
                         ! []
 
+                Failed error ->
+                    model ! []
+
         Mute ->
             case model.state of
                 LoggingIn fields ->
@@ -805,6 +885,9 @@ update msg model =
                             Playing { fields | audioLevel = 0 }
                     }
                         ! [ audioLevel 0 ]
+
+                Failed error ->
+                    model ! []
 
         UnMute ->
             case model.state of
@@ -818,6 +901,9 @@ update msg model =
                     }
                         ! [ audioLevel 1 ]
 
+                Failed error ->
+                    model ! []
+
         Logout ->
             { model
                 | state =
@@ -827,7 +913,7 @@ update msg model =
                         , remember = False
                         }
             }
-                ! []
+                ! [ logOutLocalStorage () ]
 
         RememberMe val ->
             case model.state of
@@ -841,6 +927,9 @@ update msg model =
                 Playing record ->
                     model ! []
 
+                Failed error ->
+                    model ! []
+
         SetSeekLocation coord ->
             case model.state of
                 LoggingIn record ->
@@ -852,6 +941,9 @@ update msg model =
                             Playing { record | seek = coord }
                     }
                         ! [ getProgressBarWidth () ]
+
+                Failed error ->
+                    model ! []
 
         SetNewTime totalWidth ->
             case model.state of
@@ -872,6 +964,9 @@ update msg model =
                         }
                             ! [ sendNewTime newTime ]
 
+                Failed error ->
+                    model ! []
+
         ToPreviousSongs ->
             case model.state of
                 LoggingIn record ->
@@ -879,6 +974,9 @@ update msg model =
 
                 Playing record ->
                     { model | state = Playing { record | playingState = PreviousSongs } } ! []
+
+                Failed error ->
+                    model ! []
 
         PlayPreviousSong song ->
             case model.state of
@@ -898,6 +996,9 @@ update msg model =
                                 }
                     }
                         ! []
+
+                Failed error ->
+                    model ! []
 
 
 
@@ -925,6 +1026,9 @@ port sendProgressBarWidth : (Float -> msg) -> Sub msg
 port sendNewTime : Float -> Cmd msg
 
 
+port logOutLocalStorage : () -> Cmd msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.state of
@@ -940,6 +1044,9 @@ subscriptions model =
                 , Material.subscriptions Mdl model
                 , sendProgressBarWidth SetNewTime
                 ]
+
+        Failed error ->
+            Sub.batch [ Sub.none ]
 
 
 
@@ -984,7 +1091,7 @@ audioSlider modelAudioLevel visibleVal =
         , Slider.step 0.1
         , Slider.value modelAudioLevel
         , Options.css "width" "100px"
-        , Options.css "margin-top" "8px"
+        , Options.css "padding-top" "8px"
         , Options.css "z-index" "2"
         , Options.css "margin-left" "0px"
         , Options.css "visibility" visibleVal
@@ -1197,15 +1304,16 @@ viewProgressBar model =
             div
                 [ style
                     [ ( "width", "100%" )
-                    , ( "height", "5px" )
+                    , ( "height", "10%" )
                     , ( "background-color", "black" )
+                    , ( "cursor", "pointer" )
                     ]
                 , onClickXVal
                 , id "progressBar"
                 ]
                 [ div
                     [ style
-                        [ ( "height", "5px" )
+                        [ ( "height", "100%" )
                         , ( "width"
                           , ((toString
                                 (timePercentage
@@ -1222,6 +1330,9 @@ viewProgressBar model =
                     ]
                     []
                 ]
+
+        Failed error ->
+            text error
 
 
 controller : Model -> Bool -> String -> List (Html Msg)
@@ -1265,15 +1376,51 @@ controller model notClickable stationId =
                             "play_arrow"
                         )
                     ]
-                , i
-                    [ class "material-icons controlIcons"
-                    , style
-                        [ ( "font-size", "26px" )
-                        , ( "margin-right", "20px" )
-                        ]
-                    , onClick (SkipSong stationId)
+                , Icon.view "skip_next"
+                    [ Options.cs "material-icons controlIcons"
+                    , Options.css "font-size" "26px"
+                    , Options.css "margin-right" "20px"
+                    , Options.onClick (SkipSong stationId)
+                    , Tooltip.attach Mdl [ 690 ]
                     ]
-                    [ text "skip_next" ]
+                , Tooltip.render Mdl
+                    [ 690 ]
+                    model.mdl
+                    [ Tooltip.top
+                    , Options.css "width" "300px"
+                    ]
+                    [ div
+                        [ style
+                            [ ( "display", "flex" )
+                            , ( "flex-direction", "column" )
+                            ]
+                        ]
+                        [ img
+                            [ style
+                                [ ( "width", "100%" )
+                                ]
+                            , src
+                                (case (List.head (List.drop 1 fields.songQueue)) of
+                                    Just song ->
+                                        song.albumArt
+
+                                    Nothing ->
+                                        ""
+                                )
+                            ]
+                            []
+                        , p [ style [ ( "text-align", "center" ), ( "margin-bottom", "0px" ) ] ]
+                            [ text
+                                (case (List.head (List.drop 1 fields.songQueue)) of
+                                    Just song ->
+                                        (song.songTitle ++ " - " ++ song.artistName)
+
+                                    Nothing ->
+                                        ""
+                                )
+                            ]
+                        ]
+                    ]
                 , i
                     [ class "material-icons controlIcons"
                     , (if (currentSong model).rating == 1 then
@@ -1342,6 +1489,9 @@ controller model notClickable stationId =
                     [ text "thumb_up_alt" ]
                 ]
 
+        Failed error ->
+            [ text error ]
+
 
 viewControls : Model -> String -> Html Msg
 viewControls model stationId =
@@ -1363,7 +1513,7 @@ viewControls model stationId =
                         div
                             [ style
                                 [ ( "width", "100%" )
-                                , ( "height", "100%" )
+                                , ( "height", "90%" )
                                 , ( "background-color", "#323842" )
                                 , ( "display", "flex" )
                                 , ( "justify-content", "center" )
@@ -1376,7 +1526,7 @@ viewControls model stationId =
                         div
                             [ style
                                 [ ( "width", "100%" )
-                                , ( "height", "100%" )
+                                , ( "height", "90%" )
                                 , ( "background-color", "#323842" )
                                 , ( "display", "flex" )
                                 , ( "justify-content", "center" )
@@ -1391,7 +1541,7 @@ viewControls model stationId =
                         div
                             [ style
                                 [ ( "width", "100%" )
-                                , ( "height", "100%" )
+                                , ( "height", "90%" )
                                 , ( "background-color", "#323842" )
                                 , ( "display", "flex" )
                                 , ( "justify-content", "center" )
@@ -1404,7 +1554,7 @@ viewControls model stationId =
                         div
                             [ style
                                 [ ( "width", "100%" )
-                                , ( "height", "100%" )
+                                , ( "height", "90%" )
                                 , ( "background-color", "#323842" )
                                 , ( "display", "flex" )
                                 , ( "justify-content", "center" )
@@ -1416,6 +1566,9 @@ viewControls model stationId =
                             (controller model True stationId)
                   )
                 ]
+
+        Failed error ->
+            text error
 
 
 viewSongInfo : Model -> Html Msg
@@ -1430,7 +1583,7 @@ viewSongInfo model =
                     [ ( "display", "flex" )
                     , ( "flex-direction", "column" )
                     , ( "align-items", "center" )
-                    , ( "margin-top", "2.75%" )
+                    , ( "margin-top", "1%" )
                     , ( "height", "60%" )
                     ]
                 ]
@@ -1448,7 +1601,9 @@ viewSongInfo model =
                             Nothing ->
                                 "fillerIMG.jpg"
                         )
-                    , style [ ( "border", "1px black solid" ) ]
+                    , style
+                        [ ( "border", "1px black solid" )
+                        ]
                     ]
                     []
                 , p
@@ -1486,101 +1641,99 @@ viewSongInfo model =
                     ]
                 ]
 
+        Failed error ->
+            text error
 
-viewLogin : Model -> Html Msg
-viewLogin model =
-    case model.state of
-        LoggingIn fields ->
-            div
+
+viewLogin : Model -> Bool -> Html Msg
+viewLogin model remember =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "width", "650px" )
+            , ( "height", "100%" )
+            , ( "margin", "auto" )
+            , ( "margin-top", "10px" )
+            , ( "padding-top", "30px" )
+            , ( "padding-bottom", "30px" )
+            ]
+        ]
+        [ h3
+            [ style
+                [ ( "margin-top", "0" )
+                , ( "text-align", "center" )
+                ]
+            ]
+            [ text "Log in" ]
+        , input
+            [ style
+                [ ( "margin-bottom", "30px" )
+                , ( "margin-top", "25px" )
+                , ( "width", "450px" )
+                , ( "align-self", "center" )
+                , ( "height", "35px" )
+                ]
+            , type_ "email"
+            , placeholder "Email"
+            , onInput InputEmail
+            ]
+            []
+        , input
+            [ type_ "password"
+            , placeholder "Password"
+            , onInput InputPassword
+            , style
+                [ ( "width", "450px" )
+                , ( "align-self", "center" )
+                , ( "height", "35px" )
+                , ( "margin-bottom", "30px" )
+                ]
+            ]
+            []
+        , div
+            [ style
+                [ ( "margin-top", "10%" )
+                , ( "height", "40px" )
+                , ( "width", "460px" )
+                , ( "align-self", "center" )
+                , ( "display", "flex" )
+                ]
+            ]
+            [ div
                 [ style
                     [ ( "display", "flex" )
-                    , ( "flex-direction", "column" )
-                    , ( "width", "650px" )
-                    , ( "height", "100%" )
-                    , ( "margin", "auto" )
+                    , ( "margin-left", "10px" )
+                    , ( "margin-right", "auto" )
                     , ( "margin-top", "10px" )
-                    , ( "padding-top", "30px" )
-                    , ( "padding-bottom", "30px" )
                     ]
                 ]
-                [ h3
-                    [ style
-                        [ ( "margin-top", "0" )
-                        , ( "text-align", "center" )
-                        ]
-                    ]
-                    [ text "Log in" ]
+                [ p [] [ text "Remember me" ]
                 , input
-                    [ style
-                        [ ( "margin-bottom", "30px" )
-                        , ( "margin-top", "25px" )
-                        , ( "width", "450px" )
-                        , ( "align-self", "center" )
-                        , ( "height", "35px" )
-                        ]
-                    , type_ "email"
-                    , placeholder "Email"
-                    , onInput InputEmail
-                    ]
-                    []
-                , input
-                    [ type_ "password"
-                    , placeholder "Password"
-                    , onInput InputPassword
+                    [ type_ "checkbox"
+                    , onCheck RememberMe
                     , style
-                        [ ( "width", "450px" )
-                        , ( "align-self", "center" )
-                        , ( "height", "35px" )
-                        , ( "margin-bottom", "30px" )
+                        [ ( "margin-top", "7px" )
+                        , ( "margin-left", "5px" )
                         ]
                     ]
                     []
-                , div
-                    [ style
-                        [ ( "margin-top", "10%" )
-                        , ( "height", "40px" )
-                        , ( "width", "460px" )
-                        , ( "align-self", "center" )
-                        , ( "display", "flex" )
-                        ]
-                    ]
-                    [ div
-                        [ style
-                            [ ( "display", "flex" )
-                            , ( "margin-left", "10px" )
-                            , ( "margin-right", "auto" )
-                            , ( "margin-top", "10px" )
-                            ]
-                        ]
-                        [ p [] [ text "Remember me" ]
-                        , input
-                            [ type_ "checkbox"
-                            , onCheck RememberMe
-                            , style
-                                [ ( "margin-top", "7px" )
-                                , ( "margin-left", "5px" )
-                                ]
-                            ]
-                            []
-                        ]
-                    , Button.render Mdl
-                        [ 102321 ]
-                        model.mdl
-                        [ if fields.remember then
-                            Options.onClick LoginRemember
-                          else
-                            Options.onClick Login
-                        , Button.raised
-                        , Button.ripple
-                        , Options.css "margin-right" "10px"
-                        , Options.css "margin-left" "auto"
-                        ]
-                        [ text "Log in" ]
-                    ]
                 ]
-
-        Playing record ->
-            text ""
+            , Button.render Mdl
+                [ 102321 ]
+                model.mdl
+                [ if remember then
+                    Options.onClick LoginRemember
+                  else
+                    Options.onClick Login
+                , Button.raised
+                , Button.ripple
+                , Options.css "margin-right" "10px"
+                , Options.css "margin-left" "auto"
+                ]
+                [ text "Log in" ]
+            ]
+        ]
 
 
 viewStation : String -> String -> String -> Grid.Cell Msg
@@ -1609,7 +1762,12 @@ viewStation id name url =
                 , src url
                 ]
                 []
-            , p [ style [ ( "text-align", "center" ) ] ] [ text name ]
+            , p
+                [ style
+                    [ ( "text-align", "center" )
+                    ]
+                ]
+                [ text name ]
             ]
         ]
 
@@ -1640,7 +1798,12 @@ viewPreviousSong song =
                 , src song.albumArt
                 ]
                 []
-            , p [ style [ ( "text-align", "center" ) ] ] [ text song.songTitle ]
+            , p
+                [ style
+                    [ ( "text-align", "center" )
+                    ]
+                ]
+                [ text song.songTitle ]
             ]
         ]
 
@@ -1665,61 +1828,63 @@ viewPreviousSongs model =
                     record.previousSongs
                 )
 
-
-viewStationSelector : Model -> Html Msg
-viewStationSelector model =
-    case model.state of
-        LoggingIn fields ->
-            div [] []
-
-        Playing fields ->
-            Grid.grid
-                [ Options.css "width" "100%"
-                , Options.css "margin" "0px"
-                , Options.css "overflow-y" "auto"
-                ]
-                (List.map
-                    (\station ->
-                        viewStation
-                            station.id
-                            station.name
-                            station.art
-                    )
-                    fields.stations
-                )
+        Failed error ->
+            text error
 
 
-viewPlayer : Model -> Html Msg -> Html Msg
-viewPlayer model content =
-    case model.state of
-        LoggingIn record ->
-            div [] []
+viewStationSelector : Model -> List Station -> Html Msg
+viewStationSelector model stations =
+    Grid.grid
+        [ Options.css "width" "100%"
+        , Options.css "margin" "0px"
+        , Options.css "overflow-y" "auto"
+        ]
+        (List.map
+            (\station ->
+                viewStation
+                    station.id
+                    station.name
+                    station.art
+            )
+            stations
+        )
 
-        Playing record ->
-            div
-                [ style
-                    [ ( "height", "100%" )
-                    , ( "width", "100%" )
-                    , ( "display", "flex" )
-                    , ( "flex-direction", "column" )
-                    , ( "margin", "auto" )
-                    ]
-                ]
-                [ viewTopBar record.audioLevel
-                    (case record.currentStation of
-                        Just station ->
-                            station.name
 
-                        Nothing ->
-                            ""
-                    )
-                    record.audioHover
-                    model.mdl
-                    record.playingState
-                    record.previousSongs
-                , content
-                , viewControls model (getCurrentStation model).id
-                ]
+viewPlayer :
+    Model
+    -> Html Msg
+    -> Float
+    -> Maybe Station
+    -> Bool
+    -> Material.Model
+    -> PlayingState
+    -> List Song
+    -> Html Msg
+viewPlayer model content audioLevel currentStation audioHover mdl playingState previousSongs =
+    div
+        [ style
+            [ ( "height", "100%" )
+            , ( "width", "100%" )
+            , ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "margin", "auto" )
+            ]
+        ]
+        [ viewTopBar audioLevel
+            (case currentStation of
+                Just station ->
+                    station.name
+
+                Nothing ->
+                    ""
+            )
+            audioHover
+            mdl
+            playingState
+            previousSongs
+        , content
+        , viewControls model (getCurrentStation model).id
+        ]
 
 
 view : Model -> Html Msg
@@ -1747,6 +1912,9 @@ view model =
 
                                     LoggingIn fields ->
                                         []
+
+                                    Failed error ->
+                                        []
                                 )
                             )
                          of
@@ -1759,20 +1927,45 @@ view model =
                     , autoplay True
                     ]
                     []
-                , (case fields.playingState of
-                    Normal ->
-                        viewPlayer model (viewSongInfo model)
+                , viewPlayer model
+                    (case fields.playingState of
+                        Normal ->
+                            viewSongInfo model
 
-                    SelectingPlaying ->
-                        viewPlayer model (viewStationSelector model)
+                        SelectingPlaying ->
+                            viewStationSelector model fields.stations
 
-                    SelectingStation ->
-                        viewPlayer model (viewStationSelector model)
+                        SelectingStation ->
+                            viewStationSelector model fields.stations
 
-                    PreviousSongs ->
-                        viewPlayer model (viewPreviousSongs model)
-                  )
+                        PreviousSongs ->
+                            viewPreviousSongs model
+                    )
+                    fields.audioLevel
+                    fields.currentStation
+                    fields.audioHover
+                    model.mdl
+                    fields.playingState
+                    fields.previousSongs
                 ]
 
         LoggingIn fields ->
-            viewLogin model
+            viewLogin model fields.remember
+
+        Failed error ->
+            div []
+                [ p
+                    [ onClick Logout
+                    , style
+                        [ ( "cursor", "pointer" )
+                        ]
+                    , class "logOut"
+                    ]
+                    [ text "Logout" ]
+                , p
+                    [ style
+                        [ ( "text-align", "center" )
+                        ]
+                    ]
+                    [ text error ]
+                ]

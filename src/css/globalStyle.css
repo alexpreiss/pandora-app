@@ -20,10 +20,16 @@
 }
 .mdl-slider__background-flex {
   margin-left: 0px !important;
+  top: 60%;
 }
+
 body {
   margin: 0px;
   height: 100%;
+}
+
+.logOut:hover {
+  color: #6499ef;
 }
 
 @media only screen and (min-width: 0px) {

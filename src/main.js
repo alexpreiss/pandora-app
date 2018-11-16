@@ -37,6 +37,10 @@ function setAudio(level) {
 function rememberMe(token) {
    localStorage.setItem('authToken', token)}
 
+function forgetMe(token) {
+   localStorage.removeItem('authToken')
+ }
+
  function progressBarWidth() {
   const progressBar = document.getElementById('progressBar')
   app.ports.sendProgressBarWidth.send((progressBar.getBoundingClientRect()).width)
@@ -50,3 +54,4 @@ app.ports.replaySong.subscribe( replaySong )
 app.ports.audioLevel.subscribe( setAudio )
 app.ports.rememberMe.subscribe( rememberMe )
 app.ports.sendNewTime.subscribe( seekTrack )
+app.ports.logOutLocalStorage.subscribe( forgetMe )
