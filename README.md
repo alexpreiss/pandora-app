@@ -4,4 +4,4 @@
 
 Start dev server with 'npm start'
 
-Build new app with 'package-mac'
+Rebuild app with 'package-mac'
