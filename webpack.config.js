@@ -43,6 +43,10 @@ module.exports = {
       filename: 'index.html',
       template: resolve('./src/template.html')
     }),
-    new CopyWebpackPlugin([ { from: 'src/index.js', to: 'index.js' }, "assets" ])
+    new CopyWebpackPlugin([
+      { from: 'src/index.js', to: 'index.js' },
+      { from: 'src/mainmenu.js', to: 'mainmenu.js' },
+      "assets"
+    ])
   ]
 }

@@ -19,6 +19,8 @@ import Time
 import Types.Feedback as Feedback
 import Types.Station as Station exposing (Station)
 import Types.Fragment as Fragment exposing (Song)
+import Types.Chat as Chat exposing (..)
+import Keyboard
 
 
 main : Program Flags Model Msg
@@ -71,6 +73,14 @@ type PlayingState
     | SelectingStation
     | SelectingPlaying
     | PreviousSongs
+    | Chatting
+        { email : String
+        , chatInput : String
+        , chats : List Chat
+        , username : String
+        , newUser : Bool
+        , userNameInput : String
+        }
 
 
 type State
@@ -79,6 +89,8 @@ type State
         , password : String
         , remember : Bool
         , failed : Bool
+        , audioLevel : Maybe Float
+        , username : Maybe String
         }
     | Playing
         { authToken : String
@@ -92,6 +104,8 @@ type State
         , isPlaying : Bool
         , playingState : PlayingState
         , seek : Float
+        , email : String
+        , username : String
         }
 
 
@@ -132,59 +146,58 @@ type alias Model =
     , getStationError : Bool
     , startStationError : Bool
     , loadingSongError : Bool
-    }
-
-
-type alias UserInfo =
-    { authToken : String
-    , email : String
-    }
-
-
-type alias User =
-    { email : String
-    , authToken : String
-    , audioLevel : Maybe Float
-    , lastStation : Maybe String
+    , keyPress : Int
     }
 
 
 type alias Flags =
-    { authToken : Maybe String
+    { password : Maybe String
     , audioLevel : Maybe Float
+    , username : Maybe String
+    , email : Maybe String
     }
 
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    case flags.authToken of
-        Just token ->
+    case flags.password of
+        Just password ->
             { state =
-                Playing
-                    { authToken = token
-                    , seek = 0
-                    , stations = []
-                    , currentStation = Nothing
-                    , songQueue = []
-                    , currentTime = 0.0
-                    , previousSongs = []
-                    , audioLevel =
-                        case flags.audioLevel of
-                            Just level ->
-                                level
+                LoggingIn
+                    { email =
+                        (case flags.email of
+                            Just email ->
+                                email
 
                             Nothing ->
-                                1.0
-                    , audioHover = False
-                    , isPlaying = False
-                    , playingState = SelectingStation
+                                ""
+                        )
+                    , password = password
+                    , remember = True
+                    , failed = False
+                    , audioLevel = flags.audioLevel
+                    , username = flags.username
                     }
             , mdl = Material.model
             , getStationError = False
             , startStationError = False
             , loadingSongError = False
+            , keyPress = 0
             }
-                ! [ Http.send GotStations (Station.get token) ]
+                ! [ Http.send LoggedInRemember
+                        (login
+                            { email =
+                                (case flags.email of
+                                    Just email ->
+                                        email
+
+                                    Nothing ->
+                                        ""
+                                )
+                            , password = password
+                            }
+                        )
+                  ]
 
         Nothing ->
             { state =
@@ -193,11 +206,14 @@ init flags =
                     , password = ""
                     , remember = False
                     , failed = False
+                    , audioLevel = flags.audioLevel
+                    , username = Nothing
                     }
             , mdl = Material.model
             , getStationError = False
             , startStationError = False
             , loadingSongError = False
+            , keyPress = 0
             }
                 ! []
 
@@ -269,9 +285,10 @@ type
     | HoveringAudio
     | UnHoveringAudio
       -- Navigation
-    | BackToStations
-    | BackToPlaying
+    | ToStations
+    | ToPlaying
     | ToPreviousSongs
+    | ToChat
     | PlayPreviousSong Song
       -- Feedback
     | SendThumbsDown String
@@ -282,6 +299,12 @@ type
       -- Misc
     | Mdl (Material.Msg Msg)
     | NoOp
+    | KeyDown Int
+      -- Chatting
+    | ChatInput String
+    | UserNameInput String
+    | SetUserName
+    | GotChats (Result Http.Error (List Chat))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -336,6 +359,8 @@ update msg model =
                                     , password = fields.password
                                     }
                                 )
+                          , rememberEmail fields.email
+                          , rememberPassword fields.password
                           ]
 
                 Playing fields ->
@@ -355,16 +380,31 @@ update msg model =
                                         , songQueue = []
                                         , currentTime = 0.0
                                         , previousSongs = []
-                                        , audioLevel = 1.0
+                                        , audioLevel =
+                                            case fields.audioLevel of
+                                                Just audio ->
+                                                    audio
+
+                                                Nothing ->
+                                                    1.0
                                         , audioHover = False
                                         , isPlaying = False
                                         , playingState = SelectingStation
                                         , seek = 0
+                                        , email = fields.email
+                                        , username =
+                                            case fields.username of
+                                                Just username ->
+                                                    username
+
+                                                Nothing ->
+                                                    ""
                                         }
                             }
                                 ! [ Http.send GotStations
                                         (Station.get token)
-                                  , rememberMe token
+                                  , rememberPassword fields.password
+                                  , rememberEmail fields.email
                                   ]
 
                         Err error ->
@@ -387,11 +427,25 @@ update msg model =
                                         , songQueue = []
                                         , currentTime = 0.0
                                         , previousSongs = []
-                                        , audioLevel = 1.0
+                                        , audioLevel =
+                                            case fields.audioLevel of
+                                                Just audio ->
+                                                    audio
+
+                                                Nothing ->
+                                                    1.0
                                         , audioHover = False
                                         , isPlaying = False
                                         , playingState = SelectingStation
                                         , seek = 0
+                                        , email = fields.email
+                                        , username =
+                                            case fields.username of
+                                                Just username ->
+                                                    username
+
+                                                Nothing ->
+                                                    ""
                                         }
                             }
                                 ! [ Http.send
@@ -766,7 +820,7 @@ update msg model =
                     }
                         ! []
 
-        BackToStations ->
+        ToStations ->
             case model.state of
                 LoggingIn fields ->
                     { model
@@ -792,7 +846,7 @@ update msg model =
         NoOp ->
             model ! []
 
-        BackToPlaying ->
+        ToPlaying ->
             case model.state of
                 LoggingIn fields ->
                     { model
@@ -837,16 +891,34 @@ update msg model =
                         ! [ audioLevel 1 ]
 
         Logout ->
-            { model
-                | state =
-                    LoggingIn
-                        { email = ""
-                        , password = ""
-                        , remember = False
-                        , failed = False
-                        }
-            }
-                ! [ logOutLocalStorage () ]
+            case model.state of
+                LoggingIn record ->
+                    { model
+                        | state =
+                            LoggingIn
+                                { email = ""
+                                , password = ""
+                                , remember = False
+                                , failed = False
+                                , audioLevel = record.audioLevel
+                                , username = Nothing
+                                }
+                    }
+                        ! []
+
+                Playing record ->
+                    { model
+                        | state =
+                            LoggingIn
+                                { email = ""
+                                , password = ""
+                                , remember = False
+                                , failed = False
+                                , audioLevel = Just record.audioLevel
+                                , username = Nothing
+                                }
+                    }
+                        ! []
 
         RememberMe val ->
             case model.state of
@@ -899,6 +971,29 @@ update msg model =
                 Playing record ->
                     { model | state = Playing { record | playingState = PreviousSongs } } ! []
 
+        ToChat ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model
+                        | state =
+                            Playing
+                                { record
+                                    | playingState =
+                                        Chatting
+                                            { email = record.email
+                                            , chatInput = ""
+                                            , chats = []
+                                            , username = ""
+                                            , newUser = True
+                                            , userNameInput = ""
+                                            }
+                                }
+                    }
+                        ! [ Http.send GotChats (Chat.getAll record.authToken) ]
+
         PlayPreviousSong song ->
             case model.state of
                 LoggingIn record ->
@@ -918,6 +1013,181 @@ update msg model =
                     }
                         ! []
 
+        ChatInput content ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        Chatting fields ->
+                            { model
+                                | state =
+                                    Playing
+                                        { record | playingState = Chatting { fields | chatInput = content } }
+                            }
+                                ! []
+
+        GotChats result ->
+            case result of
+                Ok chatList ->
+                    case model.state of
+                        LoggingIn record ->
+                            model ! []
+
+                        Playing record ->
+                            case record.playingState of
+                                Normal ->
+                                    model ! []
+
+                                SelectingStation ->
+                                    model ! []
+
+                                SelectingPlaying ->
+                                    model ! []
+
+                                PreviousSongs ->
+                                    model ! []
+
+                                Chatting fields ->
+                                    { model
+                                        | state =
+                                            Playing
+                                                { record | playingState = Chatting { fields | chats = chatList } }
+                                    }
+                                        ! []
+
+                Err _ ->
+                    model ! []
+
+        KeyDown code ->
+            case model.state of
+                LoggingIn record ->
+                    model
+                        ! if code == 13 then
+                            (if record.remember then
+                                [ Http.send LoggedInRemember
+                                    (login
+                                        { email = record.email
+                                        , password = record.password
+                                        }
+                                    )
+                                , rememberEmail record.email
+                                , rememberPassword record.password
+                                ]
+                             else
+                                [ Http.send LoggedIn
+                                    (login
+                                        { email = record.email
+                                        , password = record.password
+                                        }
+                                    )
+                                ]
+                            )
+                          else
+                            [ Cmd.none ]
+
+                Playing record ->
+                    (if code == 32 then
+                        { model
+                            | keyPress = code
+                            , state =
+                                Playing
+                                    { record | isPlaying = not record.isPlaying }
+                        }
+                     else
+                        { model
+                            | state =
+                                Playing
+                                    { record | isPlaying = record.isPlaying }
+                        }
+                    )
+                        ! [ (if code == 32 then
+                                togglePause ()
+                             else
+                                Cmd.none
+                            )
+                          ]
+
+        UserNameInput username ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        Chatting fields ->
+                            { model
+                                | state =
+                                    Playing
+                                        { record
+                                            | playingState =
+                                                Chatting
+                                                    { fields | userNameInput = username }
+                                        }
+                            }
+                                ! []
+
+        SetUserName ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        Chatting fields ->
+                            { model
+                                | state =
+                                    Playing
+                                        { record
+                                            | playingState =
+                                                Chatting
+                                                    { fields
+                                                        | username = fields.userNameInput
+                                                        , newUser = False
+                                                    }
+                                        }
+                            }
+                                ! [ rememberUsername fields.userNameInput
+                                  , newUser ()
+                                  ]
+
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
@@ -932,7 +1202,16 @@ port replaySong : () -> Cmd msg
 port audioLevel : Float -> Cmd msg
 
 
-port rememberMe : String -> Cmd msg
+port rememberEmail : String -> Cmd msg
+
+
+port rememberUsername : String -> Cmd msg
+
+
+port rememberPassword : String -> Cmd msg
+
+
+port newUser : () -> Cmd msg
 
 
 port getProgressBarWidth : () -> Cmd msg
@@ -951,7 +1230,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.state of
         LoggingIn fields ->
-            Sub.batch [ Sub.none ]
+            Sub.batch [ Keyboard.downs KeyDown ]
 
         Playing fields ->
             Sub.batch
@@ -968,6 +1247,7 @@ subscriptions model =
                     Sub.none
                 , Material.subscriptions Mdl model
                 , sendProgressBarWidth SetNewTime
+                , Keyboard.downs KeyDown
                 ]
 
 
@@ -1020,8 +1300,13 @@ audioSlider modelAudioLevel visibleVal =
         ]
 
 
-viewTopMenu : Material.Model -> PlayingState -> List Song -> Html Msg
-viewTopMenu modelMdl playingState previousSongs =
+viewTopMenu :
+    Material.Model
+    -> PlayingState
+    -> List Song
+    -> List Song
+    -> Html Msg
+viewTopMenu modelMdl playingState previousSongs songQueue =
     div
         [ style
             [ ( "margin-left", "auto" )
@@ -1030,10 +1315,13 @@ viewTopMenu modelMdl playingState previousSongs =
         ]
         [ let
             i name =
-                Icon.view name [ Options.css "width" "30px" ]
+                Icon.view name
+                    [ Options.css "width" "30px"
+                    , Options.css "padding-right" "20px"
+                    ]
 
-            padding =
-                Options.css "padding-right" "20px"
+            onSelect =
+                Menu.onSelect
           in
             Menu.render Mdl
                 [ 2 ]
@@ -1042,82 +1330,136 @@ viewTopMenu modelMdl playingState previousSongs =
                 (case playingState of
                     Normal ->
                         [ Menu.item
-                            [ Menu.onSelect BackToStations
-                            , padding
+                            [ onSelect ToStations
+                            , Options.cs "topMenuIcon"
                             ]
                             [ i "apps", text "Stations" ]
                         , Menu.item
-                            [ Menu.onSelect ToPreviousSongs
+                            [ onSelect ToChat
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "chat_bubble", text "Chat" ]
+                        , Menu.item
+                            [ onSelect ToPreviousSongs
                             , (if previousSongs == [] then
                                 Menu.disabled
                                else
-                                Options.disabled False
+                                Options.cs "topMenuIcon"
                               )
-                            , padding
                             , Menu.divider
                             ]
                             [ i "first_page", text "Previous Songs" ]
                         , Menu.item
-                            [ Menu.onSelect Logout
-                            , padding
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
                             ]
                             [ i "clear", text "Log out" ]
                         ]
 
                     SelectingPlaying ->
                         [ Menu.item
-                            [ Menu.onSelect BackToPlaying
-                            , padding
+                            [ onSelect ToPlaying
+                            , Options.cs "topMenuIcon"
                             ]
                             [ i "play_circle_outline", text "Player" ]
                         , Menu.item
-                            [ Menu.onSelect ToPreviousSongs
-                            , padding
+                            [ onSelect ToChat
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "chat_bubble", text "Chat" ]
+                        , Menu.item
+                            [ onSelect ToPreviousSongs
                             , Menu.divider
                             , (if previousSongs == [] then
                                 Menu.disabled
                                else
-                                Options.disabled False
+                                Options.cs "topMenuIcon"
                               )
                             ]
                             [ i "first_page", text "Previous Songs" ]
                         , Menu.item
-                            [ Menu.onSelect Logout, padding ]
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
+                            ]
                             [ i "clear", text "Log out" ]
                         ]
 
                     SelectingStation ->
                         [ Menu.item
-                            [ Menu.onSelect BackToPlaying
-                            , padding
+                            [ onSelect ToPlaying
                             , Menu.disabled
                             ]
                             [ i "play_circle_outline", text "Player" ]
                         , Menu.item
-                            [ Menu.onSelect ToPreviousSongs
+                            [ onSelect ToChat
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "chat_bubble", text "Chat" ]
+                        , Menu.item
+                            [ onSelect ToPreviousSongs
                             , Menu.disabled
-                            , padding
                             , Menu.divider
                             ]
                             [ i "first_page", text "Previous Songs" ]
                         , Menu.item
-                            [ Menu.onSelect Logout, padding ]
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
+                            ]
                             [ i "clear", text "Log out" ]
                         ]
 
                     PreviousSongs ->
                         [ Menu.item
-                            [ Menu.onSelect BackToPlaying
-                            , padding
+                            [ onSelect ToPlaying
+                            , Options.cs "topMenuIcon"
                             ]
                             [ i "play_circle_outline", text "Player" ]
                         , Menu.item
-                            [ Menu.onSelect BackToStations
-                            , padding
+                            [ onSelect ToChat
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "chat_bubble", text "Chat" ]
+                        , Menu.item
+                            [ onSelect ToStations
+                            , Options.cs "topMenuIcon"
                             ]
                             [ i "apps", text "Stations" ]
                         , Menu.item
-                            [ Menu.onSelect Logout, padding ]
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "clear", text "Log out" ]
+                        ]
+
+                    Chatting items ->
+                        [ Menu.item
+                            (case songQueue of
+                                [] ->
+                                    [ onSelect NoOp
+                                    , Menu.disabled
+                                    ]
+
+                                _ ->
+                                    [ onSelect ToPlaying
+                                    , Options.cs "topMenuIcon"
+                                    ]
+                            )
+                            [ i "play_circle_outline", text "Player" ]
+                        , Menu.item
+                            [ onSelect ToStations
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "apps", text "Stations" ]
+                        , Menu.item
+                            [ onSelect ToPreviousSongs
+                            , Menu.disabled
+                            , Menu.divider
+                            ]
+                            [ i "first_page", text "Previous Songs" ]
+                        , Menu.item
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
+                            ]
                             [ i "clear", text "Log out" ]
                         ]
                 )
@@ -1172,8 +1514,9 @@ viewTopBar :
     -> Material.Model
     -> PlayingState
     -> List Song
+    -> List Song
     -> Html Msg
-viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState modelPreviousSongs =
+viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl playingState modelPreviousSongs songQueue =
     div
         [ style
             [ ( "position", "relative" )
@@ -1198,7 +1541,7 @@ viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl play
             [ audioSelector modelAudioLevel
                 modelAudioHover
                 modelPreviousSongs
-            , viewTopMenu modelMdl playingState modelPreviousSongs
+            , viewTopMenu modelMdl playingState modelPreviousSongs songQueue
             ]
         ]
 
@@ -1254,6 +1597,20 @@ viewProgressBar model =
                 ]
 
 
+ifEmptyQueue : Model -> Msg -> Msg
+ifEmptyQueue model msg =
+    case model.state of
+        LoggingIn fields ->
+            NoOp
+
+        Playing fields ->
+            (if fields.songQueue /= [] then
+                msg
+             else
+                NoOp
+            )
+
+
 controller : Model -> Bool -> String -> List (Html Msg)
 controller model notClickable stationId =
     case model.state of
@@ -1264,7 +1621,7 @@ controller model notClickable stationId =
             if notClickable then
                 [ i
                     [ class "material-icons controlIcons"
-                    , onClick (SendThumbsDown stationId)
+                    , onClick (ifEmptyQueue model (SendThumbsDown stationId))
                     , style
                         [ ( "font-size", "20px" )
                         ]
@@ -1272,7 +1629,7 @@ controller model notClickable stationId =
                     [ text "thumb_down_alt" ]
                 , i
                     [ class "material-icons controlIcons"
-                    , onClick ReplaySong
+                    , onClick (ifEmptyQueue model ReplaySong)
                     , style
                         [ ( "font-size", "26px" )
                         , ( "margin-left", "20px" )
@@ -1281,7 +1638,7 @@ controller model notClickable stationId =
                     [ text "replay" ]
                 , i
                     [ class "material-icons controlIcons"
-                    , onClick TogglePause
+                    , onClick (ifEmptyQueue model TogglePause)
                     , style
                         [ ( "font-size", "40px" )
                         , ( "margin-left", "10px" )
@@ -1299,7 +1656,7 @@ controller model notClickable stationId =
                     [ Options.cs "material-icons controlIcons"
                     , Options.css "font-size" "26px"
                     , Options.css "margin-right" "20px"
-                    , Options.onClick (SkipSong stationId)
+                    , Options.onClick (ifEmptyQueue model (SkipSong stationId))
                     , Tooltip.attach Mdl [ 690 ]
                     ]
                 , Tooltip.render Mdl
@@ -1391,7 +1748,6 @@ controller model notClickable stationId =
                         [ ( "font-size", "26px" )
                         , ( "margin-right", "20px" )
                         ]
-                    , onClick (SkipSong stationId)
                     ]
                     [ text "skip_next" ]
                 , i
@@ -1449,7 +1805,7 @@ viewControls model stationId =
                                 , ( "align-items", "center" )
                                 , ( "cursor", "pointer" )
                                 ]
-                            , onClick BackToPlaying
+                            , onClick ToPlaying
                             ]
                             (controller model True stationId)
 
@@ -1477,7 +1833,21 @@ viewControls model stationId =
                                 , ( "align-items", "center" )
                                 , ( "cursor", "pointer" )
                                 ]
-                            , onClick BackToPlaying
+                            , onClick ToPlaying
+                            ]
+                            (controller model True stationId)
+
+                    Chatting items ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "90%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                , ( "cursor", "pointer" )
+                                ]
                             ]
                             (controller model True stationId)
                   )
@@ -1510,6 +1880,7 @@ viewSongInfo model =
                             [ ( "-webkit-user-select", "none" )
                             , ( "height", "100%" )
                             , ( "box-shadow", "0.25px 0.25px black" )
+                            , ( "border", "1px black solid" )
                             ]
                         , src
                             (case (List.head fields.songQueue) of
@@ -1519,9 +1890,7 @@ viewSongInfo model =
                                 Nothing ->
                                     "fillerIMG.jpg"
                             )
-                        , style
-                            [ ( "border", "1px black solid" )
-                            ]
+                        , class "playerAlbumArt"
                         ]
                         []
                     , p
@@ -1784,8 +2153,9 @@ viewPlayer :
     -> Material.Model
     -> PlayingState
     -> List Song
+    -> List Song
     -> Html Msg
-viewPlayer model content audioLevel currentStation audioHover mdl playingState previousSongs =
+viewPlayer model content audioLevel currentStation audioHover mdl playingState previousSongs songQueue =
     div
         [ style
             [ ( "height", "100%" )
@@ -1807,9 +2177,207 @@ viewPlayer model content audioLevel currentStation audioHover mdl playingState p
             mdl
             playingState
             previousSongs
+            songQueue
         , content
         , viewControls model (getCurrentStation model).id
         ]
+
+
+chatInput : Model -> Html Msg
+chatInput model =
+    div
+        [ style
+            [ ( "height", "6%" )
+            , ( "width", "89.75%" )
+            , ( "margin-top", "1%" )
+            , ( "margin-bottom", "3%" )
+            , ( "display", "flex" )
+            ]
+        ]
+        [ input
+            [ style
+                [ ( "padding-left", "5px" )
+                , ( "height", "100%" )
+                , ( "width", "95%" )
+                ]
+            ]
+            []
+        , (Button.render Mdl
+            [ 7834 ]
+            model.mdl
+            [ Button.ripple
+            , Options.onClick NoOp
+            , Options.css "height" "100%"
+            , Options.css "margin-top" ".45%"
+            ]
+            [ text "Send" ]
+          )
+        ]
+
+
+viewChatRooms : Html Msg
+viewChatRooms =
+    div
+        [ style
+            [ ( "background-color", "green" )
+            , ( "border", "black 1px solid" )
+            , ( "width", "25.5%" )
+            , ( "height", "95%" )
+            ]
+        ]
+        []
+
+
+viewChat : Chat -> Html Msg
+viewChat chat =
+    div []
+        [ p [] [ text chat.email ]
+        , br [] []
+        , p [] [ text chat.content ]
+        ]
+
+
+darkEle : Html Msg
+darkEle =
+    div
+        [ style
+            [ ( "z-index", "2" )
+            , ( "position", "absolute" )
+            , ( "background-color", "rgba(0, 0, 0, 0.5)" )
+            , ( "top", "0" )
+            , ( "bottom", "0" )
+            , ( "right", "0" )
+            , ( "left", "0" )
+            ]
+        ]
+        []
+
+
+chatLogin : Model -> String -> Html Msg
+chatLogin model nameInput =
+    div
+        [ style
+            [ ( "z-index", "2" )
+            , ( "position", "absolute" )
+            , ( "background-color", "white" )
+            , ( "border", "1px black solid" )
+            , ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "height", "60%" )
+            , ( "width", "50%" )
+            ]
+        ]
+        [ h3 [ style [ ( "text-align", "center" ) ] ]
+            [ text "Please enter a username: " ]
+        , p [ style [ ( "text-align", "center" ) ] ]
+            [ text "This is what other users will see when you send a message" ]
+        , p
+            [ style
+                [ ( "text-align", "center" )
+                , ( "margin-top", "10%" )
+                ]
+            , class "chatLoginAltOpt"
+            ]
+            [ text "Or click here to use your email instead" ]
+        , input
+            [ type_ "text"
+            , onInput UserNameInput
+            , style
+                [ ( "height", "12%" )
+                , ( "padding-left", "2%" )
+                , ( "font-size", "100%" )
+                , ( "margin-top", "auto" )
+                ]
+            ]
+            []
+        , (Button.render Mdl
+            [ 18 ]
+            model.mdl
+            [ Button.minifab
+            , Button.ripple
+            , (if nameInput == "" then
+                Options.onClick NoOp
+               else
+                Options.onClick SetUserName
+              )
+            , Options.css "height" "20%"
+            , Options.css "margin-bottom" "0px"
+            ]
+            [ Icon.i "arrow_right_alt" ]
+          )
+        ]
+
+
+viewAllChats : List Chat -> List (Html Msg)
+viewAllChats chatList =
+    List.map viewChat chatList
+
+
+viewChatWindow : Model -> Html Msg
+viewChatWindow model =
+    case model.state of
+        LoggingIn record ->
+            text ""
+
+        Playing record ->
+            case record.playingState of
+                Normal ->
+                    text ""
+
+                SelectingStation ->
+                    text ""
+
+                SelectingPlaying ->
+                    text ""
+
+                PreviousSongs ->
+                    text ""
+
+                Chatting fields ->
+                    div
+                        [ style
+                            [ ( "height", "100%" )
+                            , ( "width", "100%" )
+                            , ( "display", "flex" )
+                            , ( "flex-direction", "column" )
+                            , ( "align-items", "center" )
+                            , ( "justify-content", "center" )
+                            ]
+                        ]
+                        [ div
+                            [ style
+                                [ ( "display", "flex" )
+                                , ( "height", "100%" )
+                                , ( "width", "100%" )
+                                ]
+                            ]
+                            [ viewChatRooms
+
+                            -- CHAT SELECTOR ^^^
+                            , div
+                                [ style
+                                    [ ( "margin-top", "0" )
+                                    , ( "border", "black 1px solid" )
+                                    , ( "width", "75%" )
+                                    , ( "height", "95%" )
+                                    ]
+                                ]
+                                (viewAllChats
+                                    fields.chats
+                                )
+                            ]
+
+                        -- CHAT ^^^
+                        , chatInput model
+                        , if fields.newUser then
+                            darkEle
+                          else
+                            text ""
+                        , if fields.newUser then
+                            chatLogin model fields.userNameInput
+                          else
+                            text ""
+                        ]
 
 
 view : Model -> Html Msg
@@ -1862,6 +2430,9 @@ view model =
 
                         PreviousSongs ->
                             viewPreviousSongs model
+
+                        Chatting items ->
+                            viewChatWindow model
                     )
                     fields.audioLevel
                     fields.currentStation
@@ -1869,6 +2440,7 @@ view model =
                     model.mdl
                     fields.playingState
                     fields.previousSongs
+                    fields.songQueue
                 ]
 
         LoggingIn fields ->

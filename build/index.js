@@ -10,8 +10,6 @@ let mainWindow // saves a global reference to mainWindow so it doesn't get garba
 
 app.on('ready', createWindow) // called when electron has initialized
 
-
-
 // This will create our app window, no surprise there
 function createWindow () {
   mainWindow = new BrowserWindow({
@@ -20,7 +18,7 @@ function createWindow () {
     minWidth : 650,
     minHeight: 572,
     title: 'Pandora',
-    icon: '~/Documents/GitHub/pandora-app/assets/icon.png'
+    icon: `file://${ __dirname }/icon.icns`
   })
 
   const cookie = {url: 'https://www.pandora.com', name: 'csrftoken', value: 'coolestToken'}
@@ -28,18 +26,19 @@ function createWindow () {
     if (error) console.error(error)
   })
 
-
   // display the index.html file
   mainWindow.loadURL(`file://${ __dirname }/index.html`)
 
-  var registered = globalShortcut.register('mediaplaypause', function () {
-    console.log('mediaplaypause pressed');
-  });
-  if (!registered) {
-    console.log('mediaplaypause registration failed');
-  } else {
-    console.log('mediaplaypause registration bound!');
-  }
+  // const reload = globalShortcut.register('CommandOrControl+R', function() {
+  // 		console.log('CommandOrControl+R is pressed')
+  // 		mainWindow.reload()
+  // 	})
+  // if (!reload) {
+  //   console.log('reload registration failed')
+  // }
+  // else {
+  //   console.log('reload registration bound!')
+  // }
 
   var registered = globalShortcut.register('medianexttrack', function () {
     console.log('medianexttrack pressed');
@@ -53,6 +52,8 @@ function createWindow () {
   mainWindow.on('closed', function () {
     mainWindow = null
   })
+
+  require('./mainmenu.js')
 }
 
 /* Mac Specific things */

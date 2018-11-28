@@ -32,6 +32,18 @@ body {
   color: #6499ef;
 }
 
+.topMenuIcon:hover {
+  color: #6499ef;
+}
+
+.chatLoginAltOpt:hover {
+  text-decoration: underline;
+  color: #6499ef;
+  cursor: pointer;
+}
+
+/* BASIC MEDIA QUERIES NEED TO UPDATE FOR BETTER RESPONSIVE DESIGN */
+
 @media only screen and (min-width: 0px) {
   .songTitle {
     font-size: 16px;
