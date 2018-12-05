@@ -1,24 +1,23 @@
 module Types.Chat exposing (..)
 
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Http exposing (Request)
 
 
 type alias Chat =
-    { id : Int
-    , email : String
-    , content : String
+    { email : String
     , username : String
+    , content : String
     }
 
 
 chatDecoder : Decode.Decoder Chat
 chatDecoder =
-    Decode.map4 Chat
-        (Decode.field "id" Decode.int)
+    Decode.map3 Chat
         (Decode.field "email" Decode.string)
-        (Decode.field "content" Decode.string)
         (Decode.field "username" Decode.string)
+        (Decode.field "content" Decode.string)
 
 
 getAll :
@@ -28,13 +27,37 @@ getAll authToken =
     Http.request
         { method = "GET"
         , headers =
-            [ Http.header "X-CsrfToken" "coolestToken"
-            , Http.header "X-AuthToken" authToken
-            , Http.header "Content-Type" "application/json"
+            [ Http.header "Content-Type" "application/json"
             ]
         , body = Http.emptyBody
         , url = "http://localhost:8000/getchats"
         , expect = Http.expectJson (Decode.list chatDecoder)
+        , timeout = Nothing
+        , withCredentials = False
+        }
+
+
+send :
+    { email : String
+    , username : String
+    , content : String
+    }
+    -> Request String
+send items =
+    Http.request
+        { method = "POST"
+        , headers =
+            []
+        , url = "http://localhost:8000/sendchat"
+        , body =
+            Http.jsonBody
+                (Encode.object
+                    [ ( "email", (Encode.string items.email) )
+                    , ( "username", (Encode.string items.username) )
+                    , ( "content", (Encode.string items.content) )
+                    ]
+                )
+        , expect = Http.expectJson (Decode.succeed "")
         , timeout = Nothing
         , withCredentials = False
         }

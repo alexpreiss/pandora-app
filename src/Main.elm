@@ -91,6 +91,7 @@ type State
         , failed : Bool
         , audioLevel : Maybe Float
         , username : Maybe String
+        , newUser : Maybe Bool
         }
     | Playing
         { authToken : String
@@ -106,6 +107,7 @@ type State
         , seek : Float
         , email : String
         , username : String
+        , newUser : Bool
         }
 
 
@@ -155,6 +157,7 @@ type alias Flags =
     , audioLevel : Maybe Float
     , username : Maybe String
     , email : Maybe String
+    , newUser : Maybe String
     }
 
 
@@ -177,6 +180,11 @@ init flags =
                     , failed = False
                     , audioLevel = flags.audioLevel
                     , username = flags.username
+                    , newUser =
+                        if flags.newUser == Just "false" then
+                            Just False
+                        else
+                            Just True
                     }
             , mdl = Material.model
             , getStationError = False
@@ -208,6 +216,7 @@ init flags =
                     , failed = False
                     , audioLevel = flags.audioLevel
                     , username = Nothing
+                    , newUser = Nothing
                     }
             , mdl = Material.model
             , getStationError = False
@@ -299,12 +308,16 @@ type
       -- Misc
     | Mdl (Material.Msg Msg)
     | NoOp
+    | NoOp1 String
     | KeyDown Int
       -- Chatting
     | ChatInput String
     | UserNameInput String
     | SetUserName
     | GotChats (Result Http.Error (List Chat))
+    | SendChat
+    | SentChat (Result Http.Error String)
+    | ChatSocket Chat
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -399,6 +412,13 @@ update msg model =
 
                                                 Nothing ->
                                                     ""
+                                        , newUser =
+                                            case fields.newUser of
+                                                Just bool ->
+                                                    bool
+
+                                                Nothing ->
+                                                    True
                                         }
                             }
                                 ! [ Http.send GotStations
@@ -446,6 +466,13 @@ update msg model =
 
                                                 Nothing ->
                                                     ""
+                                        , newUser =
+                                            case fields.newUser of
+                                                Just bool ->
+                                                    bool
+
+                                                Nothing ->
+                                                    True
                                         }
                             }
                                 ! [ Http.send
@@ -902,6 +929,7 @@ update msg model =
                                 , failed = False
                                 , audioLevel = record.audioLevel
                                 , username = Nothing
+                                , newUser = Just True
                                 }
                     }
                         ! []
@@ -916,6 +944,7 @@ update msg model =
                                 , failed = False
                                 , audioLevel = Just record.audioLevel
                                 , username = Nothing
+                                , newUser = Just True
                                 }
                     }
                         ! []
@@ -977,22 +1006,44 @@ update msg model =
                     model ! []
 
                 Playing record ->
-                    { model
-                        | state =
-                            Playing
-                                { record
-                                    | playingState =
-                                        Chatting
-                                            { email = record.email
-                                            , chatInput = ""
-                                            , chats = []
-                                            , username = ""
-                                            , newUser = True
-                                            , userNameInput = ""
-                                            }
-                                }
-                    }
-                        ! [ Http.send GotChats (Chat.getAll record.authToken) ]
+                    if Debug.log "bool" record.newUser == False then
+                        { model
+                            | state =
+                                Playing
+                                    { record
+                                        | playingState =
+                                            Chatting
+                                                { email = record.email
+                                                , chatInput = ""
+                                                , chats = []
+                                                , username = record.username
+                                                , newUser = False
+                                                , userNameInput = ""
+                                                }
+                                    }
+                        }
+                            ! [ Http.send GotChats (Chat.getAll record.authToken)
+                              , rememberUsername record.username
+                              , newUser ()
+                              ]
+                    else
+                        { model
+                            | state =
+                                Playing
+                                    { record
+                                        | playingState =
+                                            Chatting
+                                                { email = record.email
+                                                , chatInput = ""
+                                                , chats = []
+                                                , username = ""
+                                                , newUser = True
+                                                , userNameInput = ""
+                                                }
+                                    }
+                        }
+                            ! [ Http.send GotChats (Chat.getAll record.authToken)
+                              ]
 
         PlayPreviousSong song ->
             case model.state of
@@ -1188,6 +1239,73 @@ update msg model =
                                   , newUser ()
                                   ]
 
+        SendChat ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case Debug.log "state" record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        Chatting fields ->
+                            { model
+                                | state =
+                                    Playing
+                                        { record
+                                            | playingState =
+                                                Chatting
+                                                    { fields | chatInput = "" }
+                                        }
+                            }
+                                ! [ Http.send SentChat
+                                        (Chat.send
+                                            { email = Debug.log "email" fields.email
+                                            , username =
+                                                record.username
+                                            , content = fields.chatInput
+                                            }
+                                        )
+                                  ]
+
+        SentChat result ->
+            model ! []
+
+        ChatSocket message ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        Chatting fields ->
+                            { model | state = Playing { record | playingState = Chatting { fields | chats = message :: fields.chats } } } ! []
+
+        NoOp1 _ ->
+            model ! []
+
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
@@ -1223,6 +1341,9 @@ port sendProgressBarWidth : (Float -> msg) -> Sub msg
 port sendNewTime : Float -> Cmd msg
 
 
+port chatSocket : (Chat -> msg) -> Sub msg
+
+
 port logOutLocalStorage : () -> Cmd msg
 
 
@@ -1248,6 +1369,7 @@ subscriptions model =
                 , Material.subscriptions Mdl model
                 , sendProgressBarWidth SetNewTime
                 , Keyboard.downs KeyDown
+                , chatSocket ChatSocket
                 ]
 
 
@@ -2183,60 +2305,6 @@ viewPlayer model content audioLevel currentStation audioHover mdl playingState p
         ]
 
 
-chatInput : Model -> Html Msg
-chatInput model =
-    div
-        [ style
-            [ ( "height", "6%" )
-            , ( "width", "89.75%" )
-            , ( "margin-top", "1%" )
-            , ( "margin-bottom", "3%" )
-            , ( "display", "flex" )
-            ]
-        ]
-        [ input
-            [ style
-                [ ( "padding-left", "5px" )
-                , ( "height", "100%" )
-                , ( "width", "95%" )
-                ]
-            ]
-            []
-        , (Button.render Mdl
-            [ 7834 ]
-            model.mdl
-            [ Button.ripple
-            , Options.onClick NoOp
-            , Options.css "height" "100%"
-            , Options.css "margin-top" ".45%"
-            ]
-            [ text "Send" ]
-          )
-        ]
-
-
-viewChatRooms : Html Msg
-viewChatRooms =
-    div
-        [ style
-            [ ( "background-color", "green" )
-            , ( "border", "black 1px solid" )
-            , ( "width", "25.5%" )
-            , ( "height", "95%" )
-            ]
-        ]
-        []
-
-
-viewChat : Chat -> Html Msg
-viewChat chat =
-    div []
-        [ p [] [ text chat.email ]
-        , br [] []
-        , p [] [ text chat.content ]
-        ]
-
-
 darkEle : Html Msg
 darkEle =
     div
@@ -2253,6 +2321,109 @@ darkEle =
         []
 
 
+chatInput : Model -> Html Msg
+chatInput model =
+    case model.state of
+        LoggingIn fields ->
+            text ""
+
+        Playing fields ->
+            case fields.playingState of
+                Normal ->
+                    text ""
+
+                SelectingPlaying ->
+                    text ""
+
+                SelectingStation ->
+                    text ""
+
+                PreviousSongs ->
+                    text ""
+
+                Chatting fields ->
+                    div
+                        [ style
+                            [ ( "height", "6%" )
+                            , ( "width", "89.75%" )
+                            , ( "margin-top", "1%" )
+                            , ( "margin-bottom", "3%" )
+                            , ( "display", "flex" )
+                            ]
+                        ]
+                        [ input
+                            [ style
+                                [ ( "padding-left", "5px" )
+                                , ( "height", "100%" )
+                                , ( "width", "95%" )
+                                ]
+                            , value
+                                fields.chatInput
+                            , onInput ChatInput
+                            , Html.Events.onWithOptions "keydown"
+                                { stopPropagation = True
+                                , preventDefault = False
+                                }
+                                (Decode.succeed NoOp)
+                            ]
+                            []
+                        , (Button.render Mdl
+                            [ 7834 ]
+                            model.mdl
+                            [ Button.ripple
+                            , Options.css "height" "100%"
+                            , Options.css "margin-top" ".45%"
+                            , Options.onClick SendChat
+                            ]
+                            [ text "Send" ]
+                          )
+                        ]
+
+
+viewChatRooms : Html Msg
+viewChatRooms =
+    div
+        [ style
+            [ ( "background-color", "rgb(223, 223, 223)" )
+            , ( "width", "15%" )
+            , ( "height", "95%" )
+            ]
+        ]
+        []
+
+
+viewChat : Chat -> Html Msg
+viewChat chat =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "margin-left", "1%" )
+            ]
+        ]
+        [ if chat.username /= "" then
+            p
+                [ style
+                    [ ( "font-weight", "bold" )
+                    ]
+                ]
+                [ text chat.username ]
+          else
+            p
+                [ style
+                    [ ( "font-weight", "bold" )
+                    ]
+                ]
+                [ text chat.email ]
+        , p
+            [ style
+                [ ( "margin-left", "1.5%" )
+                , ( "margin-top", "0.04%" )
+                ]
+            ]
+            [ text chat.content ]
+        ]
+
+
 chatLogin : Model -> String -> Html Msg
 chatLogin model nameInput =
     div
@@ -2260,7 +2431,6 @@ chatLogin model nameInput =
             [ ( "z-index", "2" )
             , ( "position", "absolute" )
             , ( "background-color", "white" )
-            , ( "border", "1px black solid" )
             , ( "display", "flex" )
             , ( "flex-direction", "column" )
             , ( "height", "60%" )
@@ -2356,10 +2526,10 @@ viewChatWindow model =
                             -- CHAT SELECTOR ^^^
                             , div
                                 [ style
-                                    [ ( "margin-top", "0" )
-                                    , ( "border", "black 1px solid" )
-                                    , ( "width", "75%" )
+                                    [ ( "margin-top", "0px" )
+                                    , ( "width", "84%" )
                                     , ( "height", "95%" )
+                                    , ( "overflow-y", "auto" )
                                     ]
                                 ]
                                 (viewAllChats

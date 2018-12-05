@@ -1,6 +1,9 @@
 import './css/globalStyle.css'
+import io from 'socket.io-client'
 
 import Elm from './Main.elm'
+
+const socket = io('http://localhost:8000')
 
   const app = Elm.Main.embed(
     document.querySelector('div'),
@@ -77,3 +80,6 @@ app.ports.sendNewTime.subscribe( seekTrack )
 app.ports.logOutLocalStorage.subscribe( forgetMe )
 app.ports.newUser.subscribe( rememeberNewUser )
 app.ports.rememberUsername.subscribe( rememberUsername )
+socket.on('chat message', function(msg){
+  app.ports.chatSocket.send(msg)
+})

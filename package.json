@@ -26,6 +26,9 @@
   "dependencies": {
     "better-sqlite3": "^5.0.1",
     "electron": "^3.0.8",
+    "express": "^4.16.4",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
     "sqlite": "^3.0.0",
     "sqlite3": "^4.0.4"
   }
