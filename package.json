@@ -4,6 +4,7 @@
   "private": true,
   "main": "data/app.js",
   "scripts": {
+    "start": "node data/app.js",
     "start-dev": "webpack --watch --mode development",
     "buid": "webpack --mode production",
     "package-mac": "electron-packager ./build --icon=build/icon.icns --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds"
