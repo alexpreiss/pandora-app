@@ -11,7 +11,7 @@ var knex = require('knex')({
   debug: true
 })
 
-const port = 8000
+const port = process.env.PORT || 8000
 
 app.use(express.json())
 
