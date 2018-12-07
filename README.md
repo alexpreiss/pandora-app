@@ -17,6 +17,6 @@ Use 'elm-install' to install packages
 
 Rebuild app with 'package-mac'
 
-:)
-
 [Click here to download](http://www.mediafire.com/file/w3w9qoqu6ndn9e8/Pandora.zip/file) (Mac download)
+
+:)
