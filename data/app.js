@@ -15,14 +15,14 @@ const port = 8000
 
 app.use(express.json())
 
-// knex.schema.createTable('chats', function(table) {
-//   table.increments().primary()
-//   table.string('email').notNullable()
-//   table.string('username').notNullable()
-//   table.string('content').notNullable()
-//   table.timestamps()
-// })
-// .then(() => console.log("this resolved"))
+knex.schema.createTable('chats', function(table) {
+  table.increments().primary()
+  table.string('email').notNullable()
+  table.string('username').notNullable()
+  table.string('content').notNullable()
+  table.timestamps()
+})
+.then(() => console.log("this resolved"))
 
 app.post('/sendchat', (req, res) => {
   knex('chats').insert({email: req.body.email, username: req.body.username, content: req.body.content})
