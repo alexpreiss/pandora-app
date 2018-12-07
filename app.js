@@ -35,7 +35,6 @@ app.post('/sendchat', (req, res) => {
     })
 })
 
-
 app.get('/getchats', (req, res) => {
   knex.select().from('chats').orderBy('id', 'desc')
     .then((chats) => res.send(chats) )
