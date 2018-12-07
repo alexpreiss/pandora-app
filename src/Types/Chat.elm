@@ -30,7 +30,7 @@ getAll authToken =
             [ Http.header "Content-Type" "application/json"
             ]
         , body = Http.emptyBody
-        , url = "http://localhost:8000/getchats"
+        , url = "https://pandora-app-alexpreiss.herokuapp.com/getchats"
         , expect = Http.expectJson (Decode.list chatDecoder)
         , timeout = Nothing
         , withCredentials = False
@@ -48,7 +48,7 @@ send items =
         { method = "POST"
         , headers =
             []
-        , url = "http://localhost:8000/sendchat"
+        , url = "https://pandora-app-alexpreiss.herokuapp.com/sendchat"
         , body =
             Http.jsonBody
                 (Encode.object

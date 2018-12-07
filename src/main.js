@@ -3,7 +3,7 @@ import io from 'socket.io-client'
 
 import Elm from './Main.elm'
 
-const socket = io('http://localhost:8000')
+const socket = io('https://pandora-app-alexpreiss.herokuapp.com')
 
   const app = Elm.Main.embed(
     document.querySelector('div'),

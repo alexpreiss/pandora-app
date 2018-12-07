@@ -1,6 +1,6 @@
 {
   "name": "Pandora",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "private": true,
   "main": "app.js",
   "scripts": {
@@ -26,14 +26,11 @@
     "webpack-dev-server": "^3.1.8"
   },
   "dependencies": {
-    "better-sqlite3": "^5.0.1",
     "electron": "^3.0.8",
     "express": "^4.16.4",
     "knex": "^0.15.2",
     "pg": "^7.7.1",
     "socket.io": "^2.1.1",
-    "socket.io-client": "^2.1.1",
-    "sqlite": "^3.0.0",
-    "sqlite3": "^4.0.4"
+    "socket.io-client": "^2.1.1"
   }
 }

@@ -1,4 +1,8 @@
 
+Release 2.0.0 (First to be public)
+
+Simple Pandora music player that gives you unlimited skips/replays/scrubbing without Pandora Plus!
+
 Written in Elm 0.18
 
 ## Development
@@ -14,3 +18,5 @@ Use 'elm-install' to install packages
 Rebuild app with 'package-mac'
 
 :)
+
+[Click here to download](http://www.mediafire.com/file/w3w9qoqu6ndn9e8/Pandora.zip/file) (Mac download)
