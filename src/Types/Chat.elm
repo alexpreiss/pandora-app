@@ -6,7 +6,8 @@ import Http exposing (Request)
 
 
 type alias Chat =
-    { email : String
+    { id : Int
+    , email : String
     , username : String
     , content : String
     }
@@ -14,7 +15,8 @@ type alias Chat =
 
 chatDecoder : Decode.Decoder Chat
 chatDecoder =
-    Decode.map3 Chat
+    Decode.map4 Chat
+        (Decode.field "id" Decode.int)
         (Decode.field "email" Decode.string)
         (Decode.field "username" Decode.string)
         (Decode.field "content" Decode.string)

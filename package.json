@@ -1,5 +1,8 @@
 {
   "name": "Pandora",
+  "productName": "pandora-app",
+  "author": "Alex Preiss",
+  "description": "Simple Pandora music player that gives you unlimited skips/replays/scrubbing without Pandora Plus!",
   "version": "2.0.0",
   "private": true,
   "main": "app.js",

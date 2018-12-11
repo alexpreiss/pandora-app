@@ -23,11 +23,17 @@ knex.schema.createTable('chats', function(table) {
   table.timestamps()
 })
 .then(() => console.log("this resolved"))
+.catch((err) => {
+  console.error(err)
+})
 
 app.post('/sendchat', (req, res) => {
-  knex('chats').insert({email: req.body.email, username: req.body.username, content: req.body.content})
-    .then(() => {res.status(201).send()
-      io.emit('chat message', {email : req.body.email, username : req.body.username, content : req.body.content })
+  knex('chats')
+    .insert({email: req.body.email, username: req.body.username, content: req.body.content})
+    .returning("*")
+    .then((chat) => {
+      res.status(201).send()
+      io.emit('chat message', chat)
     })
     .catch((err) => {
       console.error(err)
