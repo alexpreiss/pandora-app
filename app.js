@@ -31,7 +31,7 @@ app.post('/sendchat', (req, res) => {
   knex('chats')
     .insert({email: req.body.email, username: req.body.username, content: req.body.content})
     .returning("*")
-    .then((chat) => {
+    .then(([chat]) => {
       res.status(201).send()
       io.emit('chat message', chat)
       console.log(chat)
