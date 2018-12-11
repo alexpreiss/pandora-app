@@ -34,6 +34,7 @@ app.post('/sendchat', (req, res) => {
     .then((chat) => {
       res.status(201).send()
       io.emit('chat message', chat)
+      console.log(chat)
     })
     .catch((err) => {
       console.error(err)
