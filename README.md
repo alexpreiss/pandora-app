@@ -7,7 +7,7 @@ Written in Elm 0.18
 
 ## Development
 
-Start dev server with 'npm start'
+Start dev server with 'npm run start-dev'
 
 Use 'elm-install' to install packages
 
