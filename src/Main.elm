@@ -17,11 +17,12 @@ import Material.Tooltip as Tooltip
 import Material
 import Time
 import Types.Feedback as Feedback
-import Types.Station as Station exposing (Station, SearchResult)
+import Types.Station as Station exposing (Station, SearchResult, removingPopup)
 import Types.Fragment as Fragment exposing (Song)
 import Types.Chat as Chat exposing (..)
 import Keyboard
 import Dict exposing (Dict)
+import Util.Events as Events
 
 
 main : Program Flags Model Msg
@@ -73,10 +74,7 @@ type PlayingState
     = Normal
     | SelectingStation
     | SelectingPlaying
-    | AddingStation
-        { searchedSongs : Dict String SearchResult
-        , searchInput : String
-        }
+    | AddingStation AddingStationFields
     | PreviousSongs
     | Chatting
         { email : String
@@ -88,32 +86,47 @@ type PlayingState
         }
 
 
+type alias AddingStationFields =
+    { searchResults : Dict String SearchResult
+    , searchInput : String
+    }
+
+
+type alias PlayingFields =
+    { authToken : String
+    , stations : List Station
+    , currentStation : Maybe Station
+    , songQueue : List Song
+    , currentTime : Float
+    , previousSongs : List Song
+    , audioLevel : Float
+    , audioHover : Bool
+    , isPlaying : Bool
+    , playingState : PlayingState
+    , seek : Float
+    , email : String
+    , username : String
+    , newUser : Bool
+    , deletingStationPopup : Bool
+    , updatingStationPopup : Bool
+    , updateStationNameInput : String
+    }
+
+
+type alias LoggingInFields =
+    { email : String
+    , password : String
+    , remember : Bool
+    , failed : Bool
+    , audioLevel : Maybe Float
+    , username : Maybe String
+    , newUser : Maybe Bool
+    }
+
+
 type State
-    = LoggingIn
-        { email : String
-        , password : String
-        , remember : Bool
-        , failed : Bool
-        , audioLevel : Maybe Float
-        , username : Maybe String
-        , newUser : Maybe Bool
-        }
-    | Playing
-        { authToken : String
-        , stations : List Station
-        , currentStation : Maybe Station
-        , songQueue : List Song
-        , currentTime : Float
-        , previousSongs : List Song
-        , audioLevel : Float
-        , audioHover : Bool
-        , isPlaying : Bool
-        , playingState : PlayingState
-        , seek : Float
-        , email : String
-        , username : String
-        , newUser : Bool
-        }
+    = LoggingIn LoggingInFields
+    | Playing PlayingFields
 
 
 stateCase : Model -> a -> a -> a -> a
@@ -328,7 +341,18 @@ type
     | SearchForSong String
     | GotSearchedSongs (Result Http.Error (Dict String SearchResult))
     | CreateStation String
-    | CreatedStation (Result Http.Error String)
+    | CreatedStation (Result Http.Error Station)
+      -- Removing Stations
+    | OpenRemoveStationPopup
+    | CloseRemoveStationPopup
+    | RemoveStation Station
+    | RemovedStation (Result Http.Error String)
+      -- Updating Stations
+    | UpdateStation
+    | UpdatedStation (Result Http.Error String)
+    | OpenUpdateStationPopup
+    | CloseUpdateStationPopup
+    | NameInputToModel String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -430,6 +454,9 @@ update msg model =
 
                                                 Nothing ->
                                                     True
+                                        , deletingStationPopup = False
+                                        , updatingStationPopup = False
+                                        , updateStationNameInput = ""
                                         }
                             }
                                 ! [ Http.send GotStations
@@ -484,6 +511,9 @@ update msg model =
 
                                                 Nothing ->
                                                     True
+                                        , deletingStationPopup = False
+                                        , updatingStationPopup = False
+                                        , updateStationNameInput = ""
                                         }
                             }
                                 ! [ Http.send
@@ -1354,7 +1384,7 @@ update msg model =
                                 { record
                                     | playingState =
                                         AddingStation
-                                            { searchedSongs = Dict.empty
+                                            { searchResults = Dict.empty
                                             , searchInput = ""
                                             }
                                 }
@@ -1367,7 +1397,44 @@ update msg model =
                     model ! []
 
                 Playing record ->
-                    model ! [ Http.send GotSearchedSongs (Station.search input record.authToken) ]
+                    case model.state of
+                        LoggingIn record ->
+                            model ! []
+
+                        Playing record ->
+                            case record.playingState of
+                                Normal ->
+                                    model ! []
+
+                                SelectingPlaying ->
+                                    model ! []
+
+                                SelectingStation ->
+                                    model ! []
+
+                                PreviousSongs ->
+                                    model ! []
+
+                                Chatting fields ->
+                                    model ! []
+
+                                AddingStation fields ->
+                                    if input == "" then
+                                        { model
+                                            | state =
+                                                Playing
+                                                    { record
+                                                        | playingState =
+                                                            AddingStation
+                                                                { fields
+                                                                    | searchResults = Dict.empty
+                                                                    , searchInput = fields.searchInput
+                                                                }
+                                                    }
+                                        }
+                                            ! []
+                                    else
+                                        model ! [ Http.send GotSearchedSongs (Station.search input record.authToken) ]
 
         GotSearchedSongs result ->
             case model.state of
@@ -1398,7 +1465,7 @@ update msg model =
                                                     | playingState =
                                                         AddingStation
                                                             { fields
-                                                                | searchedSongs = songs
+                                                                | searchResults = songs
                                                                 , searchInput = fields.searchInput
                                                             }
                                                 }
@@ -1421,15 +1488,178 @@ update msg model =
                     model ! []
 
                 Playing record ->
-                    model ! [ Http.send CreatedStation (Station.create musicToken record.authToken) ]
+                    { model
+                        | state =
+                            Playing
+                                { record | playingState = SelectingPlaying }
+                    }
+                        ! [ Http.send CreatedStation
+                                (Station.create
+                                    musicToken
+                                    record.authToken
+                                )
+                          ]
 
-        CreatedStation _ ->
+        CreatedStation result ->
+            case result of
+                Ok station ->
+                    case model.state of
+                        LoggingIn record ->
+                            model ! []
+
+                        Playing record ->
+                            { model
+                                | state =
+                                    Playing
+                                        { record
+                                            | stations = station :: record.stations
+                                        }
+                            }
+                                ! []
+
+                Err error ->
+                    let
+                        log =
+                            Debug.log "Error creating station" error
+                    in
+                        model ! []
+
+        RemoveStation removedStation ->
             case model.state of
                 LoggingIn record ->
                     model ! []
 
                 Playing record ->
-                    { model | state = Playing { record | playingState = SelectingStation } } ! []
+                    { model
+                        | state =
+                            Playing
+                                { record
+                                    | stations =
+                                        (List.filter
+                                            (\station -> station.id /= removedStation.id)
+                                            record.stations
+                                        )
+                                }
+                    }
+                        ! [ Http.send RemovedStation (Station.remove removedStation.id record.authToken) ]
+
+        RemovedStation _ ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model
+                        | state =
+                            Playing
+                                { record
+                                    | playingState = SelectingStation
+                                    , deletingStationPopup = False
+                                    , isPlaying = False
+                                    , currentTime = 0
+                                    , currentStation = Nothing
+                                }
+                    }
+                        ! []
+
+        OpenRemoveStationPopup ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | deletingStationPopup = True } } ! []
+
+        CloseRemoveStationPopup ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | deletingStationPopup = False } } ! []
+
+        OpenUpdateStationPopup ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | updatingStationPopup = True } } ! []
+
+        CloseUpdateStationPopup ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | updatingStationPopup = False } } ! []
+
+        UpdateStation ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    let
+                        stationId =
+                            case record.currentStation of
+                                Just station ->
+                                    station.id
+
+                                Nothing ->
+                                    ""
+                    in
+                        model ! [ Http.send UpdatedStation (Station.update stationId record.updateStationNameInput record.authToken) ]
+
+        UpdatedStation result ->
+            case result of
+                Ok result ->
+                    case model.state of
+                        LoggingIn record ->
+                            model ! []
+
+                        Playing record ->
+                            let
+                                station =
+                                    case record.currentStation of
+                                        Just station ->
+                                            station
+
+                                        Nothing ->
+                                            { id = ""
+                                            , name = ""
+                                            , art = ""
+                                            }
+                            in
+                                { model
+                                    | state =
+                                        Playing
+                                            { record
+                                                | currentStation =
+                                                    Just
+                                                        { id = station.id
+                                                        , name = record.updateStationNameInput
+                                                        , art = station.art
+                                                        }
+                                                , updatingStationPopup = False
+                                            }
+                                }
+                                    ! []
+
+                Err error ->
+                    let
+                        log =
+                            Debug.log "Error updating station" error
+                    in
+                        model ! []
+
+        NameInputToModel input ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | updateStationNameInput = input } } ! []
 
 
 
@@ -1793,16 +2023,59 @@ viewTopBar modelAudioLevel modelCurrentStationName modelAudioHover modelMdl play
             , ( "height", "10%" )
             ]
         ]
-        [ p
+        [ div
             [ style
-                [ ( "text-align", "center" )
-                , ( "position", "absolute" )
-                , ( "left", "0" )
-                , ( "right", "0" )
+                [ ( "display", "flex" )
+                , ( "justify-content", "center" )
                 , ( "padding-top", "6px" )
                 ]
             ]
-            [ text modelCurrentStationName ]
+            [ i
+                [ class "material-icons deleteStation"
+                , style
+                    [ ( "margin-right", "1%" )
+                    , (case modelCurrentStationName of
+                        "" ->
+                            ( "opacity", "0" )
+
+                        _ ->
+                            ( "pointer-events", "auto" )
+                      )
+                    , (case modelCurrentStationName of
+                        "" ->
+                            ( "pointer-events", "none" )
+
+                        _ ->
+                            ( "pointer-events", "auto" )
+                      )
+                    ]
+                , onClick OpenRemoveStationPopup
+                ]
+                [ text "delete" ]
+            , p [] [ text modelCurrentStationName ]
+            , i
+                [ class "material-icons editStation"
+                , onClick OpenUpdateStationPopup
+                , style
+                    [ ( "margin-left", "1%" )
+                    , (case modelCurrentStationName of
+                        "" ->
+                            ( "opacity", "0" )
+
+                        _ ->
+                            ( "pointer-events", "auto" )
+                      )
+                    , (case modelCurrentStationName of
+                        "" ->
+                            ( "pointer-events", "none" )
+
+                        _ ->
+                            ( "pointer-events", "auto" )
+                      )
+                    ]
+                ]
+                [ text "edit" ]
+            ]
         , div
             [ style
                 [ ( "display", "flex" )
@@ -2476,8 +2749,10 @@ viewPlayer :
     -> PlayingState
     -> List Song
     -> List Song
+    -> Bool
+    -> Bool
     -> Html Msg
-viewPlayer model content audioLevel currentStation audioHover mdl playingState previousSongs songQueue =
+viewPlayer model content audioLevel currentStation audioHover mdl playingState previousSongs songQueue removingStationPopup updatingStationPopup =
     div
         [ style
             [ ( "height", "100%" )
@@ -2502,6 +2777,44 @@ viewPlayer model content audioLevel currentStation audioHover mdl playingState p
             songQueue
         , content
         , viewControls model (getCurrentStation model).id
+        , (if removingStationPopup then
+            Station.removingPopup mdl
+                Mdl
+                (case currentStation of
+                    Just station ->
+                        station
+
+                    Nothing ->
+                        { id = ""
+                        , name = ""
+                        , art = ""
+                        }
+                )
+                CloseRemoveStationPopup
+                RemoveStation
+           else
+            text ""
+          )
+        , (if updatingStationPopup then
+            Station.updatingPopup mdl
+                Mdl
+                (case currentStation of
+                    Just station ->
+                        station
+
+                    Nothing ->
+                        { id = ""
+                        , name = ""
+                        , art = ""
+                        }
+                )
+                CloseUpdateStationPopup
+                UpdateStation
+                NoOp
+                NameInputToModel
+           else
+            text ""
+          )
         ]
 
 
@@ -2756,149 +3069,15 @@ viewChatWindow model =
                         ]
 
 
-viewSearchResults : Model -> Html Msg
-viewSearchResults model =
-    case model.state of
-        LoggingIn record ->
-            text ""
-
-        Playing record ->
-            case record.playingState of
-                Normal ->
-                    text ""
-
-                SelectingPlaying ->
-                    text ""
-
-                SelectingStation ->
-                    text ""
-
-                PreviousSongs ->
-                    text ""
-
-                AddingStation fields ->
-                    div
-                        [ style
-                            [ ( "overflow-y", "auto" )
-                            , ( "width", "100%" )
-                            ]
-                        ]
-                        (List.map viewSearchResult (Dict.values fields.searchedSongs))
-
-                Chatting items ->
-                    text ""
-
-
-viewSearchResult : SearchResult -> Html Msg
-viewSearchResult result =
-    div
-        [ style
-            [ ( "display", "flex" )
-            , ( "width", "100%" )
-            , ( "border-top", "0.5px black solid" )
-            ]
-        , onClick (CreateStation result.pandoraId)
-        ]
-        [ div
-            [ style
-                [ ( "display", "flex" )
-                , ( "flex-direction", "column" )
-                , ( "justify-content", "space-around" )
-                , ( "margin-left", "3%" )
-                ]
-            ]
-            [ (case result.artistName of
-                Just artist ->
-                    p [ style [ ( "margin", "0" ) ] ]
-                        [ text artist
-                        ]
-
-                Nothing ->
-                    text ""
-              )
-            , p [ style [ ( "margin", "0" ) ] ] [ text result.name ]
-            , p [ style [ ( "margin", "0" ) ] ]
-                [ text
-                    (case result.resultType of
-                        "AR" ->
-                            "Artist"
-
-                        "TR" ->
-                            "Song"
-
-                        "AL" ->
-                            "Album"
-
-                        _ ->
-                            ""
-                    )
-                ]
-            ]
-        , img
-            [ src
-                (case
-                    (case result.resultType of
-                        "AR" ->
-                            result.art
-
-                        _ ->
-                            result.thorId
-                    )
-                 of
-                    Just art ->
-                        ("https://content-images.p-cdn.com/"
-                            ++ art
-                        )
-
-                    Nothing ->
-                        "https://vignette.wikia.nocookie.net/the-darkest-minds/images/4/47/Placeholder.png/revision/latest?cb=20160927044640"
-                )
-            , style
-                [ ( "margin-left", "auto" )
-                , ( "border-left", "0.5px black solid" )
-                , ( "border-right", "0.5px black solid" )
-                , ( "margin-right", "3%" )
-                , ( "height", "150px" )
-                , ( "width", "150px" )
-                ]
-            ]
-            []
-        ]
-
-
-viewSongSearch : Model -> Html Msg
-viewSongSearch model =
-    div
-        [ style
-            [ ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "height", "100%" )
-            , ( "width", "100%" )
-            , ( "align-items", "center" )
-            ]
-        ]
-        [ input
-            [ style
-                [ ( "height", "7.5%" )
-                , ( "width", "70%" )
-                , ( "padding-left", "1.5%" )
-                ]
-            , onInput SearchForSong
-            ]
-            []
-        , viewSearchResults model
-        ]
-
-
 view : Model -> Html Msg
 view model =
     case model.state of
-        Playing fields ->
+        Playing record ->
             div
                 [ style [ ( "height", "100%" ) ] ]
                 [ audio
                     [ onEnded
-                        (case (fields.currentStation) of
+                        (case (record.currentStation) of
                             Just station ->
                                 station.id
 
@@ -2928,33 +3107,35 @@ view model =
                     ]
                     []
                 , viewPlayer model
-                    (case fields.playingState of
+                    (case record.playingState of
                         Normal ->
                             viewSongInfo model
 
                         SelectingPlaying ->
-                            viewStationSelector model fields.stations
+                            viewStationSelector model record.stations
 
                         SelectingStation ->
-                            viewStationSelector model fields.stations
+                            viewStationSelector model record.stations
 
                         PreviousSongs ->
                             viewPreviousSongs model
 
                         AddingStation fields ->
-                            viewSongSearch model
+                            Station.viewSearch fields.searchResults SearchForSong NoOp CreateStation
 
                         Chatting items ->
                             viewChatWindow model
                     )
-                    fields.audioLevel
-                    fields.currentStation
-                    fields.audioHover
+                    record.audioLevel
+                    record.currentStation
+                    record.audioHover
                     model.mdl
-                    fields.playingState
-                    fields.previousSongs
-                    fields.songQueue
+                    record.playingState
+                    record.previousSongs
+                    record.songQueue
+                    record.deletingStationPopup
+                    record.updatingStationPopup
                 ]
 
-        LoggingIn fields ->
-            viewLogin model fields.remember fields.failed
+        LoggingIn record ->
+            viewLogin model record.remember record.failed

@@ -1,5 +1,787 @@
-var _user$project$Types_Station$create = F2(
-	function (musicToken, authToken) {
+var _user$project$Types_Station$removingPopup = F5(
+	function (modelMdl, mdlMsg, station, closePopupMsg, removeMsg) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '400px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'z-index', _1: '5'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-right', _1: '1px black solid'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-left', _1: '1px black solid'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h5,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '15%'},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Are you sure you would like to delete'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h5,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'\"',
+									A2(_elm_lang$core$Basics_ops['++'], station.name, '\"?'))),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '17.5%'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A5(
+									_debois$elm_mdl$Material_Button$render,
+									mdlMsg,
+									{
+										ctor: '::',
+										_0: 987,
+										_1: {ctor: '[]'}
+									},
+									modelMdl,
+									{
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Options$onClick(closePopupMsg),
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Button$raised,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$colored,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$ripple,
+													_1: {
+														ctor: '::',
+														_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Cancel'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A5(
+										_debois$elm_mdl$Material_Button$render,
+										mdlMsg,
+										{
+											ctor: '::',
+											_0: 573,
+											_1: {ctor: '[]'}
+										},
+										modelMdl,
+										{
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Options$onClick(
+												removeMsg(station)),
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$raised,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$colored,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Button$ripple,
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+															_1: {
+																ctor: '::',
+																_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Delete'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _user$project$Types_Station$updatingPopup = F7(
+	function (modelMdl, mdlMsg, station, closePopupMsg, updateMsg, noOp, inputMsg) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '400px'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'z-index', _1: '5'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-right', _1: '1px black solid'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-left', _1: '1px black solid'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+															_1: {
+																ctor: '::',
+																_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h5,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10%'},
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('What would you like to rename'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h5,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'\"',
+									A2(_elm_lang$core$Basics_ops['++'], station.name, '\" to?'))),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5%'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'height', _1: '10%'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'width', _1: '60%'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(inputMsg),
+									_1: {
+										ctor: '::',
+										_0: _user$project$Util_Events$blockSpacebar(noOp),
+										_1: {ctor: '[]'}
+									}
+								}
+							},
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$div,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$style(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '7.5%'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: A5(
+										_debois$elm_mdl$Material_Button$render,
+										mdlMsg,
+										{
+											ctor: '::',
+											_0: 987,
+											_1: {ctor: '[]'}
+										},
+										modelMdl,
+										{
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Options$onClick(closePopupMsg),
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$raised,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$colored,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Button$ripple,
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+															_1: {
+																ctor: '::',
+																_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Cancel'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A5(
+											_debois$elm_mdl$Material_Button$render,
+											mdlMsg,
+											{
+												ctor: '::',
+												_0: 573,
+												_1: {ctor: '[]'}
+											},
+											modelMdl,
+											{
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Options$onClick(updateMsg),
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$raised,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Button$colored,
+														_1: {
+															ctor: '::',
+															_0: _debois$elm_mdl$Material_Button$ripple,
+															_1: {
+																ctor: '::',
+																_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html$text('Update'),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Types_Station$viewSearchResult = F2(
+	function (createMsg, result) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'border-top', _1: '0.5px black solid'},
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(
+						createMsg(result.pandoraId)),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'margin-left', _1: '3%'},
+											_1: {ctor: '[]'}
+										}
+									}
+								}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: function () {
+							var _p0 = result.artistName;
+							if (_p0.ctor === 'Just') {
+								return A2(
+									_elm_lang$html$Html$p,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(_p0._0),
+										_1: {ctor: '[]'}
+									});
+							} else {
+								return _elm_lang$html$Html$text('');
+							}
+						}(),
+						_1: {
+							ctor: '::',
+							_0: function () {
+								var _p1 = result.name;
+								if (_p1.ctor === 'Just') {
+									return A2(
+										_elm_lang$html$Html$p,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$style(
+												{
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(_p1._0),
+											_1: {ctor: '[]'}
+										});
+								} else {
+									return _elm_lang$html$Html$text('');
+								}
+							}(),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$p,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$style(
+											{
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'margin', _1: '0'},
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(
+											function () {
+												var _p2 = result.resultType;
+												switch (_p2) {
+													case 'AR':
+														return 'Artist';
+													case 'TR':
+														return 'Song';
+													case 'AL':
+														return 'Album';
+													default:
+														return '';
+												}
+											}()),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$img,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$src(
+								function () {
+									var _p4 = function () {
+										var _p3 = result.resultType;
+										if (_p3 === 'AR') {
+											return result.art;
+										} else {
+											return result.thorId;
+										}
+									}();
+									if (_p4.ctor === 'Just') {
+										return A2(_elm_lang$core$Basics_ops['++'], 'https://content-images.p-cdn.com/', _p4._0);
+									} else {
+										return 'https://vignette.wikia.nocookie.net/the-darkest-minds/images/4/47/Placeholder.png/revision/latest?cb=20160927044640';
+									}
+								}()),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin-left', _1: 'auto'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'border-left', _1: '0.5px black solid'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'border-right', _1: '0.5px black solid'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'margin-right', _1: '3%'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'height', _1: '150px'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'width', _1: '150px'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Types_Station$viewSearchResults = F2(
+	function (searchResults, createMsg) {
+		return _elm_lang$core$Native_Utils.eq(searchResults, _elm_lang$core$Dict$empty) ? A2(
+			_elm_lang$html$Html$h4,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('No results'),
+				_1: {ctor: '[]'}
+			}) : A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'overflow-y', _1: 'auto'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$List$map,
+				_user$project$Types_Station$viewSearchResult(createMsg),
+				_elm_lang$core$Dict$values(searchResults)));
+	});
+var _user$project$Types_Station$viewSearch = F4(
+	function (searchResults, searchMsg, noOp, createMsg) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$style(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'align-items', _1: 'center'},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$input,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '7.5%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'width', _1: '70%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'padding-left', _1: '1.5%'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'flex-shrink', _1: '0'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'margin-bottom', _1: '5%'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(searchMsg),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Util_Events$blockSpacebar(noOp),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Types_Station$viewSearchResults, searchResults, createMsg),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Types_Station$update = F3(
+	function (stationId, input, authToken) {
 		return _elm_lang$http$Http$request(
 			{
 				method: 'POST',
@@ -12,15 +794,55 @@ var _user$project$Types_Station$create = F2(
 						_1: {ctor: '[]'}
 					}
 				},
-				url: 'https://www.pandora.com/api/v1/station/createStation',
+				url: 'https://www.pandora.com/api/v1/station/updateStation',
 				body: _elm_lang$http$Http$jsonBody(
 					_elm_lang$core$Json_Encode$object(
 						{
 							ctor: '::',
 							_0: {
 								ctor: '_Tuple2',
-								_0: 'pandoraId',
-								_1: _elm_lang$core$Json_Encode$string(musicToken)
+								_0: 'name',
+								_1: _elm_lang$core$Json_Encode$string(input)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'stationId',
+									_1: _elm_lang$core$Json_Encode$string(stationId)
+								},
+								_1: {ctor: '[]'}
+							}
+						})),
+				expect: _elm_lang$http$Http$expectJson(
+					_elm_lang$core$Json_Decode$succeed('')),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
+var _user$project$Types_Station$remove = F2(
+	function (stationId, authToken) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'https://www.pandora.com/api/v1/station/removeStation',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'stationId',
+								_1: _elm_lang$core$Json_Encode$string(stationId)
 							},
 							_1: {ctor: '[]'}
 						})),
@@ -49,6 +871,58 @@ var _user$project$Types_Station$decodeListLast = F2(
 var _user$project$Types_Station$Station = F3(
 	function (a, b, c) {
 		return {id: a, name: b, art: c};
+	});
+var _user$project$Types_Station$createdStationDecoder = A4(
+	_elm_lang$core$Json_Decode$map3,
+	_user$project$Types_Station$Station,
+	A2(_elm_lang$core$Json_Decode$field, 'stationId', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$oneOf(
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$core$Json_Decode$field,
+				'art',
+				A2(
+					_user$project$Types_Station$decodeListLast,
+					A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string),
+					'fillerImg.jpg')),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Json_Decode$succeed('fillerIMG.jpg'),
+				_1: {ctor: '[]'}
+			}
+		}));
+var _user$project$Types_Station$create = F2(
+	function (musicToken, authToken) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'https://www.pandora.com/api/v1/station/createStation',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'pandoraId',
+								_1: _elm_lang$core$Json_Encode$string(musicToken)
+							},
+							_1: {ctor: '[]'}
+						})),
+				expect: _elm_lang$http$Http$expectJson(_user$project$Types_Station$createdStationDecoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
 	});
 var _user$project$Types_Station$stationDecoder = A4(
 	_elm_lang$core$Json_Decode$map3,
@@ -119,7 +993,8 @@ var _user$project$Types_Station$searchResultDecoder = A8(
 	A2(_elm_lang$core$Json_Decode$field, 'pandoraId', _elm_lang$core$Json_Decode$string),
 	_elm_lang$core$Json_Decode$maybe(
 		A2(_elm_lang$core$Json_Decode$field, 'artistName', _elm_lang$core$Json_Decode$string)),
-	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string)),
 	A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string),
 	_elm_lang$core$Json_Decode$maybe(
 		_elm_lang$core$Json_Decode$oneOf(

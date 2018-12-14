@@ -4,7 +4,22 @@
 }
 .controlIcons {
   color: white;
-
+}
+.material-icons.editStation {
+  opacity: 0;
+  pointer-events: none;
+}
+.material-icons.editStation:hover {
+  opacity: 100;
+  cursor: pointer;
+}
+.material-icons.deleteStation {
+  opacity: 0;
+  pointer-events: none;
+}
+.material-icons.deleteStation:hover {
+  opacity: 100;
+  cursor: pointer;
 }
 *, h3 {
   font-family: 'Lato', sans-serif;
