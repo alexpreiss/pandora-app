@@ -35,7 +35,7 @@ type alias SearchResult =
 
 
 
--- Decoder Function
+-- Decoder Functions
 
 
 createdStationDecoder : Decode.Decoder Station

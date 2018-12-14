@@ -6,15 +6,15 @@ import Html.Events exposing (..)
 import Json.Decode as Decode exposing (Value)
 import Json.Encode as Encode
 import Http exposing (Request)
+import Material
 import Material.Slider as Slider
 import Material.Spinner as Spinner
 import Material.Options as Options
 import Material.Button as Button
 import Material.Menu as Menu
-import Material.Icon as Icon
 import Material.Grid as Grid exposing (Device(..))
 import Material.Tooltip as Tooltip
-import Material
+import Material.Icon as Icon
 import Time
 import Types.Feedback as Feedback
 import Types.Station as Station exposing (Station, SearchResult, removingPopup)
@@ -70,20 +70,14 @@ currentSong model =
                     }
 
 
-type PlayingState
-    = Normal
-    | SelectingStation
-    | SelectingPlaying
-    | AddingStation AddingStationFields
-    | PreviousSongs
-    | Chatting
-        { email : String
-        , chatInput : String
-        , chats : List Chat
-        , username : String
-        , newUser : Bool
-        , userNameInput : String
-        }
+type alias ChattingFields =
+    { email : String
+    , chatInput : String
+    , chats : List Chat
+    , username : String
+    , newUser : Bool
+    , userNameInput : String
+    }
 
 
 type alias AddingStationFields =
@@ -124,21 +118,6 @@ type alias LoggingInFields =
     }
 
 
-type State
-    = LoggingIn LoggingInFields
-    | Playing PlayingFields
-
-
-stateCase : Model -> a -> a -> a -> a
-stateCase model playing loggingIn failed =
-    case model.state of
-        Playing fields ->
-            playing
-
-        LoggingIn fields ->
-            loggingIn
-
-
 getCurrentStation : Model -> Station
 getCurrentStation model =
     case model.state of
@@ -158,6 +137,20 @@ getCurrentStation model =
                     , name = "Select a station"
                     , art = ""
                     }
+
+
+type State
+    = LoggingIn LoggingInFields
+    | Playing PlayingFields
+
+
+type PlayingState
+    = Normal
+    | SelectingStation
+    | SelectingPlaying
+    | AddingStation AddingStationFields
+    | PreviousSongs
+    | Chatting ChattingFields
 
 
 type alias Model =
@@ -2818,257 +2811,6 @@ viewPlayer model content audioLevel currentStation audioHover mdl playingState p
         ]
 
 
-darkEle : Html Msg
-darkEle =
-    div
-        [ style
-            [ ( "z-index", "2" )
-            , ( "position", "absolute" )
-            , ( "background-color", "rgba(0, 0, 0, 0.5)" )
-            , ( "top", "0" )
-            , ( "bottom", "0" )
-            , ( "right", "0" )
-            , ( "left", "0" )
-            ]
-        ]
-        []
-
-
-chatInput : Model -> Html Msg
-chatInput model =
-    case model.state of
-        LoggingIn fields ->
-            text ""
-
-        Playing fields ->
-            case fields.playingState of
-                Normal ->
-                    text ""
-
-                SelectingPlaying ->
-                    text ""
-
-                SelectingStation ->
-                    text ""
-
-                AddingStation fields ->
-                    text ""
-
-                PreviousSongs ->
-                    text ""
-
-                Chatting fields ->
-                    div
-                        [ style
-                            [ ( "height", "6%" )
-                            , ( "width", "89.75%" )
-                            , ( "margin-top", "1%" )
-                            , ( "margin-bottom", "3%" )
-                            , ( "display", "flex" )
-                            ]
-                        ]
-                        [ input
-                            [ style
-                                [ ( "padding-left", "5px" )
-                                , ( "height", "100%" )
-                                , ( "width", "95%" )
-                                ]
-                            , value
-                                fields.chatInput
-                            , onInput ChatInput
-                            , Html.Events.onWithOptions "keydown"
-                                { stopPropagation = True
-                                , preventDefault = False
-                                }
-                                (Decode.succeed NoOp)
-                            ]
-                            []
-                        , (Button.render Mdl
-                            [ 7834 ]
-                            model.mdl
-                            [ Button.ripple
-                            , Options.css "height" "100%"
-                            , Options.css "margin-top" ".45%"
-                            , Options.onClick SendChat
-                            ]
-                            [ text "Send" ]
-                          )
-                        ]
-
-
-viewChatRooms : Html Msg
-viewChatRooms =
-    div
-        [ style
-            [ ( "background-color", "rgb(223, 223, 223)" )
-            , ( "width", "15%" )
-            , ( "height", "95%" )
-            ]
-        ]
-        []
-
-
-viewChat : Chat -> Html Msg
-viewChat chat =
-    div
-        [ style
-            [ ( "display", "flex" )
-            , ( "margin-left", "1%" )
-            ]
-        ]
-        [ if chat.username /= "" then
-            p
-                [ style
-                    [ ( "font-weight", "bold" )
-                    ]
-                ]
-                [ text chat.username ]
-          else
-            p
-                [ style
-                    [ ( "font-weight", "bold" )
-                    ]
-                ]
-                [ text chat.email ]
-        , p
-            [ style
-                [ ( "margin-left", "1.5%" )
-                , ( "margin-top", "0.04%" )
-                ]
-            ]
-            [ text chat.content ]
-        ]
-
-
-chatLogin : Model -> String -> Html Msg
-chatLogin model nameInput =
-    div
-        [ style
-            [ ( "z-index", "2" )
-            , ( "position", "absolute" )
-            , ( "background-color", "white" )
-            , ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "height", "60%" )
-            , ( "width", "50%" )
-            ]
-        ]
-        [ h3 [ style [ ( "text-align", "center" ) ] ]
-            [ text "Please enter a username: " ]
-        , p [ style [ ( "text-align", "center" ) ] ]
-            [ text "This is what other users will see when you send a message" ]
-        , p
-            [ style
-                [ ( "text-align", "center" )
-                , ( "margin-top", "10%" )
-                ]
-            , class "chatLoginAltOpt"
-            ]
-            [ text "Or click here to use your email instead" ]
-        , input
-            [ type_ "text"
-            , onInput UserNameInput
-            , style
-                [ ( "height", "12%" )
-                , ( "padding-left", "2%" )
-                , ( "font-size", "100%" )
-                , ( "margin-top", "auto" )
-                ]
-            ]
-            []
-        , (Button.render Mdl
-            [ 18 ]
-            model.mdl
-            [ Button.minifab
-            , Button.ripple
-            , (if nameInput == "" then
-                Options.onClick NoOp
-               else
-                Options.onClick SetUserName
-              )
-            , Options.css "height" "20%"
-            , Options.css "margin-bottom" "0px"
-            ]
-            [ Icon.i "arrow_right_alt" ]
-          )
-        ]
-
-
-viewAllChats : List Chat -> List (Html Msg)
-viewAllChats chatList =
-    List.map viewChat chatList
-
-
-viewChatWindow : Model -> Html Msg
-viewChatWindow model =
-    case model.state of
-        LoggingIn record ->
-            text ""
-
-        Playing record ->
-            case record.playingState of
-                Normal ->
-                    text ""
-
-                SelectingStation ->
-                    text ""
-
-                SelectingPlaying ->
-                    text ""
-
-                AddingStation fields ->
-                    text ""
-
-                PreviousSongs ->
-                    text ""
-
-                Chatting fields ->
-                    div
-                        [ style
-                            [ ( "height", "100%" )
-                            , ( "width", "100%" )
-                            , ( "display", "flex" )
-                            , ( "flex-direction", "column" )
-                            , ( "align-items", "center" )
-                            , ( "justify-content", "center" )
-                            ]
-                        ]
-                        [ div
-                            [ style
-                                [ ( "display", "flex" )
-                                , ( "height", "100%" )
-                                , ( "width", "100%" )
-                                ]
-                            ]
-                            [ viewChatRooms
-
-                            -- CHAT SELECTOR ^^^
-                            , div
-                                [ style
-                                    [ ( "margin-top", "0px" )
-                                    , ( "width", "84%" )
-                                    , ( "height", "95%" )
-                                    , ( "overflow-y", "auto" )
-                                    ]
-                                ]
-                                (viewAllChats
-                                    fields.chats
-                                )
-                            ]
-
-                        -- CHAT ^^^
-                        , chatInput model
-                        , if fields.newUser then
-                            darkEle
-                          else
-                            text ""
-                        , if fields.newUser then
-                            chatLogin model fields.userNameInput
-                          else
-                            text ""
-                        ]
-
-
 view : Model -> Html Msg
 view model =
     case model.state of
@@ -3124,7 +2866,14 @@ view model =
                             Station.viewSearch fields.searchResults SearchForSong NoOp CreateStation
 
                         Chatting items ->
-                            viewChatWindow model
+                            Chat.viewWindow items
+                                ChatInput
+                                Mdl
+                                model.mdl
+                                SendChat
+                                UserNameInput
+                                NoOp
+                                SetUserName
                     )
                     record.audioLevel
                     record.currentStation
