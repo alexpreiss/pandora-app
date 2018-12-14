@@ -17,10 +17,11 @@ import Material.Tooltip as Tooltip
 import Material
 import Time
 import Types.Feedback as Feedback
-import Types.Station as Station exposing (Station)
+import Types.Station as Station exposing (Station, SearchResult)
 import Types.Fragment as Fragment exposing (Song)
 import Types.Chat as Chat exposing (..)
 import Keyboard
+import Dict exposing (Dict)
 
 
 main : Program Flags Model Msg
@@ -72,6 +73,10 @@ type PlayingState
     = Normal
     | SelectingStation
     | SelectingPlaying
+    | AddingStation
+        { searchedSongs : Dict String SearchResult
+        , searchInput : String
+        }
     | PreviousSongs
     | Chatting
         { email : String
@@ -298,6 +303,7 @@ type
     | ToPlaying
     | ToPreviousSongs
     | ToChat
+    | ToSongSearch
     | PlayPreviousSong Song
       -- Feedback
     | SendThumbsDown String
@@ -318,6 +324,11 @@ type
     | SendChat
     | SentChat (Result Http.Error String)
     | ChatSocket Chat
+      -- Creating Stations
+    | SearchForSong String
+    | GotSearchedSongs (Result Http.Error (Dict String SearchResult))
+    | CreateStation String
+    | CreatedStation (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -441,7 +452,7 @@ update msg model =
                             { model
                                 | state =
                                     Playing
-                                        { authToken = token
+                                        { authToken = Debug.log "Token" token
                                         , stations = []
                                         , currentStation = Nothing
                                         , songQueue = []
@@ -1083,6 +1094,9 @@ update msg model =
                         PreviousSongs ->
                             model ! []
 
+                        AddingStation fields ->
+                            model ! []
+
                         Chatting fields ->
                             { model
                                 | state =
@@ -1110,6 +1124,9 @@ update msg model =
                                     model ! []
 
                                 PreviousSongs ->
+                                    model ! []
+
+                                AddingStation fields ->
                                     model ! []
 
                                 Chatting fields ->
@@ -1191,6 +1208,9 @@ update msg model =
                         PreviousSongs ->
                             model ! []
 
+                        AddingStation fields ->
+                            model ! []
+
                         Chatting fields ->
                             { model
                                 | state =
@@ -1220,6 +1240,9 @@ update msg model =
                             model ! []
 
                         PreviousSongs ->
+                            model ! []
+
+                        AddingStation fields ->
                             model ! []
 
                         Chatting fields ->
@@ -1253,6 +1276,9 @@ update msg model =
                             model ! []
 
                         SelectingStation ->
+                            model ! []
+
+                        AddingStation fields ->
                             model ! []
 
                         PreviousSongs ->
@@ -1300,11 +1326,110 @@ update msg model =
                         PreviousSongs ->
                             model ! []
 
+                        AddingStation fields ->
+                            model ! []
+
                         Chatting fields ->
-                            { model | state = Playing { record | playingState = Chatting { fields | chats = message :: fields.chats } } } ! []
+                            { model
+                                | state =
+                                    Playing
+                                        { record
+                                            | playingState = Chatting { fields | chats = message :: fields.chats }
+                                        }
+                            }
+                                ! []
 
         NoOp1 _ ->
             model ! []
+
+        ToSongSearch ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model
+                        | state =
+                            Playing
+                                { record
+                                    | playingState =
+                                        AddingStation
+                                            { searchedSongs = Dict.empty
+                                            , searchInput = ""
+                                            }
+                                }
+                    }
+                        ! []
+
+        SearchForSong input ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    model ! [ Http.send GotSearchedSongs (Station.search input record.authToken) ]
+
+        GotSearchedSongs result ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    case record.playingState of
+                        Normal ->
+                            model ! []
+
+                        SelectingPlaying ->
+                            model ! []
+
+                        SelectingStation ->
+                            model ! []
+
+                        PreviousSongs ->
+                            model ! []
+
+                        AddingStation fields ->
+                            case Debug.log "songs" result of
+                                Ok songs ->
+                                    { model
+                                        | state =
+                                            Playing
+                                                { record
+                                                    | playingState =
+                                                        AddingStation
+                                                            { fields
+                                                                | searchedSongs = songs
+                                                                , searchInput = fields.searchInput
+                                                            }
+                                                }
+                                    }
+                                        ! []
+
+                                Err error ->
+                                    let
+                                        log =
+                                            Debug.log "Error searching songs" error
+                                    in
+                                        model ! []
+
+                        Chatting fields ->
+                            model ! []
+
+        CreateStation musicToken ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    model ! [ Http.send CreatedStation (Station.create musicToken record.authToken) ]
+
+        CreatedStation _ ->
+            case model.state of
+                LoggingIn record ->
+                    model ! []
+
+                Playing record ->
+                    { model | state = Playing { record | playingState = SelectingStation } } ! []
 
 
 
@@ -1320,7 +1445,13 @@ port replaySong : () -> Cmd msg
 port audioLevel : Float -> Cmd msg
 
 
+port logOutLocalStorage : () -> Cmd msg
+
+
 port rememberEmail : String -> Cmd msg
+
+
+port sendNewTime : Float -> Cmd msg
 
 
 port rememberUsername : String -> Cmd msg
@@ -1338,13 +1469,7 @@ port getProgressBarWidth : () -> Cmd msg
 port sendProgressBarWidth : (Float -> msg) -> Sub msg
 
 
-port sendNewTime : Float -> Cmd msg
-
-
 port chatSocket : (Chat -> msg) -> Sub msg
-
-
-port logOutLocalStorage : () -> Cmd msg
 
 
 subscriptions : Model -> Sub Msg
@@ -1531,6 +1656,29 @@ viewTopMenu modelMdl playingState previousSongs songQueue =
                         ]
 
                     PreviousSongs ->
+                        [ Menu.item
+                            [ onSelect ToPlaying
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "play_circle_outline", text "Player" ]
+                        , Menu.item
+                            [ onSelect ToChat
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "chat_bubble", text "Chat" ]
+                        , Menu.item
+                            [ onSelect ToStations
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "apps", text "Stations" ]
+                        , Menu.item
+                            [ onSelect Logout
+                            , Options.cs "topMenuIcon"
+                            ]
+                            [ i "clear", text "Log out" ]
+                        ]
+
+                    AddingStation fields ->
                         [ Menu.item
                             [ onSelect ToPlaying
                             , Options.cs "topMenuIcon"
@@ -1959,6 +2107,20 @@ viewControls model stationId =
                             ]
                             (controller model True stationId)
 
+                    AddingStation fields ->
+                        div
+                            [ style
+                                [ ( "width", "100%" )
+                                , ( "height", "90%" )
+                                , ( "background-color", "#323842" )
+                                , ( "display", "flex" )
+                                , ( "justify-content", "center" )
+                                , ( "align-items", "center" )
+                                , ( "cursor", "pointer" )
+                                ]
+                            ]
+                            (controller model True stationId)
+
                     Chatting items ->
                         div
                             [ style
@@ -2245,6 +2407,42 @@ viewPreviousSongs model =
                 )
 
 
+viewAddStation : Grid.Cell Msg
+viewAddStation =
+    Grid.cell
+        [ Grid.size Desktop 3
+        , Options.css "margin-bottom" "25px "
+        , Options.css "text-align" "center"
+        , Options.onClick ToSongSearch
+        ]
+        [ div
+            [ style
+                [ ( "width", "150px" )
+                , ( "height", "175px" )
+                , ( "margin", "auto" )
+                ]
+            ]
+            [ img
+                [ style
+                    [ ( "height", "150px" )
+                    , ( "width", "150px" )
+                    , ( "border", "1px solid black" )
+                    , ( "box-shadow", "0.25px 0.25px black" )
+                    , ( "-webkit-user-select", "none" )
+                    ]
+                , src "add-station.png"
+                ]
+                []
+            , p
+                [ style
+                    [ ( "text-align", "center" )
+                    ]
+                ]
+                [ text "Add a station" ]
+            ]
+        ]
+
+
 viewStationSelector : Model -> List Station -> Html Msg
 viewStationSelector model stations =
     if model.getStationError then
@@ -2255,14 +2453,16 @@ viewStationSelector model stations =
             , Options.css "margin" "0px"
             , Options.css "overflow-y" "auto"
             ]
-            (List.map
-                (\station ->
-                    viewStation
-                        station.id
-                        station.name
-                        station.art
-                )
-                stations
+            (viewAddStation
+                :: (List.map
+                        (\station ->
+                            viewStation
+                                station.id
+                                station.name
+                                station.art
+                        )
+                        stations
+                   )
             )
 
 
@@ -2336,6 +2536,9 @@ chatInput model =
                     text ""
 
                 SelectingStation ->
+                    text ""
+
+                AddingStation fields ->
                     text ""
 
                 PreviousSongs ->
@@ -2500,6 +2703,9 @@ viewChatWindow model =
                 SelectingPlaying ->
                     text ""
 
+                AddingStation fields ->
+                    text ""
+
                 PreviousSongs ->
                     text ""
 
@@ -2548,6 +2754,140 @@ viewChatWindow model =
                           else
                             text ""
                         ]
+
+
+viewSearchResults : Model -> Html Msg
+viewSearchResults model =
+    case model.state of
+        LoggingIn record ->
+            text ""
+
+        Playing record ->
+            case record.playingState of
+                Normal ->
+                    text ""
+
+                SelectingPlaying ->
+                    text ""
+
+                SelectingStation ->
+                    text ""
+
+                PreviousSongs ->
+                    text ""
+
+                AddingStation fields ->
+                    div
+                        [ style
+                            [ ( "overflow-y", "auto" )
+                            , ( "width", "100%" )
+                            ]
+                        ]
+                        (List.map viewSearchResult (Dict.values fields.searchedSongs))
+
+                Chatting items ->
+                    text ""
+
+
+viewSearchResult : SearchResult -> Html Msg
+viewSearchResult result =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "width", "100%" )
+            , ( "border-top", "0.5px black solid" )
+            ]
+        , onClick (CreateStation result.pandoraId)
+        ]
+        [ div
+            [ style
+                [ ( "display", "flex" )
+                , ( "flex-direction", "column" )
+                , ( "justify-content", "space-around" )
+                , ( "margin-left", "3%" )
+                ]
+            ]
+            [ (case result.artistName of
+                Just artist ->
+                    p [ style [ ( "margin", "0" ) ] ]
+                        [ text artist
+                        ]
+
+                Nothing ->
+                    text ""
+              )
+            , p [ style [ ( "margin", "0" ) ] ] [ text result.name ]
+            , p [ style [ ( "margin", "0" ) ] ]
+                [ text
+                    (case result.resultType of
+                        "AR" ->
+                            "Artist"
+
+                        "TR" ->
+                            "Song"
+
+                        "AL" ->
+                            "Album"
+
+                        _ ->
+                            ""
+                    )
+                ]
+            ]
+        , img
+            [ src
+                (case
+                    (case result.resultType of
+                        "AR" ->
+                            result.art
+
+                        _ ->
+                            result.thorId
+                    )
+                 of
+                    Just art ->
+                        ("https://content-images.p-cdn.com/"
+                            ++ art
+                        )
+
+                    Nothing ->
+                        "https://vignette.wikia.nocookie.net/the-darkest-minds/images/4/47/Placeholder.png/revision/latest?cb=20160927044640"
+                )
+            , style
+                [ ( "margin-left", "auto" )
+                , ( "border-left", "0.5px black solid" )
+                , ( "border-right", "0.5px black solid" )
+                , ( "margin-right", "3%" )
+                , ( "height", "150px" )
+                , ( "width", "150px" )
+                ]
+            ]
+            []
+        ]
+
+
+viewSongSearch : Model -> Html Msg
+viewSongSearch model =
+    div
+        [ style
+            [ ( "display", "flex" )
+            , ( "flex-direction", "column" )
+            , ( "height", "100%" )
+            , ( "width", "100%" )
+            , ( "align-items", "center" )
+            ]
+        ]
+        [ input
+            [ style
+                [ ( "height", "7.5%" )
+                , ( "width", "70%" )
+                , ( "padding-left", "1.5%" )
+                ]
+            , onInput SearchForSong
+            ]
+            []
+        , viewSearchResults model
+        ]
 
 
 view : Model -> Html Msg
@@ -2600,6 +2940,9 @@ view model =
 
                         PreviousSongs ->
                             viewPreviousSongs model
+
+                        AddingStation fields ->
+                            viewSongSearch model
 
                         Chatting items ->
                             viewChatWindow model

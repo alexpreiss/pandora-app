@@ -1,5 +1,6 @@
 import './css/globalStyle.css'
 import io from 'socket.io-client'
+import csvParse from "csv-parse/lib/es5"
 
 import Elm from './Main.elm'
 
@@ -67,8 +68,6 @@ function forgetMe(token) {
   const progressBar = document.getElementById('progressBar')
   app.ports.sendProgressBarWidth.send((progressBar.getBoundingClientRect()).width)
 }
-
-
 
 app.ports.getProgressBarWidth.subscribe ( progressBarWidth )
 app.ports.togglePause.subscribe( togglePause )

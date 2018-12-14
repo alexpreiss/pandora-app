@@ -1,3 +1,35 @@
+var _user$project$Types_Station$create = F2(
+	function (musicToken, authToken) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'https://www.pandora.com/api/v1/station/createStation',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'pandoraId',
+								_1: _elm_lang$core$Json_Encode$string(musicToken)
+							},
+							_1: {ctor: '[]'}
+						})),
+				expect: _elm_lang$http$Http$expectJson(
+					_elm_lang$core$Json_Decode$succeed('')),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
 var _user$project$Types_Station$decodeListLast = F2(
 	function (decoder, $default) {
 		return A2(
@@ -77,3 +109,150 @@ var _user$project$Types_Station$get = function (authToken) {
 			withCredentials: false
 		});
 };
+var _user$project$Types_Station$SearchResult = F7(
+	function (a, b, c, d, e, f, g) {
+		return {pandoraId: a, artistName: b, name: c, resultType: d, art: e, thorId: f, dominantColor: g};
+	});
+var _user$project$Types_Station$searchResultDecoder = A8(
+	_elm_lang$core$Json_Decode$map7,
+	_user$project$Types_Station$SearchResult,
+	A2(_elm_lang$core$Json_Decode$field, 'pandoraId', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(_elm_lang$core$Json_Decode$field, 'artistName', _elm_lang$core$Json_Decode$string)),
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'type', _elm_lang$core$Json_Decode$string),
+	_elm_lang$core$Json_Decode$maybe(
+		_elm_lang$core$Json_Decode$oneOf(
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Json_Decode$at,
+					{
+						ctor: '::',
+						_0: 'icon',
+						_1: {
+							ctor: '::',
+							_0: 'artId',
+							_1: {ctor: '[]'}
+						}
+					},
+					_elm_lang$core$Json_Decode$string),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$core$Json_Decode$at,
+						{
+							ctor: '::',
+							_0: 'icon',
+							_1: {
+								ctor: '::',
+								_0: 'artUrl',
+								_1: {ctor: '[]'}
+							}
+						},
+						_elm_lang$core$Json_Decode$string),
+					_1: {ctor: '[]'}
+				}
+			})),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(
+			_elm_lang$core$Json_Decode$at,
+			{
+				ctor: '::',
+				_0: 'icon',
+				_1: {
+					ctor: '::',
+					_0: 'thorId',
+					_1: {ctor: '[]'}
+				}
+			},
+			_elm_lang$core$Json_Decode$string)),
+	_elm_lang$core$Json_Decode$maybe(
+		A2(
+			_elm_lang$core$Json_Decode$at,
+			{
+				ctor: '::',
+				_0: 'icon',
+				_1: {
+					ctor: '::',
+					_0: 'dominantColor',
+					_1: {ctor: '[]'}
+				}
+			},
+			_elm_lang$core$Json_Decode$string)));
+var _user$project$Types_Station$searchResultListDecoder = A2(
+	_elm_lang$core$Json_Decode$field,
+	'annotations',
+	_elm_lang$core$Json_Decode$dict(_user$project$Types_Station$searchResultDecoder));
+var _user$project$Types_Station$search = F2(
+	function (searchText, authToken) {
+		return _elm_lang$http$Http$request(
+			{
+				method: 'POST',
+				headers: {
+					ctor: '::',
+					_0: A2(_elm_lang$http$Http$header, 'X-CsrfToken', 'coolestToken'),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$http$Http$header, 'X-AuthToken', authToken),
+						_1: {ctor: '[]'}
+					}
+				},
+				url: 'https://www.pandora.com/api/v3/sod/search',
+				body: _elm_lang$http$Http$jsonBody(
+					_elm_lang$core$Json_Encode$object(
+						{
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'annotate',
+								_1: _elm_lang$core$Json_Encode$bool(true)
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'count',
+									_1: _elm_lang$core$Json_Encode$int(20)
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'query',
+										_1: _elm_lang$core$Json_Encode$string(searchText)
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'types',
+											_1: _elm_lang$core$Json_Encode$list(
+												{
+													ctor: '::',
+													_0: _elm_lang$core$Json_Encode$string('AL'),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$core$Json_Encode$string('AR'),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$core$Json_Encode$string('TR'),
+															_1: {
+																ctor: '::',
+																_0: _elm_lang$core$Json_Encode$string('ST'),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												})
+										},
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						})),
+				expect: _elm_lang$http$Http$expectJson(_user$project$Types_Station$searchResultListDecoder),
+				timeout: _elm_lang$core$Maybe$Nothing,
+				withCredentials: false
+			});
+	});
