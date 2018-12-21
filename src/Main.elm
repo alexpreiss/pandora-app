@@ -1,4 +1,4 @@
-port module Main exposing (..)
+module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -16,16 +16,13 @@ import Material.Grid as Grid exposing (Device(..))
 import Material.Tooltip as Tooltip
 import Material.Icon as Icon
 import Time
-import Types.Feedback as Feedback
-import Types.Station as Station exposing (Station, SearchResult, removingPopup)
-import Types.Fragment as Fragment exposing (Song)
-import Types.Chat as Chat exposing (..)
+import Util.Types as Types exposing (Song, Station, GlobalModel, SearchResult)
 import Keyboard
 import Dict exposing (Dict)
 import Util.Events as Events
 
 
-main : Program Flags Model Msg
+main : Program Flags GlobalModel Msg
 main =
     Html.programWithFlags
         { init = init
@@ -39,7 +36,7 @@ main =
 -- ΩΩΩ MODEL ΩΩΩ
 
 
-currentSong : Model -> Song
+currentSong : GlobalModel -> Song
 currentSong model =
     case model.state of
         LoggingIn fields ->
@@ -70,16 +67,6 @@ currentSong model =
                     }
 
 
-type alias ChattingFields =
-    { email : String
-    , chatInput : String
-    , chats : List Chat
-    , username : String
-    , newUser : Bool
-    , userNameInput : String
-    }
-
-
 type alias AddingStationFields =
     { searchResults : Dict String SearchResult
     , searchInput : String
@@ -88,11 +75,9 @@ type alias AddingStationFields =
 
 type alias PlayingFields =
     { authToken : String
-    , stations : List Station
     , currentStation : Maybe Station
     , songQueue : List Song
     , currentTime : Float
-    , previousSongs : List Song
     , audioLevel : Float
     , audioHover : Bool
     , isPlaying : Bool
@@ -118,7 +103,7 @@ type alias LoggingInFields =
     }
 
 
-getCurrentStation : Model -> Station
+getCurrentStation : GlobalModel -> Station
 getCurrentStation model =
     case model.state of
         LoggingIn fields ->
@@ -153,16 +138,6 @@ type PlayingState
     | Chatting ChattingFields
 
 
-type alias Model =
-    { state : State
-    , mdl : Material.Model
-    , getStationError : Bool
-    , startStationError : Bool
-    , loadingSongError : Bool
-    , keyPress : Int
-    }
-
-
 type alias Flags =
     { password : Maybe String
     , audioLevel : Maybe Float
@@ -172,7 +147,7 @@ type alias Flags =
     }
 
 
-init : Flags -> ( Model, Cmd Msg )
+init : Flags -> ( GlobalModel, Cmd Msg )
 init flags =
     case flags.password of
         Just password ->
@@ -287,8 +262,6 @@ type
     | LoggedInRemember (Result Http.Error String)
     | GotStations (Result Http.Error (List Station))
       -- Controls
-    | StartStation String String String
-    | StartedStation (Result Http.Error (List Song))
     | TogglePause
     | ReplaySong
     | SetCurrentTime Float
@@ -305,12 +278,8 @@ type
     | HoveringAudio
     | UnHoveringAudio
       -- Navigation
-    | ToStations
     | ToPlaying
-    | ToPreviousSongs
     | ToChat
-    | ToSongSearch
-    | PlayPreviousSong Song
       -- Feedback
     | SendThumbsDown String
     | SendThumbsUp String
@@ -322,19 +291,6 @@ type
     | NoOp
     | NoOp1 String
     | KeyDown Int
-      -- Chatting
-    | ChatInput String
-    | UserNameInput String
-    | SetUserName
-    | GotChats (Result Http.Error (List Chat))
-    | SendChat
-    | SentChat (Result Http.Error String)
-    | ChatSocket Chat
-      -- Creating Stations
-    | SearchForSong String
-    | GotSearchedSongs (Result Http.Error (Dict String SearchResult))
-    | CreateStation String
-    | CreatedStation (Result Http.Error Station)
       -- Removing Stations
     | OpenRemoveStationPopup
     | CloseRemoveStationPopup
@@ -348,7 +304,7 @@ type
     | NameInputToModel String
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> GlobalModel -> ( GlobalModel, Cmd Msg )
 update msg model =
     case msg of
         InputEmail input ->
@@ -537,30 +493,6 @@ update msg model =
                         Err error ->
                             { model | getStationError = True } ! []
 
-        StartStation id name art ->
-            case model.state of
-                LoggingIn fields ->
-                    model ! []
-
-                Playing fields ->
-                    { model
-                        | state =
-                            Playing
-                                { fields
-                                    | currentStation =
-                                        Just
-                                            { id = id
-                                            , name = name
-                                            , art = art
-                                            }
-                                    , songQueue = []
-                                    , playingState = Normal
-                                }
-                    }
-                        ! [ Http.send StartedStation
-                                (Fragment.getNext id fields.authToken True)
-                          ]
-
         LoadNextSongs id ->
             case model.state of
                 LoggingIn fields ->
@@ -571,32 +503,6 @@ update msg model =
                         ! [ Http.send LoadedNextSongs
                                 (Fragment.getNext id fields.authToken False)
                           ]
-
-        StartedStation result ->
-            case model.state of
-                LoggingIn fields ->
-                    model ! []
-
-                Playing fields ->
-                    case result of
-                        Ok songs ->
-                            { model
-                                | state =
-                                    Playing
-                                        { fields
-                                            | songQueue =
-                                                List.append
-                                                    fields.songQueue
-                                                    songs
-                                            , currentTime = 0
-                                            , isPlaying = True
-                                        }
-                            }
-                                ! []
-
-                        Err error ->
-                            { model | startStationError = True }
-                                ! []
 
         LoadedNextSongs result ->
             case model.state of
@@ -881,26 +787,6 @@ update msg model =
                     }
                         ! []
 
-        ToStations ->
-            case model.state of
-                LoggingIn fields ->
-                    { model
-                        | getStationError = False
-                        , loadingSongError = False
-                        , startStationError = False
-                    }
-                        ! []
-
-                Playing fields ->
-                    { model
-                        | state =
-                            Playing { fields | playingState = SelectingPlaying }
-                        , getStationError = False
-                        , loadingSongError = False
-                        , startStationError = False
-                    }
-                        ! []
-
         Mdl msg ->
             Material.update Mdl msg model
 
@@ -1026,14 +912,6 @@ update msg model =
                         }
                             ! [ sendNewTime newTime ]
 
-        ToPreviousSongs ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    { model | state = Playing { record | playingState = PreviousSongs } } ! []
-
         ToChat ->
             case model.state of
                 LoggingIn record ->
@@ -1056,8 +934,7 @@ update msg model =
                                                 }
                                     }
                         }
-                            ! [ Http.send GotChats (Chat.getAll record.authToken)
-                              , rememberUsername record.username
+                            ! [ rememberUsername record.username
                               , newUser ()
                               ]
                     else
@@ -1078,90 +955,6 @@ update msg model =
                         }
                             ! [ Http.send GotChats (Chat.getAll record.authToken)
                               ]
-
-        PlayPreviousSong song ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    { model
-                        | state =
-                            Playing
-                                { record
-                                    | songQueue = song :: record.songQueue
-                                    , currentTime = 0
-                                    , isPlaying = True
-                                    , previousSongs = List.filter (\songTest -> not (songTest.trackToken == song.trackToken)) record.previousSongs
-                                    , playingState = Normal
-                                }
-                    }
-                        ! []
-
-        ChatInput content ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        AddingStation fields ->
-                            model ! []
-
-                        Chatting fields ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record | playingState = Chatting { fields | chatInput = content } }
-                            }
-                                ! []
-
-        GotChats result ->
-            case result of
-                Ok chatList ->
-                    case model.state of
-                        LoggingIn record ->
-                            model ! []
-
-                        Playing record ->
-                            case record.playingState of
-                                Normal ->
-                                    model ! []
-
-                                SelectingStation ->
-                                    model ! []
-
-                                SelectingPlaying ->
-                                    model ! []
-
-                                PreviousSongs ->
-                                    model ! []
-
-                                AddingStation fields ->
-                                    model ! []
-
-                                Chatting fields ->
-                                    { model
-                                        | state =
-                                            Playing
-                                                { record | playingState = Chatting { fields | chats = chatList } }
-                                    }
-                                        ! []
-
-                Err _ ->
-                    model ! []
 
         KeyDown code ->
             case model.state of
@@ -1212,310 +1005,8 @@ update msg model =
                             )
                           ]
 
-        UserNameInput username ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        AddingStation fields ->
-                            model ! []
-
-                        Chatting fields ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record
-                                            | playingState =
-                                                Chatting
-                                                    { fields | userNameInput = username }
-                                        }
-                            }
-                                ! []
-
-        SetUserName ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        AddingStation fields ->
-                            model ! []
-
-                        Chatting fields ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record
-                                            | playingState =
-                                                Chatting
-                                                    { fields
-                                                        | username = fields.userNameInput
-                                                        , newUser = False
-                                                    }
-                                        }
-                            }
-                                ! [ rememberUsername fields.userNameInput
-                                  , newUser ()
-                                  ]
-
-        SendChat ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case Debug.log "state" record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        AddingStation fields ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        Chatting fields ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record
-                                            | playingState =
-                                                Chatting
-                                                    { fields | chatInput = "" }
-                                        }
-                            }
-                                ! [ Http.send SentChat
-                                        (Chat.send
-                                            { email = Debug.log "email" fields.email
-                                            , username =
-                                                record.username
-                                            , content = fields.chatInput
-                                            }
-                                        )
-                                  ]
-
-        SentChat result ->
-            model ! []
-
-        ChatSocket message ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        AddingStation fields ->
-                            model ! []
-
-                        Chatting fields ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record
-                                            | playingState = Chatting { fields | chats = message :: fields.chats }
-                                        }
-                            }
-                                ! []
-
         NoOp1 _ ->
             model ! []
-
-        ToSongSearch ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    { model
-                        | state =
-                            Playing
-                                { record
-                                    | playingState =
-                                        AddingStation
-                                            { searchResults = Dict.empty
-                                            , searchInput = ""
-                                            }
-                                }
-                    }
-                        ! []
-
-        SearchForSong input ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case model.state of
-                        LoggingIn record ->
-                            model ! []
-
-                        Playing record ->
-                            case record.playingState of
-                                Normal ->
-                                    model ! []
-
-                                SelectingPlaying ->
-                                    model ! []
-
-                                SelectingStation ->
-                                    model ! []
-
-                                PreviousSongs ->
-                                    model ! []
-
-                                Chatting fields ->
-                                    model ! []
-
-                                AddingStation fields ->
-                                    if input == "" then
-                                        { model
-                                            | state =
-                                                Playing
-                                                    { record
-                                                        | playingState =
-                                                            AddingStation
-                                                                { fields
-                                                                    | searchResults = Dict.empty
-                                                                    , searchInput = fields.searchInput
-                                                                }
-                                                    }
-                                        }
-                                            ! []
-                                    else
-                                        model ! [ Http.send GotSearchedSongs (Station.search input record.authToken) ]
-
-        GotSearchedSongs result ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    case record.playingState of
-                        Normal ->
-                            model ! []
-
-                        SelectingPlaying ->
-                            model ! []
-
-                        SelectingStation ->
-                            model ! []
-
-                        PreviousSongs ->
-                            model ! []
-
-                        AddingStation fields ->
-                            case Debug.log "songs" result of
-                                Ok songs ->
-                                    { model
-                                        | state =
-                                            Playing
-                                                { record
-                                                    | playingState =
-                                                        AddingStation
-                                                            { fields
-                                                                | searchResults = songs
-                                                                , searchInput = fields.searchInput
-                                                            }
-                                                }
-                                    }
-                                        ! []
-
-                                Err error ->
-                                    let
-                                        log =
-                                            Debug.log "Error searching songs" error
-                                    in
-                                        model ! []
-
-                        Chatting fields ->
-                            model ! []
-
-        CreateStation musicToken ->
-            case model.state of
-                LoggingIn record ->
-                    model ! []
-
-                Playing record ->
-                    { model
-                        | state =
-                            Playing
-                                { record | playingState = SelectingPlaying }
-                    }
-                        ! [ Http.send CreatedStation
-                                (Station.create
-                                    musicToken
-                                    record.authToken
-                                )
-                          ]
-
-        CreatedStation result ->
-            case result of
-                Ok station ->
-                    case model.state of
-                        LoggingIn record ->
-                            model ! []
-
-                        Playing record ->
-                            { model
-                                | state =
-                                    Playing
-                                        { record
-                                            | stations = station :: record.stations
-                                        }
-                            }
-                                ! []
-
-                Err error ->
-                    let
-                        log =
-                            Debug.log "Error creating station" error
-                    in
-                        model ! []
 
         RemoveStation removedStation ->
             case model.state of
@@ -1659,43 +1150,7 @@ update msg model =
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
 
 
-port togglePause : () -> Cmd msg
-
-
-port replaySong : () -> Cmd msg
-
-
-port audioLevel : Float -> Cmd msg
-
-
-port logOutLocalStorage : () -> Cmd msg
-
-
-port rememberEmail : String -> Cmd msg
-
-
-port sendNewTime : Float -> Cmd msg
-
-
-port rememberUsername : String -> Cmd msg
-
-
-port rememberPassword : String -> Cmd msg
-
-
-port newUser : () -> Cmd msg
-
-
-port getProgressBarWidth : () -> Cmd msg
-
-
-port sendProgressBarWidth : (Float -> msg) -> Sub msg
-
-
-port chatSocket : (Chat -> msg) -> Sub msg
-
-
-subscriptions : Model -> Sub Msg
+subscriptions : GlobalModel -> Sub Msg
 subscriptions model =
     case model.state of
         LoggingIn fields ->
@@ -1717,7 +1172,6 @@ subscriptions model =
                 , Material.subscriptions Mdl model
                 , sendProgressBarWidth SetNewTime
                 , Keyboard.downs KeyDown
-                , chatSocket ChatSocket
                 ]
 
 
@@ -2095,7 +1549,7 @@ timePercentage currentTime songQueue =
           )
 
 
-viewProgressBar : Model -> Html Msg
+viewProgressBar : GlobalModel -> Html Msg
 viewProgressBar model =
     case model.state of
         LoggingIn fields ->
@@ -2133,7 +1587,7 @@ viewProgressBar model =
                 ]
 
 
-ifEmptyQueue : Model -> Msg -> Msg
+ifEmptyQueue : GlobalModel -> Msg -> Msg
 ifEmptyQueue model msg =
     case model.state of
         LoggingIn fields ->
@@ -2147,7 +1601,7 @@ ifEmptyQueue model msg =
             )
 
 
-controller : Model -> Bool -> String -> List (Html Msg)
+controller : GlobalModel -> Bool -> String -> List (Html Msg)
 controller model notClickable stationId =
     case model.state of
         LoggingIn fields ->
@@ -2301,7 +1755,7 @@ controller model notClickable stationId =
                 ]
 
 
-viewControls : Model -> String -> Html Msg
+viewControls : GlobalModel -> String -> Html Msg
 viewControls model stationId =
     case model.state of
         LoggingIn fields ->
@@ -2404,7 +1858,7 @@ viewControls model stationId =
                 ]
 
 
-viewSongInfo : Model -> Html Msg
+viewSongInfo : GlobalModel -> Html Msg
 viewSongInfo model =
     case model.state of
         LoggingIn fields ->
@@ -2479,7 +1933,7 @@ viewSongInfo model =
                     ]
 
 
-viewLogin : Model -> Bool -> Bool -> Html Msg
+viewLogin : GlobalModel -> Bool -> Bool -> Html Msg
 viewLogin model remember failed =
     div
         [ style
@@ -2580,160 +2034,8 @@ viewLogin model remember failed =
         ]
 
 
-viewStation : String -> String -> String -> Grid.Cell Msg
-viewStation id name url =
-    Grid.cell
-        [ Grid.size Desktop 3
-        , Options.css "margin-bottom" "25px "
-        , Options.css "text-align" "center"
-        ]
-        [ div
-            [ style
-                [ ( "width", "150px" )
-                , ( "height", "175px" )
-                , ( "margin", "auto" )
-                ]
-            , onClick (StartStation id name url)
-            ]
-            [ img
-                [ style
-                    [ ( "height", "150px" )
-                    , ( "width", "150px" )
-                    , ( "border", "1px solid black" )
-                    , ( "box-shadow", "0.25px 0.25px black" )
-                    , ( "-webkit-user-select", "none" )
-                    ]
-                , src url
-                ]
-                []
-            , p
-                [ style
-                    [ ( "text-align", "center" )
-                    ]
-                ]
-                [ text name ]
-            ]
-        ]
-
-
-viewPreviousSong : Song -> Grid.Cell Msg
-viewPreviousSong song =
-    Grid.cell
-        [ Grid.size Desktop 3
-        , Options.css "margin-bottom" "25px "
-        , Options.css "text-align" "center"
-        ]
-        [ div
-            [ style
-                [ ( "width", "150px" )
-                , ( "height", "175px" )
-                , ( "margin", "auto" )
-                ]
-            , onClick (PlayPreviousSong song)
-            ]
-            [ img
-                [ style
-                    [ ( "height", "150px" )
-                    , ( "width", "150px" )
-                    , ( "border", "1px solid black" )
-                    , ( "box-shadow", "0.25px 0.25px black" )
-                    , ( "-webkit-user-select", "none" )
-                    ]
-                , src song.albumArt
-                ]
-                []
-            , p
-                [ style
-                    [ ( "text-align", "center" )
-                    ]
-                ]
-                [ text song.songTitle ]
-            ]
-        ]
-
-
-viewPreviousSongs : Model -> Html Msg
-viewPreviousSongs model =
-    case model.state of
-        LoggingIn record ->
-            div [] []
-
-        Playing record ->
-            Grid.grid
-                [ Options.css "width" "100%"
-                , Options.css "margin" "0px"
-                , Options.css "overflow-y" "auto"
-                ]
-                (List.map
-                    (\song ->
-                        viewPreviousSong
-                            song
-                    )
-                    record.previousSongs
-                )
-
-
-viewAddStation : Grid.Cell Msg
-viewAddStation =
-    Grid.cell
-        [ Grid.size Desktop 3
-        , Options.css "margin-bottom" "25px "
-        , Options.css "text-align" "center"
-        , Options.onClick ToSongSearch
-        ]
-        [ div
-            [ style
-                [ ( "width", "150px" )
-                , ( "height", "175px" )
-                , ( "margin", "auto" )
-                ]
-            ]
-            [ img
-                [ style
-                    [ ( "height", "150px" )
-                    , ( "width", "150px" )
-                    , ( "border", "1px solid black" )
-                    , ( "box-shadow", "0.25px 0.25px black" )
-                    , ( "-webkit-user-select", "none" )
-                    ]
-                , src "add-station.png"
-                ]
-                []
-            , p
-                [ style
-                    [ ( "text-align", "center" )
-                    ]
-                ]
-                [ text "Add a station" ]
-            ]
-        ]
-
-
-viewStationSelector : Model -> List Station -> Html Msg
-viewStationSelector model stations =
-    if model.getStationError then
-        h3 [ style [ ( "text-align", "center" ) ] ] [ text "Error retrieving stations :(" ]
-    else
-        Grid.grid
-            [ Options.css "width" "100%"
-            , Options.css "margin" "0px"
-            , Options.css "overflow-y" "auto"
-            ]
-            (viewAddStation
-                :: (List.map
-                        (\station ->
-                            viewStation
-                                station.id
-                                station.name
-                                station.art
-                        )
-                        stations
-                   )
-            )
-
-
 viewPlayer :
-    Model
+    GlobalModel
     -> Html Msg
     -> Float
     -> Maybe Station
@@ -2811,7 +2113,7 @@ viewPlayer model content audioLevel currentStation audioHover mdl playingState p
         ]
 
 
-view : Model -> Html Msg
+view : GlobalModel -> Html Msg
 view model =
     case model.state of
         Playing record ->

@@ -1,11 +1,4 @@
-module Types.StateTypes exposing (..)
-
-
-type alias Station =
-    { id : String
-    , name : String
-    , art : String
-    }
+module Type.StateTypes exposing (..)
 
 
 type alias AddingStationFields =
@@ -30,18 +23,6 @@ type PlayingState
         }
 
 
-type alias Song =
-    { songTitle : String
-    , trackLength : Int
-    , rating : Int
-    , audioURL : String
-    , artistName : String
-    , albumTitle : String
-    , albumArt : String
-    , trackToken : String
-    }
-
-
 type alias PlayingFields =
     { authToken : String
     , stations : List Station
@@ -54,11 +35,6 @@ type alias PlayingFields =
     , isPlaying : Bool
     , playingState : PlayingState
     , seek : Float
-    , email : String
-    , username : String
-    , newUser : Bool
-    , deletingStationPopup : Bool
-    , updatingStationPopup : Bool
     , updateStationNameInput : String
     }
 

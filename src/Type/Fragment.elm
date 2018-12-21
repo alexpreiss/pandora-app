@@ -1,21 +1,9 @@
-module Types.Fragment exposing (..)
+module Type.Fragment exposing (..)
 
 import Json.Encode as Encode
 import Json.Decode as Decode
 import Json.Decode.Pipeline as Pipeline
 import Http exposing (Request)
-
-
-type alias Song =
-    { songTitle : String
-    , trackLength : Int
-    , rating : Int
-    , audioURL : String
-    , artistName : String
-    , albumTitle : String
-    , albumArt : String
-    , trackToken : String
-    }
 
 
 fragmentListDecoder : Decode.Decoder (List Song)

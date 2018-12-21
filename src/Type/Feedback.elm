@@ -1,4 +1,4 @@
-module Types.Feedback exposing (..)
+module Type.Feedback exposing (..)
 
 import Json.Encode as Encode
 import Json.Decode as Decode
