@@ -1,4 +1,6 @@
 
+In the middle of a huge codebase rework right now <- 
+
 Release 2.0.0 (First to be public)
 
 Simple Pandora music player that gives you unlimited skips/replays/scrubbing without Pandora Plus!
