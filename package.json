@@ -9,8 +9,9 @@
   "scripts": {
     "start": "node app.js",
     "start-dev": "webpack --watch --mode development",
-    "buid": "webpack --mode production",
-    "package-mac": "electron-packager ./build --icon=build/icon.icns --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds"
+    "build": "webpack --mode production",
+    "package-mac": "electron-packager ./build --icon=build/icon.icns --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
+    "build-dev": "electron ./build"
   },
   "devDependencies": {
     "@babel/core": "^7.2.0",
@@ -34,6 +35,8 @@
   "dependencies": {
     "csv-parse": "^4.1.0",
     "electron": "^3.0.8",
+    "electron-packager": "^13.0.1",
+    "elm-format": "^0.8.1",
     "express": "^4.16.4",
     "knex": "^0.15.2",
     "pg": "^7.7.1",

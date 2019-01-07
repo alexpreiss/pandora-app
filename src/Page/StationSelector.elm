@@ -16,31 +16,18 @@ import Util.Types as Types
         , SearchResult
         , Song
         , GlobalModel
+        , SelectorModel
+        , SelectorState(..)
+        , cmds
         )
 
 
 -- ΩΩΩ MODEL ΩΩΩ
 
 
-type State
-    = Selecting
-    | Searching
-    | PreviousSongs
-
-
-type alias Model =
-    { state : State
-    , stations : List Station
-    , previousSongs : List Song
-    , searchResults : Dict String SearchResult
-    , searchInput : String
-    }
-
-
-init : ( Model, Cmd Msg )
+init : ( SelectorModel, Cmd Msg )
 init =
     { state = Selecting
-    , stations = []
     , previousSongs = []
     , searchResults = Dict.empty
     , searchInput = ""
@@ -66,17 +53,12 @@ type Msg
     | NoOp
 
 
-cmds : List (Cmd Msg) -> Cmd Msg
-cmds cmdList =
-    Cmd.batch cmdList
-
-
-update : Msg -> Model -> GlobalModel -> ( Model, GlobalModel, Cmd Msg )
-update msg model globalModel =
+update : Msg -> SelectorModel -> GlobalModel -> ( SelectorModel, GlobalModel, Cmd Msg )
+update msg model gm =
     case msg of
         StartStation id name art ->
             ( model
-            , { globalModel
+            , { gm
                 | currentStation =
                     Just
                         { id = id
@@ -88,7 +70,7 @@ update msg model globalModel =
               }
             , cmds
                 [ Http.send StartedStation
-                    (SongApi.getNext id globalModel.authToken True)
+                    (SongApi.getNext id gm.authToken True)
                 ]
             )
 
@@ -96,10 +78,10 @@ update msg model globalModel =
             case result of
                 Ok songs ->
                     ( model
-                    , { globalModel
+                    , { gm
                         | songQueue =
                             List.append
-                                globalModel.songQueue
+                                gm.songQueue
                                 songs
                         , currentTime = 0
                         , isPlaying = True
@@ -108,26 +90,26 @@ update msg model globalModel =
                     )
 
                 Err error ->
-                    ( model, globalModel, cmds [] )
+                    ( model, gm, cmds [] )
 
         ToStations ->
             ( model
-            , { globalModel
+            , { gm
                 | page = Types.StationSelector
               }
             , cmds []
             )
 
         ToPreviousSongs ->
-            ( { model | state = PreviousSongs }, globalModel, cmds [] )
+            ( { model | state = PreviousSongs }, gm, cmds [] )
 
         PlayPreviousSong song ->
             ( model
-            , { globalModel
-                | songQueue = song :: globalModel.songQueue
+            , { gm
+                | songQueue = song :: gm.songQueue
                 , currentTime = 0
                 , isPlaying = True
-                , previousSongs = List.filter (\songTest -> not (songTest.trackToken == song.trackToken)) globalModel.previousSongs
+                , previousSongs = List.filter (\songTest -> not (songTest.trackToken == song.trackToken)) gm.previousSongs
                 , page = Types.Player
               }
             , cmds []
@@ -139,7 +121,7 @@ update msg model globalModel =
                 , searchResults = Dict.empty
                 , searchInput = ""
               }
-            , globalModel
+            , gm
             , cmds []
             )
 
@@ -148,11 +130,11 @@ update msg model globalModel =
                 ( { model
                     | searchResults = Dict.empty
                   }
-                , globalModel
+                , gm
                 , cmds []
                 )
             else
-                ( model, globalModel, cmds [ Http.send GotSearchedSongs (StationApi.search input globalModel.authToken) ] )
+                ( model, gm, cmds [ Http.send GotSearchedSongs (StationApi.search input gm.authToken) ] )
 
         GotSearchedSongs result ->
             case Debug.log "songs" result of
@@ -160,7 +142,7 @@ update msg model globalModel =
                     ( { model
                         | searchResults = songs
                       }
-                    , globalModel
+                    , gm
                     , cmds []
                     )
 
@@ -169,16 +151,16 @@ update msg model globalModel =
                         log =
                             Debug.log "Error searching songs" error
                     in
-                        ( model, globalModel, cmds [] )
+                        ( model, gm, cmds [] )
 
         CreateStation musicToken ->
             ( model
-            , { globalModel | page = Types.StationSelector }
+            , { gm | page = Types.StationSelector }
             , cmds
                 [ Http.send CreatedStation
                     (StationApi.create
                         musicToken
-                        globalModel.authToken
+                        gm.authToken
                     )
                 ]
             )
@@ -187,8 +169,8 @@ update msg model globalModel =
             case result of
                 Ok station ->
                     ( model
-                    , { globalModel
-                        | stations = station :: model.stations
+                    , { gm
+                        | stations = station :: gm.stations
                       }
                     , cmds []
                     )
@@ -198,17 +180,17 @@ update msg model globalModel =
                         log =
                             Debug.log "Error creating station" error
                     in
-                        ( model, globalModel, cmds [] )
+                        ( model, gm, cmds [] )
 
         NoOp ->
-            ( model, globalModel, cmds [] )
+            ( model, gm, cmds [] )
 
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
 
 
-subscriptions : Model -> Sub Msg
+subscriptions : SelectorModel -> Sub Msg
 subscriptions _ =
     Sub.none
 
@@ -453,7 +435,7 @@ viewSearchResults searchResults =
             (List.map viewSearchResult (Dict.values searchResults))
 
 
-viewSearch : Model -> Html Msg
+viewSearch : SelectorModel -> Html Msg
 viewSearch model =
     div
         [ style
@@ -480,14 +462,18 @@ viewSearch model =
         ]
 
 
-view : Model -> GlobalModel -> Html Msg
-view model globalModel =
-    case model.state of
-        Selecting ->
-            viewStationSelector globalModel
+view : GlobalModel -> Html Msg
+view gm =
+    let
+        model =
+            gm.selectorModel
+    in
+        case Debug.log "State" model.state of
+            Selecting ->
+                viewStationSelector gm
 
-        Searching ->
-            viewSearch model
+            Searching ->
+                viewSearch model
 
-        PreviousSongs ->
-            viewPreviousSongs model.previousSongs
+            PreviousSongs ->
+                viewPreviousSongs model.previousSongs

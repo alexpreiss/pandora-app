@@ -7,7 +7,7 @@ console.log(process.env.DATABASE_URL)
 
 var knex = require('knex')({
   client: 'pg',
-  connection: process.env.DATABASE_URL,
+  connection: process.env.DATABASE_URL ,
   debug: true
 })
 

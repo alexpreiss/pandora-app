@@ -1,6 +1,38 @@
 module Util.Types exposing (..)
 
 import Material
+import Dict exposing (Dict)
+
+
+cmds : List (Cmd msg) -> Cmd msg
+cmds =
+    Cmd.batch
+
+
+type alias LoginModel =
+    { email : String
+    , password : String
+    , remember : Bool
+    , failed : Bool
+    }
+
+
+type alias SelectorModel =
+    { state : SelectorState
+    , previousSongs : List Song
+    , searchResults : Dict String SearchResult
+    , searchInput : String
+    }
+
+
+type alias UiModel =
+    {}
+
+
+type SelectorState
+    = Selecting
+    | Searching
+    | PreviousSongs
 
 
 type alias GlobalModel =
@@ -8,20 +40,24 @@ type alias GlobalModel =
     , authToken : String
     , deletingStationPopup : Bool
     , updatingStationPopup : Bool
-    , email : String
-    , username : String
-    , newUser : Bool
+    , username : Maybe String
+    , newUser : Maybe Bool
     , mdl : Material.Model
     , keyPress : Int
     , seek : Float
     , isPlaying : Bool
-    , audioLevel : Float
-    , audioHover : Float
+    , audioLevel : Maybe Float
+    , audioHover : Bool
     , currentTime : Float
     , songQueue : List Song
     , currentStation : Maybe Station
     , stations : List Station
     , previousSongs : List Song
+
+    -- Page Models
+    , loginModel : LoginModel
+    , selectorModel : SelectorModel
+    , uiModel : UiModel
     }
 
 
