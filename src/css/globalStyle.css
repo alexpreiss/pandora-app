@@ -6,7 +6,7 @@
   color: white;
 }
 .material-icons.editStation {
-  opacity: 0;
+  opacity: .25;
   pointer-events: none;
 }
 .material-icons.editStation:hover {
@@ -14,7 +14,7 @@
   cursor: pointer;
 }
 .material-icons.deleteStation {
-  opacity: 0;
+  opacity: .25;
   pointer-events: none;
 }
 .material-icons.deleteStation:hover {

@@ -89,7 +89,7 @@ init
 --     , email : String
 --     , username : String
 --     , newUser : Bool
---     , deletingStationPopup : Bool
+--     , removingStationPopup : Bool
 --     , updatingStationPopup : Bool
 --     , updateStationNameInput : String
 --     }
@@ -482,7 +482,7 @@ update msg model =
 --                     Playing
 --                         { record
 --                             | playingState = SelectingStation
---                             , deletingStationPopup = False
+--                             , removingStationPopup = False
 --                             , isPlaying = False
 --                             , currentTime = 0
 --                             , currentStation = Nothing
@@ -496,7 +496,7 @@ update msg model =
 --             model ! []
 --
 --         Playing record ->
---             { model | state = Playing { record | deletingStationPopup = True } } ! []
+--             { model | state = Playing { record | removingStationPopup = True } } ! []
 --
 -- CloseRemoveStationPopup ->
 --     case model.state of
@@ -504,7 +504,7 @@ update msg model =
 --             model ! []
 --
 --         Playing record ->
---             { model | state = Playing { record | deletingStationPopup = False } } ! []
+--             { model | state = Playing { record | removingStationPopup = False } } ! []
 --
 -- OpenUpdateStationPopup ->
 --     case model.state of
@@ -760,7 +760,7 @@ view model =
                     record.playingState
                     record.previousSongs
                     record.songQueue
-                    record.deletingStationPopup
+                    record.removingStationPopup
                     record.updatingStationPopup
                 ]
 

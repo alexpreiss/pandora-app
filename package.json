@@ -35,7 +35,6 @@
   "dependencies": {
     "csv-parse": "^4.1.0",
     "electron": "^3.0.8",
-    "electron-packager": "^13.0.1",
     "elm-format": "^0.8.1",
     "express": "^4.16.4",
     "knex": "^0.15.2",

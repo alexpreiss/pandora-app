@@ -27,6 +27,8 @@ fragmentDecoder =
         |> Pipeline.required "albumTitle" Decode.string
         |> Pipeline.requiredAt [ "albumArt", "4", "url" ] Decode.string
         |> Pipeline.required "trackToken" Decode.string
+        |> Pipeline.required "pandoraId" Decode.string
+        |> Pipeline.required "dominantColor" (Decode.succeed "FFFFFF")
 
 
 getFragment : String -> String -> Bool -> Request (List Song)

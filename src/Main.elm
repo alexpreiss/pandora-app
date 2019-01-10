@@ -2,9 +2,9 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events
+import Html.Events exposing (onInput)
 import Json.Decode as Decode
-import Util.Types
+import Util.Types as Types
     exposing
         ( GlobalModel
         , Page(..)
@@ -13,17 +13,23 @@ import Util.Types
         , Song
         )
 import Util.Port as Port
+import Util.Events as Events
+import View.PreviousSongs as PreviousSongs
 import View.Player as Player
 import View.Ui as Ui
 import Api.Login as AuthApi
 import Api.Song as SongApi
+import Api.Station as StationApi
 import Page.Login
 import Page.StationSelector
 import Material
+import Material.Button as Button
+import Material.Options as Options
 import Http
 import Dict exposing (Dict)
 import Time
 import Keyboard
+import Task
 
 
 main : Program Flags GlobalModel Msg
@@ -62,8 +68,9 @@ init flags =
                 { page =
                     LoginWindow
                 , authToken = ""
-                , deletingStationPopup = False
+                , removingStationPopup = False
                 , updatingStationPopup = False
+                , updateStationNameInput = ""
                 , username = flags.username
                 , newUser =
                     if flags.newUser == Just "false" then
@@ -81,6 +88,8 @@ init flags =
                 , currentStation = Nothing
                 , stations = []
                 , previousSongs = []
+                , error = ""
+                , dominantColor = "FFFFFF"
                 , loginModel =
                     { email = email
                     , password = password
@@ -88,7 +97,7 @@ init flags =
                     , failed = False
                     }
                 , selectorModel =
-                    { state = Util.Types.Selecting
+                    { state = Types.Selecting
                     , previousSongs = []
                     , searchResults = Dict.empty
                     , searchInput = ""
@@ -101,14 +110,23 @@ init flags =
                                 , password = password
                                 }
                             )
+                      , Port.audioLevel
+                            (case flags.audioLevel of
+                                Just level ->
+                                    level
+
+                                Nothing ->
+                                    1
+                            )
                       ]
 
             Nothing ->
                 { page =
                     LoginWindow
                 , authToken = ""
-                , deletingStationPopup = False
+                , removingStationPopup = False
                 , updatingStationPopup = False
+                , updateStationNameInput = ""
                 , username = Nothing
                 , newUser = Just True
                 , mdl = Material.model
@@ -122,6 +140,8 @@ init flags =
                 , currentStation = Nothing
                 , stations = []
                 , previousSongs = []
+                , error = ""
+                , dominantColor = "FFFFFF"
                 , loginModel =
                     { email = email
                     , password = ""
@@ -129,14 +149,22 @@ init flags =
                     , failed = False
                     }
                 , selectorModel =
-                    { state = Util.Types.Selecting
+                    { state = Types.Selecting
                     , previousSongs = []
                     , searchResults = Dict.empty
                     , searchInput = ""
                     }
                 , uiModel = {}
                 }
-                    ! []
+                    ! [ Port.audioLevel
+                            (case flags.audioLevel of
+                                Just level ->
+                                    level
+
+                                Nothing ->
+                                    1
+                            )
+                      ]
 
 
 type Msg
@@ -151,6 +179,20 @@ type Msg
     | KeyDown Int
     | SetCurrentTime Float
     | SetNewTime Float
+    | PlayPreviousSong Song
+    | NoOp
+    | GotDetails (Result Http.Error String)
+      -- Removing Stations
+    | OpenRemoveStationPopup
+    | CloseRemoveStationPopup
+    | RemoveStation Types.Station
+    | RemovedStation (Result Http.Error String)
+      -- Updating Stations
+    | UpdateStation
+    | UpdatedStation (Result Http.Error String)
+    | OpenUpdateStationPopup
+    | CloseUpdateStationPopup
+    | UpdateStationInput String
 
 
 update : Msg -> GlobalModel -> ( GlobalModel, Cmd Msg )
@@ -178,9 +220,8 @@ update msg gm =
                 ( { glModel | uiModel = uiModel }, Cmd.map UiMsg cmd )
 
         SongEnded stationId ->
-            ( { gm
-                | songQueue = (List.drop 1 gm.songQueue)
-                , previousSongs =
+            let
+                currentSong =
                     (case List.head gm.songQueue of
                         Just song ->
                             song
@@ -194,20 +235,26 @@ update msg gm =
                             , albumTitle = ""
                             , albumArt = ""
                             , trackToken = ""
+                            , pandoraId = ""
+                            , dominantColor = "FFFFFF"
                             }
                     )
-                        :: gm.previousSongs
-                , currentTime = 0
-                , isPlaying = True
-              }
-            , cmds
-                [ if List.length gm.songQueue == 2 then
-                    Http.send LoadedNextSongs
-                        (SongApi.getNext stationId gm.authToken False)
-                  else
-                    Cmd.none
-                ]
-            )
+            in
+                ( { gm
+                    | songQueue = (List.drop 1 gm.songQueue)
+                    , previousSongs =
+                        currentSong
+                            :: gm.previousSongs
+                    , currentTime = 0
+                    , isPlaying = True
+                  }
+                , cmds
+                    [ if List.length gm.songQueue == 2 then
+                        Task.attempt LoadedNextSongs (SongApi.getNext stationId gm.authToken True)
+                      else
+                        Cmd.none
+                    ]
+                )
 
         LoadedNextSongs result ->
             case result of
@@ -221,7 +268,25 @@ update msg gm =
                         ! []
 
                 Err error ->
-                    gm ! []
+                    let
+                        stu =
+                            case error of
+                                Http.BadUrl str ->
+                                    "Bad url " ++ str
+
+                                Http.Timeout ->
+                                    "Request timed out"
+
+                                Http.NetworkError ->
+                                    "Network error"
+
+                                Http.BadStatus resp ->
+                                    "Bad status :" ++ resp.body
+
+                                Http.BadPayload str resp ->
+                                    "Bad payload: " ++ str
+                    in
+                        gm ! []
 
         Mdl msg ->
             Material.update Mdl msg gm
@@ -291,6 +356,107 @@ update msg gm =
         SetCurrentTime _ ->
             ( { gm | currentTime = gm.currentTime + 1 }, cmds [] )
 
+        PlayPreviousSong song ->
+            ( { gm
+                | songQueue = song :: gm.songQueue
+                , page = Player
+                , currentTime = 0
+                , isPlaying = True
+              }
+            , cmds []
+            )
+
+        NoOp ->
+            gm ! []
+
+        RemoveStation removedStation ->
+            { gm
+                | stations =
+                    (List.filter
+                        (\station -> station.id /= removedStation.id)
+                        gm.stations
+                    )
+            }
+                ! [ Http.send RemovedStation (StationApi.remove removedStation.id gm.authToken) ]
+
+        RemovedStation _ ->
+            { gm
+                | page = StationSelector
+                , removingStationPopup = False
+                , isPlaying = False
+                , currentTime = 0
+                , currentStation = Nothing
+            }
+                ! []
+
+        OpenRemoveStationPopup ->
+            { gm | removingStationPopup = True } ! []
+
+        CloseRemoveStationPopup ->
+            { gm | removingStationPopup = False } ! []
+
+        OpenUpdateStationPopup ->
+            { gm | updatingStationPopup = True } ! []
+
+        CloseUpdateStationPopup ->
+            { gm | updatingStationPopup = False } ! []
+
+        UpdateStation ->
+            let
+                stationId =
+                    case gm.currentStation of
+                        Just station ->
+                            station.id
+
+                        Nothing ->
+                            ""
+            in
+                gm ! [ Http.send UpdatedStation (StationApi.update stationId gm.updateStationNameInput gm.authToken) ]
+
+        UpdatedStation result ->
+            case result of
+                Ok result ->
+                    let
+                        station =
+                            case gm.currentStation of
+                                Just station ->
+                                    station
+
+                                Nothing ->
+                                    { id = ""
+                                    , name = ""
+                                    , art = ""
+                                    }
+                    in
+                        { gm
+                            | currentStation =
+                                Just
+                                    { id = station.id
+                                    , name = gm.updateStationNameInput
+                                    , art = station.art
+                                    }
+                            , updatingStationPopup = False
+                        }
+                            ! []
+
+                Err error ->
+                    let
+                        log =
+                            Debug.log "Error updating station" error
+                    in
+                        gm ! []
+
+        UpdateStationInput input ->
+            { gm | updateStationNameInput = input } ! []
+
+        GotDetails result ->
+            case result of
+                Ok color ->
+                    { gm | dominantColor = color } ! []
+
+                Err error ->
+                    { gm | dominantColor = "FFFFFF" } ! []
+
 
 
 -- ΩΩΩ SUBSCRIPTIONS ΩΩΩ
@@ -313,6 +479,166 @@ subscriptions gm =
 -- ΩΩΩ VIEW ΩΩΩ
 
 
+updatingPopup :
+    GlobalModel
+    -> Html Msg
+updatingPopup gm =
+    let
+        station =
+            case gm.currentStation of
+                Just station ->
+                    station
+
+                Nothing ->
+                    { id = ""
+                    , name = ""
+                    , art = ""
+                    }
+    in
+        div
+            [ style
+                [ ( "height", "350px" )
+                , ( "width", "400px" )
+                , ( "z-index", "5" )
+                , ( "border-bottom", "1px black solid" )
+                , ( "border-right", "1px black solid" )
+                , ( "border-left", "1px black solid" )
+                , ( "align-self", "center" )
+                , ( "position", "absolute" )
+                , ( "background-color", "white" )
+                , ( "display", "flex" )
+                , ( "flex-direction", "column" )
+                ]
+            ]
+            [ h5
+                [ style
+                    [ ( "text-align", "center" )
+                    , ( "margin-top", "10%" )
+                    ]
+                ]
+                [ text "What would you like to rename" ]
+            , h5 [ style [ ( "text-align", "center" ) ] ] [ text ("\"" ++ station.name ++ "\" to?") ]
+            , input
+                [ style
+                    [ ( "align-self", "center" )
+                    , ( "margin-top", "5%" )
+                    , ( "height", "10%" )
+                    , ( "width", "60%" )
+                    ]
+                , onInput UpdateStationInput
+                , Events.blockSpacebar NoOp
+                ]
+                []
+            , div
+                [ style
+                    [ ( "margin-top", "7.5%" )
+                    , ( "align-self", "center" )
+                    , ( "display", "flex" )
+                    , ( "justify-content", "space-around" )
+                    , ( "width", "100%" )
+                    ]
+                ]
+                [ Button.render Mdl
+                    [ 987 ]
+                    gm.mdl
+                    [ Options.onClick CloseUpdateStationPopup
+                    , Button.raised
+                    , Button.colored
+                    , Button.ripple
+                    , Options.css "height" "75px"
+                    , Options.css "width" "125px"
+                    ]
+                    [ text "Cancel" ]
+                , Button.render Mdl
+                    [ 573 ]
+                    gm.mdl
+                    [ Options.onClick UpdateStation
+                    , Button.raised
+                    , Button.colored
+                    , Button.ripple
+                    , Options.css "height" "75px"
+                    , Options.css "width" "125px"
+                    ]
+                    [ text "Update" ]
+                ]
+            ]
+
+
+removingPopup :
+    GlobalModel
+    -> Html Msg
+removingPopup gm =
+    let
+        station =
+            case gm.currentStation of
+                Just station ->
+                    station
+
+                Nothing ->
+                    { id = ""
+                    , name = ""
+                    , art = ""
+                    }
+    in
+        div
+            [ style
+                [ ( "height", "350px" )
+                , ( "width", "400px" )
+                , ( "z-index", "5" )
+                , ( "border-bottom", "1px black solid" )
+                , ( "border-right", "1px black solid" )
+                , ( "border-left", "1px black solid" )
+                , ( "align-self", "center" )
+                , ( "position", "absolute" )
+                , ( "background-color", "white" )
+                , ( "display", "flex" )
+                , ( "flex-direction", "column" )
+                ]
+            ]
+            [ h5
+                [ style
+                    [ ( "text-align", "center" )
+                    , ( "margin-top", "15%" )
+                    ]
+                ]
+                [ text "Are you sure you would like to delete" ]
+            , h5 [ style [ ( "text-align", "center" ) ] ]
+                [ text ("\"" ++ station.name ++ "\"?") ]
+            , div
+                [ style
+                    [ ( "margin-top", "17.5%" )
+                    , ( "align-self", "center" )
+                    , ( "display", "flex" )
+                    , ( "justify-content", "space-around" )
+                    , ( "width", "100%" )
+                    ]
+                ]
+                [ Button.render Mdl
+                    [ 987 ]
+                    gm.mdl
+                    [ Options.onClick CloseRemoveStationPopup
+                    , Button.raised
+                    , Button.colored
+                    , Button.ripple
+                    , Options.css "height" "75px"
+                    , Options.css "width" "125px"
+                    ]
+                    [ text "Cancel" ]
+                , Button.render Mdl
+                    [ 573 ]
+                    gm.mdl
+                    [ Options.onClick (RemoveStation station)
+                    , Button.raised
+                    , Button.colored
+                    , Button.ripple
+                    , Options.css "height" "75px"
+                    , Options.css "width" "125px"
+                    ]
+                    [ text "Delete" ]
+                ]
+            ]
+
+
 onEnded : String -> Attribute Msg
 onEnded stationId =
     Html.Events.on "ended"
@@ -321,58 +647,43 @@ onEnded stationId =
 
 viewPlayer : GlobalModel -> Html Msg -> Html Msg
 viewPlayer gm content =
-    div
-        [ style
-            [ ( "height", "100%" )
-            , ( "width", "100%" )
-            , ( "display", "flex" )
-            , ( "flex-direction", "column" )
-            , ( "margin", "auto" )
-            ]
-        ]
-        [ Html.map UiMsg (Ui.viewTopBar gm)
-        , content
-        , Html.map UiMsg (Ui.viewControls gm)
+    let
+        station =
+            case gm.currentStation of
+                Just station ->
+                    station
 
-        -- , (if removingStationPopup then
-        --     Station.removingPopup mdl
-        --         Mdl
-        --         (case currentStation of
-        --             Just station ->
-        --                 station
-        --
-        --             Nothing ->
-        --                 { id = ""
-        --                 , name = ""
-        --                 , art = ""
-        --                 }
-        --         )
-        --         CloseRemoveStationPopup
-        --         RemoveStation
-        --    else
-        --     text ""
-        --   )
-        -- , (if gm.updatingStationPopup then
-        --     Station.updatingPopup mdl
-        --         Mdl
-        --         (case currentStation of
-        --             Just station ->
-        --                 station
-        --
-        --             Nothing ->
-        --                 { id = ""
-        --                 , name = ""
-        --                 , art = ""
-        --                 }
-        --         )
-        --         CloseUpdateStationPopup
-        --         UpdateStation
-        --         NoOp
-        --         NameInputToModel
-        --    else
-        --     text ""
-        --   )
-        ]
+                Nothing ->
+                    { id = ""
+                    , name = ""
+                    , art = ""
+                    }
+    in
+        div
+            [ style
+                [ ( "height", "100%" )
+                , ( "width", "100%" )
+                , ( "display", "flex" )
+                , ( "flex-direction", "column" )
+                , ( "margin", "auto" )
+                , ( "background-color", "rgba(255, 255, 255, 0)" )
+                , ( "z-index", "1" )
+                ]
+            ]
+            [ Html.map UiMsg (Ui.viewTopBar gm)
+            , content
+            , Html.map UiMsg (Ui.viewControls gm)
+            , (if gm.removingStationPopup then
+                removingPopup gm
+               else
+                text ""
+              )
+            , (if gm.updatingStationPopup then
+                updatingPopup gm
+               else
+                text ""
+              )
+            ]
 
 
 view : GlobalModel -> Html Msg
@@ -391,6 +702,9 @@ view gm =
 
                 ChatWindow ->
                     text ""
+
+                PreviousSongs ->
+                    PreviousSongs.view gm.previousSongs PlayPreviousSong gm
 
         song =
             audio
@@ -414,13 +728,58 @@ view gm =
                 , autoplay True
                 ]
                 []
+
+        backgroundImg =
+            img
+                [ style
+                    [ ( "filter", "blur(5px)" )
+                    , ( "width", "100%" )
+                    , ( "height", "100%" )
+                    , ( "position", "absolute" )
+                    , ( "transform", "scale(10)" )
+                    , ( "justify-self", "center" )
+                    , ( "align-self", "center" )
+                    , ( "overflow", "hidden" )
+                    ]
+                , src
+                    (case List.head gm.songQueue of
+                        Just song ->
+                            song.albumArt
+
+                        Nothing ->
+                            ""
+                    )
+                ]
+                []
+
+        backgroundColor =
+            div
+                [ style
+                    [ ( "background-color"
+                      , "#"
+                            ++ (case List.head gm.songQueue of
+                                    Just song ->
+                                        song.dominantColor
+
+                                    Nothing ->
+                                        "FFFFFF"
+                               )
+                      )
+                    , ( "opacity", ".75" )
+                    , ( "width", "100%" )
+                    , ( "height", "100%" )
+                    , ( "position", "absolute" )
+                    ]
+                ]
+                []
     in
         div
             [ style
                 [ ( "display", "flex" )
                 , ( "width", "100%" )
                 , ( "height", "100%" )
-                , ( "overflow-x", "hidden" )
+                , ( "overflow", "hidden" )
+                , ( "position", "relative" )
                 ]
             ]
-            [ song, viewPlayer gm content ]
+            [ backgroundImg, backgroundColor, song, viewPlayer gm content ]

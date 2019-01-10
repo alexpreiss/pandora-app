@@ -3,7 +3,7 @@ module View.Ui exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
-import Util.Types exposing (GlobalModel, cmds, Song, Page(..), UiModel)
+import Util.Types as Types exposing (GlobalModel, cmds, Song, Page(..), UiModel)
 import Util.Port as Port
 import Material
 import Material.Options as Options
@@ -12,8 +12,10 @@ import Material.Icon as Icon
 import Material.Menu as Menu
 import Material.Slider as Slider
 import Api.Controller as Api
+import Api.Song as SongApi
 import Http
 import Json.Decode as Decode
+import Task
 
 
 -- ΩΩΩ MODEL ΩΩΩ
@@ -63,6 +65,7 @@ type Msg
     | UnMute
     | Mute
     | SetSeekLocation Float
+    | GotDetails (Result Http.Error String)
 
 
 update : Msg -> UiModel -> GlobalModel -> ( UiModel, GlobalModel, Cmd Msg )
@@ -195,6 +198,7 @@ update msg model gm =
                             (Api.getFragment id gm.authToken False)
                       else
                         Cmd.none
+                    , Task.attempt LoadedNextSongs (SongApi.getNext id gm.authToken True)
                     ]
                 )
 
@@ -277,16 +281,21 @@ update msg model gm =
                 ( model, { gm | page = ChatWindow }, cmds [] )
 
             ToPreviousSongs ->
-                ( model, gm, cmds [] )
+                ( model
+                , { gm
+                    | page = PreviousSongs
+                  }
+                , cmds []
+                )
 
             ToPlaying ->
                 ( model, { gm | page = Player }, cmds [] )
 
             Logout ->
-                ( model, gm, cmds [] )
+                ( model, { gm | page = LoginWindow }, cmds [ Port.logOutLocalStorage () ] )
 
             OpenDeleteStationPopup ->
-                ( model, { gm | deletingStationPopup = True }, cmds [] )
+                ( model, { gm | removingStationPopup = True }, cmds [] )
 
             OpenUpdateStationPopup ->
                 ( model, { gm | updatingStationPopup = True }, cmds [] )
@@ -298,16 +307,24 @@ update msg model gm =
                 ( model, { gm | audioHover = False }, cmds [] )
 
             SetAudio float ->
-                ( model, { gm | audioLevel = Just float }, cmds [] )
+                ( model, { gm | audioLevel = Just float }, cmds [ Port.audioLevel float ] )
 
             Mute ->
-                ( model, { gm | audioLevel = Just 0 }, cmds [] )
+                ( model, { gm | audioLevel = Just 0 }, cmds [ Port.audioLevel 0 ] )
 
             UnMute ->
-                ( model, { gm | audioLevel = Just 1 }, cmds [] )
+                ( model, { gm | audioLevel = Just 1 }, cmds [ Port.audioLevel 1 ] )
 
             SetSeekLocation float ->
                 ( model, { gm | seek = float }, cmds [ Port.getProgressBarWidth () ] )
+
+            GotDetails result ->
+                case result of
+                    Ok color ->
+                        ( model, { gm | dominantColor = color }, cmds [] )
+
+                    Err error ->
+                        ( model, { gm | dominantColor = "FFFFFF" }, cmds [] )
 
 
 
@@ -564,6 +581,7 @@ audioSelector gm =
                 , ( "margin-top", "5px" )
                 , ( "z-index", "3" )
                 , ( "-webkit-user-select", "none" )
+                , ( "color", Types.textColor gm )
                 ]
             , class "material-icons topIcons"
             , (if gm.audioLevel == Just 0 then
@@ -629,7 +647,9 @@ viewTopMenu gm =
             Menu.render Mdl
                 [ 2 ]
                 gm.mdl
-                [ Menu.bottomRight, Menu.icon "keyboard_arrow_down" ]
+                [ Menu.bottomRight
+                , Menu.icon "keyboard_arrow_down"
+                ]
                 (case gm.page of
                     Player ->
                         [ item "apps" "Stations" ToStations False
@@ -649,6 +669,13 @@ viewTopMenu gm =
                         [ item "play_circle_outline" "Player" ToPlaying emptyQueue
                         , item "apps" "Stations" ToStations False
                         , item "first_page" "Previous Songs" ToPreviousSongs False
+                        , item "clear" "Log out" Logout False
+                        ]
+
+                    PreviousSongs ->
+                        [ item "play_circle_outline" "Player" ToPlaying emptyQueue
+                        , item "apps" "Stations" ToStations False
+                        , item "chat_bubble" "Chat" ToChat False
                         , item "clear" "Log out" Logout False
                         ]
 
@@ -676,16 +703,16 @@ viewTopBar gm =
                 [ class csName
                 , onClick msg
                 , style
-                    (styles
-                        :: (case currentStationName of
-                                "" ->
-                                    [ ( "opacity", "0" )
-                                    , ( "pointer-events", "none" )
-                                    ]
+                    (List.append styles
+                        (case currentStationName of
+                            "" ->
+                                [ ( "opacity", "0" )
+                                , ( "pointer-events", "none" )
+                                ]
 
-                                _ ->
-                                    [ ( "pointer-events", "auto" ) ]
-                           )
+                            _ ->
+                                [ ( "pointer-events", "auto" ) ]
+                        )
                     )
                 ]
                 [ text name ]
@@ -694,6 +721,7 @@ viewTopBar gm =
             [ style
                 [ ( "position", "relative" )
                 , ( "height", "10%" )
+                , ( "-webkit-app-region", "drag" )
                 ]
             ]
             [ div
@@ -703,9 +731,21 @@ viewTopBar gm =
                     , ( "padding-top", "6px" )
                     ]
                 ]
-                [ icon "material-icons deleteStation" OpenDeleteStationPopup ( "margin-right", "1%" ) "delete"
-                , p [] [ text currentStationName ]
-                , icon "material-icons editStation" OpenUpdateStationPopup ( "margin-left", "1%" ) "edit"
+                [ icon "material-icons deleteStation"
+                    OpenDeleteStationPopup
+                    [ ( "margin-right", "1%" )
+                    , ( "transition", "opacity 1s" )
+                    , ( "color", Types.textColor gm )
+                    ]
+                    "delete"
+                , p [ style [ ( "color", Types.textColor gm ) ] ] [ text currentStationName ]
+                , icon "material-icons editStation"
+                    OpenUpdateStationPopup
+                    [ ( "margin-left", "1%" )
+                    , ( "transition", "opacity 1s" )
+                    , ( "color", Types.textColor gm )
+                    ]
+                    "edit"
                 ]
             , div
                 [ style

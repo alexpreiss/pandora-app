@@ -145,7 +145,7 @@ update msg model globalModel =
 
         GotStations result ->
             ( model
-            , case Debug.log "Stations" result of
+            , case result of
                 Ok stations ->
                     { globalModel
                         | stations = stations

@@ -5,6 +5,8 @@ const app = electron.app // this is our app
 const globalShortcut = electron.globalShortcut
 const BrowserWindow = electron.BrowserWindow // This is a Module that creates windows
 
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 
 let mainWindow // saves a global reference to mainWindow so it doesn't get garbage collected
 
@@ -18,7 +20,8 @@ function createWindow () {
     minWidth : 650,
     minHeight: 572,
     title: 'Pandora',
-    icon: `file://${ __dirname }/icon.icns`
+    icon: `file://${ __dirname }/icon.icns`,
+    titleBarStyle: 'hiddenInset'
   })
 
   const cookie = {url: 'https://www.pandora.com', name: 'csrftoken', value: 'coolestToken'}

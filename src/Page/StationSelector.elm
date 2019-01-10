@@ -20,6 +20,7 @@ import Util.Types as Types
         , SelectorState(..)
         , cmds
         )
+import Task
 
 
 -- ΩΩΩ MODEL ΩΩΩ
@@ -49,7 +50,6 @@ type Msg
     | PlayPreviousSong Song
     | ToStations
     | ToSongSearch
-    | ToPreviousSongs
     | NoOp
 
 
@@ -69,8 +69,7 @@ update msg model gm =
                 , page = Types.Player
               }
             , cmds
-                [ Http.send StartedStation
-                    (SongApi.getNext id gm.authToken True)
+                [ Task.attempt StartedStation (SongApi.getNext id gm.authToken True)
                 ]
             )
 
@@ -99,9 +98,6 @@ update msg model gm =
               }
             , cmds []
             )
-
-        ToPreviousSongs ->
-            ( { model | state = PreviousSongs }, gm, cmds [] )
 
         PlayPreviousSong song ->
             ( model
@@ -137,7 +133,7 @@ update msg model gm =
                 ( model, gm, cmds [ Http.send GotSearchedSongs (StationApi.search input gm.authToken) ] )
 
         GotSearchedSongs result ->
-            case Debug.log "songs" result of
+            case result of
                 Ok songs ->
                     ( { model
                         | searchResults = songs
@@ -154,8 +150,8 @@ update msg model gm =
                         ( model, gm, cmds [] )
 
         CreateStation musicToken ->
-            ( model
-            , { gm | page = Types.StationSelector }
+            ( { model | state = Types.Selecting }
+            , gm
             , cmds
                 [ Http.send CreatedStation
                     (StationApi.create
@@ -199,60 +195,8 @@ subscriptions _ =
 -- ΩΩΩ VIEW ΩΩΩ
 
 
-viewPreviousSong : Song -> Grid.Cell Msg
-viewPreviousSong song =
-    Grid.cell
-        [ Grid.size Desktop 3
-        , Options.css "margin-bottom" "25px "
-        , Options.css "text-align" "center"
-        ]
-        [ div
-            [ style
-                [ ( "width", "150px" )
-                , ( "height", "175px" )
-                , ( "margin", "auto" )
-                ]
-            , onClick (PlayPreviousSong song)
-            ]
-            [ img
-                [ style
-                    [ ( "height", "150px" )
-                    , ( "width", "150px" )
-                    , ( "border", "1px solid black" )
-                    , ( "box-shadow", "0.25px 0.25px black" )
-                    , ( "-webkit-user-select", "none" )
-                    ]
-                , src song.albumArt
-                ]
-                []
-            , p
-                [ style
-                    [ ( "text-align", "center" )
-                    ]
-                ]
-                [ text song.songTitle ]
-            ]
-        ]
-
-
-viewPreviousSongs : List Song -> Html Msg
-viewPreviousSongs previousSongs =
-    Grid.grid
-        [ Options.css "width" "100%"
-        , Options.css "margin" "0px"
-        , Options.css "overflow-y" "auto"
-        ]
-        (List.map
-            (\song ->
-                viewPreviousSong
-                    song
-            )
-            previousSongs
-        )
-
-
-viewAddStation : Grid.Cell Msg
-viewAddStation =
+viewAddStation : GlobalModel -> Grid.Cell Msg
+viewAddStation gm =
     Grid.cell
         [ Grid.size Desktop 3
         , Options.css "margin-bottom" "25px "
@@ -280,6 +224,7 @@ viewAddStation =
             , p
                 [ style
                     [ ( "text-align", "center" )
+                    , ( "color", Types.textColor gm )
                     ]
                 ]
                 [ text "Add a station" ]
@@ -287,8 +232,8 @@ viewAddStation =
         ]
 
 
-viewStation : Station -> Grid.Cell Msg
-viewStation { id, name, art } =
+viewStation : Station -> GlobalModel -> Grid.Cell Msg
+viewStation { id, name, art } gm =
     Grid.cell
         [ Grid.size Desktop 3
         , Options.css "margin-bottom" "25px "
@@ -316,6 +261,7 @@ viewStation { id, name, art } =
             , p
                 [ style
                     [ ( "text-align", "center" )
+                    , ( "color", Types.textColor gm )
                     ]
                 ]
                 [ text name ]
@@ -324,16 +270,17 @@ viewStation { id, name, art } =
 
 
 viewStationSelector : GlobalModel -> Html Msg
-viewStationSelector globalModel =
+viewStationSelector gm =
     Grid.grid
         [ Options.css "width" "100%"
         , Options.css "margin" "0px"
         , Options.css "overflow-y" "auto"
+        , (Options.css) "background-color" "rgba(255, 255, 255, 0)"
         ]
-        (viewAddStation
+        (viewAddStation gm
             :: (List.map
-                    (\station -> viewStation station)
-                    globalModel.stations
+                    (\station -> viewStation station gm)
+                    gm.stations
                )
         )
 
@@ -468,12 +415,9 @@ view gm =
         model =
             gm.selectorModel
     in
-        case Debug.log "State" model.state of
+        case model.state of
             Selecting ->
                 viewStationSelector gm
 
             Searching ->
                 viewSearch model
-
-            PreviousSongs ->
-                viewPreviousSongs model.previousSongs

@@ -91,7 +91,7 @@ update msg model =
             { model | chatInput = "" }
                 ! [ Http.send SentChat
                         (Api.send
-                            { email = Debug.log "email" model.email
+                            { email = model.email
                             , username =
                                 model.username
                             , content = model.chatInput

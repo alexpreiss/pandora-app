@@ -2,6 +2,30 @@ var _user$project$Main$Flags = F5(
 	function (a, b, c, d, e) {
 		return {password: a, audioLevel: b, username: c, email: d, newUser: e};
 	});
+var _user$project$Main$UpdateStationInput = function (a) {
+	return {ctor: 'UpdateStationInput', _0: a};
+};
+var _user$project$Main$CloseUpdateStationPopup = {ctor: 'CloseUpdateStationPopup'};
+var _user$project$Main$OpenUpdateStationPopup = {ctor: 'OpenUpdateStationPopup'};
+var _user$project$Main$UpdatedStation = function (a) {
+	return {ctor: 'UpdatedStation', _0: a};
+};
+var _user$project$Main$UpdateStation = {ctor: 'UpdateStation'};
+var _user$project$Main$RemovedStation = function (a) {
+	return {ctor: 'RemovedStation', _0: a};
+};
+var _user$project$Main$RemoveStation = function (a) {
+	return {ctor: 'RemoveStation', _0: a};
+};
+var _user$project$Main$CloseRemoveStationPopup = {ctor: 'CloseRemoveStationPopup'};
+var _user$project$Main$OpenRemoveStationPopup = {ctor: 'OpenRemoveStationPopup'};
+var _user$project$Main$GotDetails = function (a) {
+	return {ctor: 'GotDetails', _0: a};
+};
+var _user$project$Main$NoOp = {ctor: 'NoOp'};
+var _user$project$Main$PlayPreviousSong = function (a) {
+	return {ctor: 'PlayPreviousSong', _0: a};
+};
 var _user$project$Main$SetNewTime = function (a) {
 	return {ctor: 'SetNewTime', _0: a};
 };
@@ -34,6 +58,497 @@ var _user$project$Main$subscriptions = function (gm) {
 			}
 		});
 };
+var _user$project$Main$updatingPopup = function (gm) {
+	var station = function () {
+		var _p0 = gm.currentStation;
+		if (_p0.ctor === 'Just') {
+			return _p0._0;
+		} else {
+			return {id: '', name: '', art: ''};
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '400px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'z-index', _1: '5'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-right', _1: '1px black solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-left', _1: '1px black solid'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h5,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '10%'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('What would you like to rename'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h5,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'\"',
+								A2(_elm_lang$core$Basics_ops['++'], station.name, '\" to?'))),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$input,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '5%'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '10%'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'width', _1: '60%'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onInput(_user$project$Main$UpdateStationInput),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Util_Events$blockSpacebar(_user$project$Main$NoOp),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{ctor: '[]'}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '7.5%'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: A5(
+									_debois$elm_mdl$Material_Button$render,
+									_user$project$Main$Mdl,
+									{
+										ctor: '::',
+										_0: 987,
+										_1: {ctor: '[]'}
+									},
+									gm.mdl,
+									{
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Options$onClick(_user$project$Main$CloseUpdateStationPopup),
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Button$raised,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$colored,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$ripple,
+													_1: {
+														ctor: '::',
+														_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Cancel'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A5(
+										_debois$elm_mdl$Material_Button$render,
+										_user$project$Main$Mdl,
+										{
+											ctor: '::',
+											_0: 573,
+											_1: {ctor: '[]'}
+										},
+										gm.mdl,
+										{
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Options$onClick(_user$project$Main$UpdateStation),
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$raised,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$colored,
+													_1: {
+														ctor: '::',
+														_0: _debois$elm_mdl$Material_Button$ripple,
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+															_1: {
+																ctor: '::',
+																_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+																_1: {ctor: '[]'}
+															}
+														}
+													}
+												}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('Update'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Main$removingPopup = function (gm) {
+	var station = function () {
+		var _p1 = gm.currentStation;
+		if (_p1.ctor === 'Just') {
+			return _p1._0;
+		} else {
+			return {id: '', name: '', art: ''};
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'height', _1: '350px'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '400px'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'z-index', _1: '5'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'border-bottom', _1: '1px black solid'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'border-right', _1: '1px black solid'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'border-left', _1: '1px black solid'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'white'},
+													_1: {
+														ctor: '::',
+														_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+														_1: {
+															ctor: '::',
+															_0: {ctor: '_Tuple2', _0: 'flex-direction', _1: 'column'},
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h5,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$style(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '15%'},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Are you sure you would like to delete'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h5,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$style(
+							{
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'text-align', _1: 'center'},
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'\"',
+								A2(_elm_lang$core$Basics_ops['++'], station.name, '\"?'))),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'margin-top', _1: '17.5%'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+													_1: {ctor: '[]'}
+												}
+											}
+										}
+									}
+								}),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: A5(
+								_debois$elm_mdl$Material_Button$render,
+								_user$project$Main$Mdl,
+								{
+									ctor: '::',
+									_0: 987,
+									_1: {ctor: '[]'}
+								},
+								gm.mdl,
+								{
+									ctor: '::',
+									_0: _debois$elm_mdl$Material_Options$onClick(_user$project$Main$CloseRemoveStationPopup),
+									_1: {
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Button$raised,
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Button$colored,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$ripple,
+												_1: {
+													ctor: '::',
+													_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+													_1: {
+														ctor: '::',
+														_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+														_1: {ctor: '[]'}
+													}
+												}
+											}
+										}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Cancel'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {
+								ctor: '::',
+								_0: A5(
+									_debois$elm_mdl$Material_Button$render,
+									_user$project$Main$Mdl,
+									{
+										ctor: '::',
+										_0: 573,
+										_1: {ctor: '[]'}
+									},
+									gm.mdl,
+									{
+										ctor: '::',
+										_0: _debois$elm_mdl$Material_Options$onClick(
+											_user$project$Main$RemoveStation(station)),
+										_1: {
+											ctor: '::',
+											_0: _debois$elm_mdl$Material_Button$raised,
+											_1: {
+												ctor: '::',
+												_0: _debois$elm_mdl$Material_Button$colored,
+												_1: {
+													ctor: '::',
+													_0: _debois$elm_mdl$Material_Button$ripple,
+													_1: {
+														ctor: '::',
+														_0: A2(_debois$elm_mdl$Material_Options$css, 'height', '75px'),
+														_1: {
+															ctor: '::',
+															_0: A2(_debois$elm_mdl$Material_Options$css, 'width', '125px'),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('Delete'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
 var _user$project$Main$LoadedNextSongs = function (a) {
 	return {ctor: 'LoadedNextSongs', _0: a};
 };
@@ -52,6 +567,14 @@ var _user$project$Main$UiMsg = function (a) {
 };
 var _user$project$Main$viewPlayer = F2(
 	function (gm, content) {
+		var station = function () {
+			var _p2 = gm.currentStation;
+			if (_p2.ctor === 'Just') {
+				return _p2._0;
+			} else {
+				return {id: '', name: '', art: ''};
+			}
+		}();
 		return A2(
 			_elm_lang$html$Html$div,
 			{
@@ -72,7 +595,15 @@ var _user$project$Main$viewPlayer = F2(
 									_1: {
 										ctor: '::',
 										_0: {ctor: '_Tuple2', _0: 'margin', _1: 'auto'},
-										_1: {ctor: '[]'}
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'background-color', _1: 'rgba(255, 255, 255, 0)'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'z-index', _1: '1'},
+												_1: {ctor: '[]'}
+											}
+										}
 									}
 								}
 							}
@@ -95,7 +626,15 @@ var _user$project$Main$viewPlayer = F2(
 							_elm_lang$html$Html$map,
 							_user$project$Main$UiMsg,
 							_user$project$View_Ui$viewControls(gm)),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: gm.removingStationPopup ? _user$project$Main$removingPopup(gm) : _elm_lang$html$Html$text(''),
+							_1: {
+								ctor: '::',
+								_0: gm.updatingStationPopup ? _user$project$Main$updatingPopup(gm) : _elm_lang$html$Html$text(''),
+								_1: {ctor: '[]'}
+							}
+						}
 					}
 				}
 			});
@@ -108,23 +647,24 @@ var _user$project$Main$LoginMsg = function (a) {
 };
 var _user$project$Main$init = function (flags) {
 	var email = function () {
-		var _p0 = flags.email;
-		if (_p0.ctor === 'Just') {
-			return _p0._0;
+		var _p3 = flags.email;
+		if (_p3.ctor === 'Just') {
+			return _p3._0;
 		} else {
 			return '';
 		}
 	}();
-	var _p1 = flags.password;
-	if (_p1.ctor === 'Just') {
-		var _p3 = _p1._0;
+	var _p4 = flags.password;
+	if (_p4.ctor === 'Just') {
+		var _p7 = _p4._0;
 		return A2(
 			_elm_lang$core$Platform_Cmd_ops['!'],
 			{
 				page: _user$project$Util_Types$LoginWindow,
 				authToken: '',
-				deletingStationPopup: false,
+				removingStationPopup: false,
 				updatingStationPopup: false,
+				updateStationNameInput: '',
 				username: flags.username,
 				newUser: _elm_lang$core$Native_Utils.eq(
 					flags.newUser,
@@ -140,7 +680,9 @@ var _user$project$Main$init = function (flags) {
 				currentStation: _elm_lang$core$Maybe$Nothing,
 				stations: {ctor: '[]'},
 				previousSongs: {ctor: '[]'},
-				loginModel: {email: email, password: _p3, remember: false, failed: false},
+				error: '',
+				dominantColor: 'FFFFFF',
+				loginModel: {email: email, password: _p7, remember: false, failed: false},
 				selectorModel: {
 					state: _user$project$Util_Types$Selecting,
 					previousSongs: {ctor: '[]'},
@@ -153,13 +695,25 @@ var _user$project$Main$init = function (flags) {
 				ctor: '::',
 				_0: A2(
 					_elm_lang$http$Http$send,
-					function (_p2) {
+					function (_p5) {
 						return _user$project$Main$LoginMsg(
-							_user$project$Page_Login$LoggedInRemember(_p2));
+							_user$project$Page_Login$LoggedInRemember(_p5));
 					},
 					_user$project$Api_Login$login(
-						{email: email, password: _p3})),
-				_1: {ctor: '[]'}
+						{email: email, password: _p7})),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Util_Port$audioLevel(
+						function () {
+							var _p6 = flags.audioLevel;
+							if (_p6.ctor === 'Just') {
+								return _p6._0;
+							} else {
+								return 1;
+							}
+						}()),
+					_1: {ctor: '[]'}
+				}
 			});
 	} else {
 		return A2(
@@ -167,8 +721,9 @@ var _user$project$Main$init = function (flags) {
 			{
 				page: _user$project$Util_Types$LoginWindow,
 				authToken: '',
-				deletingStationPopup: false,
+				removingStationPopup: false,
 				updatingStationPopup: false,
+				updateStationNameInput: '',
 				username: _elm_lang$core$Maybe$Nothing,
 				newUser: _elm_lang$core$Maybe$Just(true),
 				mdl: _debois$elm_mdl$Material$model,
@@ -182,6 +737,8 @@ var _user$project$Main$init = function (flags) {
 				currentStation: _elm_lang$core$Maybe$Nothing,
 				stations: {ctor: '[]'},
 				previousSongs: {ctor: '[]'},
+				error: '',
+				dominantColor: 'FFFFFF',
 				loginModel: {email: email, password: '', remember: false, failed: false},
 				selectorModel: {
 					state: _user$project$Util_Types$Selecting,
@@ -191,18 +748,30 @@ var _user$project$Main$init = function (flags) {
 				},
 				uiModel: {}
 			},
-			{ctor: '[]'});
+			{
+				ctor: '::',
+				_0: _user$project$Util_Port$audioLevel(
+					function () {
+						var _p8 = flags.audioLevel;
+						if (_p8.ctor === 'Just') {
+							return _p8._0;
+						} else {
+							return 1;
+						}
+					}()),
+				_1: {ctor: '[]'}
+			});
 	}
 };
 var _user$project$Main$update = F2(
 	function (msg, gm) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
+		var _p9 = msg;
+		switch (_p9.ctor) {
 			case 'LoginMsg':
-				var _p5 = A3(_user$project$Page_Login$update, _p4._0, gm.loginModel, gm);
-				var logModel = _p5._0;
-				var glModel = _p5._1;
-				var cmd = _p5._2;
+				var _p10 = A3(_user$project$Page_Login$update, _p9._0, gm.loginModel, gm);
+				var logModel = _p10._0;
+				var glModel = _p10._1;
+				var cmd = _p10._2;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -211,10 +780,10 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$LoginMsg, cmd)
 				};
 			case 'SelectorMsg':
-				var _p6 = A3(_user$project$Page_StationSelector$update, _p4._0, gm.selectorModel, gm);
-				var selModel = _p6._0;
-				var glModel = _p6._1;
-				var cmd = _p6._2;
+				var _p11 = A3(_user$project$Page_StationSelector$update, _p9._0, gm.selectorModel, gm);
+				var selModel = _p11._0;
+				var glModel = _p11._1;
+				var cmd = _p11._2;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -223,10 +792,10 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$SelectorMsg, cmd)
 				};
 			case 'UiMsg':
-				var _p7 = A3(_user$project$View_Ui$update, _p4._0, gm.uiModel, gm);
-				var uiModel = _p7._0;
-				var glModel = _p7._1;
-				var cmd = _p7._2;
+				var _p12 = A3(_user$project$View_Ui$update, _p9._0, gm.uiModel, gm);
+				var uiModel = _p12._0;
+				var glModel = _p12._1;
+				var cmd = _p12._2;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -235,24 +804,21 @@ var _user$project$Main$update = F2(
 					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$UiMsg, cmd)
 				};
 			case 'SongEnded':
+				var currentSong = function () {
+					var _p13 = _elm_lang$core$List$head(gm.songQueue);
+					if (_p13.ctor === 'Just') {
+						return _p13._0;
+					} else {
+						return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: '', pandoraId: '', dominantColor: 'FFFFFF'};
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						gm,
 						{
 							songQueue: A2(_elm_lang$core$List$drop, 1, gm.songQueue),
-							previousSongs: {
-								ctor: '::',
-								_0: function () {
-									var _p8 = _elm_lang$core$List$head(gm.songQueue);
-									if (_p8.ctor === 'Just') {
-										return _p8._0;
-									} else {
-										return {songTitle: '', trackLength: 0, rating: 0, audioURL: '', artistName: '', albumTitle: '', albumArt: '', trackToken: ''};
-									}
-								}(),
-								_1: gm.previousSongs
-							},
+							previousSongs: {ctor: '::', _0: currentSong, _1: gm.previousSongs},
 							currentTime: 0,
 							isPlaying: true
 						}),
@@ -262,46 +828,61 @@ var _user$project$Main$update = F2(
 							_0: _elm_lang$core$Native_Utils.eq(
 								_elm_lang$core$List$length(gm.songQueue),
 								2) ? A2(
-								_elm_lang$http$Http$send,
+								_elm_lang$core$Task$attempt,
 								_user$project$Main$LoadedNextSongs,
-								A3(_user$project$Api_Song$getNext, _p4._0, gm.authToken, false)) : _elm_lang$core$Platform_Cmd$none,
+								A3(_user$project$Api_Song$getNext, _p9._0, gm.authToken, true)) : _elm_lang$core$Platform_Cmd$none,
 							_1: {ctor: '[]'}
 						})
 				};
 			case 'LoadedNextSongs':
-				var _p9 = _p4._0;
-				if (_p9.ctor === 'Ok') {
+				var _p14 = _p9._0;
+				if (_p14.ctor === 'Ok') {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							gm,
 							{
-								songQueue: A2(_elm_lang$core$List$append, gm.songQueue, _p9._0)
+								songQueue: A2(_elm_lang$core$List$append, gm.songQueue, _p14._0)
 							}),
 						{ctor: '[]'});
 				} else {
+					var stu = function () {
+						var _p15 = _p14._0;
+						switch (_p15.ctor) {
+							case 'BadUrl':
+								return A2(_elm_lang$core$Basics_ops['++'], 'Bad url ', _p15._0);
+							case 'Timeout':
+								return 'Request timed out';
+							case 'NetworkError':
+								return 'Network error';
+							case 'BadStatus':
+								return A2(_elm_lang$core$Basics_ops['++'], 'Bad status :', _p15._0.body);
+							default:
+								return A2(_elm_lang$core$Basics_ops['++'], 'Bad payload: ', _p15._0);
+						}
+					}();
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						gm,
 						{ctor: '[]'});
 				}
 			case 'Mdl':
-				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p4._0, gm);
+				return A3(_debois$elm_mdl$Material$update, _user$project$Main$Mdl, _p9._0, gm);
 			case 'KeyDown':
-				var _p13 = _p4._0;
-				var _p10 = gm.page;
-				if (_p10.ctor === 'LoginWindow') {
+				var _p19 = _p9._0;
+				var _p16 = gm.page;
+				if (_p16.ctor === 'LoginWindow') {
 					return {
 						ctor: '_Tuple2',
 						_0: gm,
 						_1: _user$project$Util_Types$cmds(
-							_elm_lang$core$Native_Utils.eq(_p13, 13) ? (gm.loginModel.remember ? {
+							_elm_lang$core$Native_Utils.eq(_p19, 13) ? (gm.loginModel.remember ? {
 								ctor: '::',
 								_0: A2(
 									_elm_lang$http$Http$send,
-									function (_p11) {
+									function (_p17) {
 										return _user$project$Main$LoginMsg(
-											_user$project$Page_Login$LoggedInRemember(_p11));
+											_user$project$Page_Login$LoggedInRemember(_p17));
 									},
 									_user$project$Api_Login$login(
 										{email: gm.loginModel.email, password: gm.loginModel.password})),
@@ -318,9 +899,9 @@ var _user$project$Main$update = F2(
 								ctor: '::',
 								_0: A2(
 									_elm_lang$http$Http$send,
-									function (_p12) {
+									function (_p18) {
 										return _user$project$Main$LoginMsg(
-											_user$project$Page_Login$LoggedIn(_p12));
+											_user$project$Page_Login$LoggedIn(_p18));
 									},
 									_user$project$Api_Login$login(
 										{email: gm.loginModel.email, password: gm.loginModel.password})),
@@ -330,22 +911,22 @@ var _user$project$Main$update = F2(
 				} else {
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
-						_elm_lang$core$Native_Utils.eq(_p13, 32) ? _elm_lang$core$Native_Utils.update(
+						_elm_lang$core$Native_Utils.eq(_p19, 32) ? _elm_lang$core$Native_Utils.update(
 							gm,
-							{isPlaying: !gm.isPlaying, keyPress: _p13}) : _elm_lang$core$Native_Utils.update(
+							{isPlaying: !gm.isPlaying, keyPress: _p19}) : _elm_lang$core$Native_Utils.update(
 							gm,
 							{isPlaying: gm.isPlaying}),
 						{
 							ctor: '::',
-							_0: _elm_lang$core$Native_Utils.eq(_p13, 32) ? _user$project$Util_Port$togglePause(
+							_0: _elm_lang$core$Native_Utils.eq(_p19, 32) ? _user$project$Util_Port$togglePause(
 								{ctor: '_Tuple0'}) : _elm_lang$core$Platform_Cmd$none,
 							_1: {ctor: '[]'}
 						});
 				}
 			case 'SetNewTime':
-				var _p14 = _elm_lang$core$List$head(gm.songQueue);
-				if (_p14.ctor === 'Just') {
-					var newTime = (gm.seek / _p4._0) * _elm_lang$core$Basics$toFloat(_p14._0.trackLength);
+				var _p20 = _elm_lang$core$List$head(gm.songQueue);
+				if (_p20.ctor === 'Just') {
+					var newTime = (gm.seek / _p9._0) * _elm_lang$core$Basics$toFloat(_p20._0.trackLength);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
@@ -362,7 +943,7 @@ var _user$project$Main$update = F2(
 						gm,
 						{ctor: '[]'});
 				}
-			default:
+			case 'SetCurrentTime':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -371,18 +952,262 @@ var _user$project$Main$update = F2(
 					_1: _user$project$Util_Types$cmds(
 						{ctor: '[]'})
 				};
+			case 'PlayPreviousSong':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						gm,
+						{
+							songQueue: {ctor: '::', _0: _p9._0, _1: gm.songQueue},
+							page: _user$project$Util_Types$Player,
+							currentTime: 0,
+							isPlaying: true
+						}),
+					_1: _user$project$Util_Types$cmds(
+						{ctor: '[]'})
+				};
+			case 'NoOp':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					gm,
+					{ctor: '[]'});
+			case 'RemoveStation':
+				var _p21 = _p9._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{
+							stations: A2(
+								_elm_lang$core$List$filter,
+								function (station) {
+									return !_elm_lang$core$Native_Utils.eq(station.id, _p21.id);
+								},
+								gm.stations)
+						}),
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$http$Http$send,
+							_user$project$Main$RemovedStation,
+							A2(_user$project$Api_Station$remove, _p21.id, gm.authToken)),
+						_1: {ctor: '[]'}
+					});
+			case 'RemovedStation':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{page: _user$project$Util_Types$StationSelector, removingStationPopup: false, isPlaying: false, currentTime: 0, currentStation: _elm_lang$core$Maybe$Nothing}),
+					{ctor: '[]'});
+			case 'OpenRemoveStationPopup':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{removingStationPopup: true}),
+					{ctor: '[]'});
+			case 'CloseRemoveStationPopup':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{removingStationPopup: false}),
+					{ctor: '[]'});
+			case 'OpenUpdateStationPopup':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{updatingStationPopup: true}),
+					{ctor: '[]'});
+			case 'CloseUpdateStationPopup':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{updatingStationPopup: false}),
+					{ctor: '[]'});
+			case 'UpdateStation':
+				var stationId = function () {
+					var _p22 = gm.currentStation;
+					if (_p22.ctor === 'Just') {
+						return _p22._0.id;
+					} else {
+						return '';
+					}
+				}();
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					gm,
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$http$Http$send,
+							_user$project$Main$UpdatedStation,
+							A3(_user$project$Api_Station$update, stationId, gm.updateStationNameInput, gm.authToken)),
+						_1: {ctor: '[]'}
+					});
+			case 'UpdatedStation':
+				var _p23 = _p9._0;
+				if (_p23.ctor === 'Ok') {
+					var station = function () {
+						var _p24 = gm.currentStation;
+						if (_p24.ctor === 'Just') {
+							return _p24._0;
+						} else {
+							return {id: '', name: '', art: ''};
+						}
+					}();
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							gm,
+							{
+								currentStation: _elm_lang$core$Maybe$Just(
+									{id: station.id, name: gm.updateStationNameInput, art: station.art}),
+								updatingStationPopup: false
+							}),
+						{ctor: '[]'});
+				} else {
+					var log = A2(_elm_lang$core$Debug$log, 'Error updating station', _p23._0);
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						gm,
+						{ctor: '[]'});
+				}
+			case 'UpdateStationInput':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						gm,
+						{updateStationNameInput: _p9._0}),
+					{ctor: '[]'});
+			default:
+				var _p25 = _p9._0;
+				if (_p25.ctor === 'Ok') {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							gm,
+							{dominantColor: _p25._0}),
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							gm,
+							{dominantColor: 'FFFFFF'}),
+						{ctor: '[]'});
+				}
 		}
 	});
 var _user$project$Main$view = function (gm) {
+	var backgroundColor = A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple2',
+						_0: 'background-color',
+						_1: A2(
+							_elm_lang$core$Basics_ops['++'],
+							'#',
+							function () {
+								var _p26 = _elm_lang$core$List$head(gm.songQueue);
+								if (_p26.ctor === 'Just') {
+									return _p26._0.dominantColor;
+								} else {
+									return 'FFFFFF';
+								}
+							}())
+					},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'opacity', _1: '.75'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{ctor: '[]'});
+	var backgroundImg = A2(
+		_elm_lang$html$Html$img,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$style(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'filter', _1: 'blur(5px)'},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'width', _1: '100%'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'position', _1: 'absolute'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'transform', _1: 'scale(10)'},
+									_1: {
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'justify-self', _1: 'center'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'align-self', _1: 'center'},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
+												_1: {ctor: '[]'}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$src(
+					function () {
+						var _p27 = _elm_lang$core$List$head(gm.songQueue);
+						if (_p27.ctor === 'Just') {
+							return _p27._0.albumArt;
+						} else {
+							return '';
+						}
+					}()),
+				_1: {ctor: '[]'}
+			}
+		},
+		{ctor: '[]'});
 	var song = A2(
 		_elm_lang$html$Html$audio,
 		{
 			ctor: '::',
 			_0: _user$project$Main$onEnded(
 				function () {
-					var _p15 = gm.currentStation;
-					if (_p15.ctor === 'Just') {
-						return _p15._0.id;
+					var _p28 = gm.currentStation;
+					if (_p28.ctor === 'Just') {
+						return _p28._0.id;
 					} else {
 						return '';
 					}
@@ -394,9 +1219,9 @@ var _user$project$Main$view = function (gm) {
 					ctor: '::',
 					_0: _elm_lang$html$Html_Attributes$src(
 						function () {
-							var _p16 = _elm_lang$core$List$head(gm.songQueue);
-							if (_p16.ctor === 'Just') {
-								return _p16._0.audioURL;
+							var _p29 = _elm_lang$core$List$head(gm.songQueue);
+							if (_p29.ctor === 'Just') {
+								return _p29._0.audioURL;
 							} else {
 								return '';
 							}
@@ -411,8 +1236,8 @@ var _user$project$Main$view = function (gm) {
 		},
 		{ctor: '[]'});
 	var content = function () {
-		var _p17 = gm.page;
-		switch (_p17.ctor) {
+		var _p30 = gm.page;
+		switch (_p30.ctor) {
 			case 'LoginWindow':
 				return A2(
 					_elm_lang$html$Html$map,
@@ -425,8 +1250,10 @@ var _user$project$Main$view = function (gm) {
 					_elm_lang$html$Html$map,
 					_user$project$Main$SelectorMsg,
 					_user$project$Page_StationSelector$view(gm));
-			default:
+			case 'ChatWindow':
 				return _elm_lang$html$Html$text('');
+			default:
+				return A3(_user$project$View_PreviousSongs$view, gm.previousSongs, _user$project$Main$PlayPreviousSong, gm);
 		}
 	}();
 	return A2(
@@ -445,8 +1272,12 @@ var _user$project$Main$view = function (gm) {
 							_0: {ctor: '_Tuple2', _0: 'height', _1: '100%'},
 							_1: {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: 'overflow-x', _1: 'hidden'},
-								_1: {ctor: '[]'}
+								_0: {ctor: '_Tuple2', _0: 'overflow', _1: 'hidden'},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'position', _1: 'relative'},
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
@@ -455,11 +1286,19 @@ var _user$project$Main$view = function (gm) {
 		},
 		{
 			ctor: '::',
-			_0: song,
+			_0: backgroundImg,
 			_1: {
 				ctor: '::',
-				_0: A2(_user$project$Main$viewPlayer, gm, content),
-				_1: {ctor: '[]'}
+				_0: backgroundColor,
+				_1: {
+					ctor: '::',
+					_0: song,
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Main$viewPlayer, gm, content),
+						_1: {ctor: '[]'}
+					}
+				}
 			}
 		});
 };

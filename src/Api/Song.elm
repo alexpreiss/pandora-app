@@ -5,6 +5,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Json.Decode.Pipeline as Pipeline
 import Http exposing (Request)
+import Task exposing (Task)
 
 
 fragmentListDecoder : Decode.Decoder (List Song)
@@ -27,9 +28,11 @@ fragmentDecoder =
         |> Pipeline.required "albumTitle" Decode.string
         |> Pipeline.requiredAt [ "albumArt", "4", "url" ] Decode.string
         |> Pipeline.required "trackToken" Decode.string
+        |> Pipeline.required "pandoraId" Decode.string
+        |> Pipeline.hardcoded "FFFFFF"
 
 
-getNext : String -> String -> Bool -> Request (List Song)
+getNext : String -> String -> Bool -> Task Http.Error (List Song)
 getNext stationId authToken isStationStart =
     Http.request
         { method = "POST"
@@ -54,3 +57,47 @@ getNext stationId authToken isStationStart =
         , timeout = Nothing
         , withCredentials = False
         }
+        |> Http.toTask
+        |> Task.andThen
+            (\songs ->
+                List.map (getDetails authToken >> Http.toTask) songs
+                    |> Task.sequence
+            )
+
+
+detailDecoder : Song -> Decode.Decoder Song
+detailDecoder song =
+    (Decode.at [ "annotations", song.pandoraId, "icon", "dominantColor" ]
+        (Decode.oneOf
+            [ Decode.string
+            , Decode.succeed "FFFFFF"
+            ]
+        )
+    )
+        |> Decode.map (\domColor -> { song | dominantColor = domColor })
+
+
+getDetails : String -> Song -> Request Song
+getDetails authToken song =
+    let
+        pandoraId =
+            song.pandoraId
+    in
+        Http.request
+            { method = "POST"
+            , headers =
+                [ Http.header "X-CsrfToken" "coolestToken"
+                , Http.header "X-AuthToken" authToken
+                ]
+            , url = "https://www.pandora.com/api/v4/catalog/getDetails"
+            , body =
+                Http.jsonBody
+                    (Encode.object
+                        [ ( "pandoraId", (Encode.string pandoraId) )
+                        ]
+                    )
+            , expect =
+                Http.expectJson (detailDecoder song)
+            , timeout = Nothing
+            , withCredentials = False
+            }
